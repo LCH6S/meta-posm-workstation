@@ -1,0 +1,2029 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meta 后台门店 POS 设备管理原型</title>
+  <style>
+    :root {
+      --top: #181921;
+      --brand: #ffd126;
+      --bg: #f4f4f5;
+      --panel: #ffffff;
+      --nav: #f7f7f8;
+      --line: #e7e7ea;
+      --line-dark: #2e2f35;
+      --text: #202124;
+      --muted: #71757c;
+      --subtle: #9a9da3;
+      --blue: #2f5bd8;
+      --blue-soft: #eef3ff;
+      --green: #0d9f5c;
+      --green-soft: #eaf8f1;
+      --red: #d93025;
+      --red-soft: #fff0ef;
+      --yellow-soft: #fff8e1;
+      --shadow: 0 18px 42px rgba(24, 25, 33, .16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      min-width: 1180px;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 48px;
+      background: var(--top);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      border-top: 3px solid #d6caa6;
+    }
+
+    .logo {
+      width: 146px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--brand);
+      font-size: 18px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .logo-mark {
+      width: 25px;
+      height: 25px;
+      border-radius: 7px;
+      background: var(--brand);
+      color: var(--top);
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .top-nav {
+      display: flex;
+      align-items: stretch;
+      gap: 40px;
+      height: 100%;
+      margin-left: 28px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .top-nav span {
+      display: flex;
+      align-items: center;
+      color: #f7f7f8;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .top-nav .active::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 8px;
+      width: 18px;
+      height: 2px;
+      transform: translateX(-50%);
+      background: #fff;
+      border-radius: 2px;
+    }
+
+    .top-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .top-icon {
+      width: 20px;
+      height: 20px;
+      color: #fff;
+    }
+
+    .divider {
+      width: 1px;
+      height: 22px;
+      background: rgba(255, 255, 255, .45);
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 172px minmax(0, 1fr);
+      min-height: calc(100vh - 48px);
+    }
+
+    .sidebar {
+      background: var(--nav);
+      border-right: 1px solid #efeff2;
+      padding: 16px 6px 0;
+    }
+
+    .side-item {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      margin-bottom: 6px;
+      color: #24252a;
+      font-size: 14px;
+      position: relative;
+    }
+
+    .side-item.has-caret {
+      justify-content: space-between;
+    }
+
+    .side-item.active {
+      background: #e8e8e9;
+      font-weight: 600;
+    }
+
+    .side-item.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 3px;
+      height: 100%;
+      background: #202124;
+    }
+
+    .main {
+      padding: 18px 20px 28px;
+    }
+
+    .breadcrumb {
+      height: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #6c7077;
+      font-size: 14px;
+      margin: 0 0 16px;
+    }
+
+    .breadcrumb strong {
+      color: var(--text);
+    }
+
+    .home-icon {
+      width: 17px;
+      height: 17px;
+      color: #8d9095;
+    }
+
+    .panel {
+      background: var(--panel);
+      margin-bottom: 16px;
+    }
+
+    .panel-title {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      font-size: 15px;
+      font-weight: 700;
+      border-bottom: 1px dashed var(--line);
+    }
+
+    .basic-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 34px;
+      padding: 25px 12px 23px;
+    }
+
+    .field-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .field-value {
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .content-panel {
+      min-height: calc(100vh - 294px);
+      padding: 20px 22px 26px;
+      background: #fff;
+    }
+
+    .page-title {
+      margin: 0 0 18px;
+      color: #202124;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .store-query {
+      padding: 0 0 20px;
+      border-bottom: 1px dashed var(--line);
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr)) auto auto;
+      gap: 22px 20px;
+      align-items: end;
+    }
+
+    .search-field label {
+      display: block;
+      font-size: 12px;
+      color: #9a9da3;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .control {
+      width: 100%;
+      height: 30px;
+      border: 0;
+      border-bottom: 1px solid #d6d8dc;
+      border-radius: 0;
+      background: #fff;
+      color: var(--text);
+      padding: 0;
+      outline: none;
+    }
+
+    .control:focus {
+      border-bottom-color: #202124;
+      box-shadow: none;
+    }
+
+    .drawer .control,
+    .dialog .control {
+      height: 34px;
+      border: 1px solid #d8d9dd;
+      border-radius: 2px;
+      padding: 0 10px;
+    }
+
+    .drawer .control:focus,
+    .dialog .control:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px rgba(47, 91, 216, .12);
+    }
+
+    .btn {
+      min-width: 72px;
+      height: 34px;
+      border: 1px solid #d5d7dc;
+      border-radius: 2px;
+      background: #fff;
+      color: #24252a;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .btn.primary {
+      border-color: #202124;
+      background: #202124;
+      color: #fff;
+    }
+
+    .btn.text {
+      min-width: auto;
+      border: 0;
+      background: transparent;
+      color: #6c7077;
+      padding: 0 6px;
+    }
+
+    .btn.blue {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .btn.ghost {
+      color: var(--blue);
+      border-color: #c7d3fa;
+      background: #fff;
+    }
+
+    .btn.danger {
+      color: var(--red);
+      border-color: #f3c8c4;
+      background: #fff;
+    }
+
+    .tabs {
+      height: 52px;
+      display: flex;
+      align-items: end;
+      gap: 38px;
+      padding: 0 0 0 0;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 22px;
+    }
+
+    .tab {
+      height: 38px;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      color: #24252a;
+      padding: 0;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .tab.active {
+      border-bottom-color: #202124;
+    }
+
+    .tab-page.hidden {
+      display: none;
+    }
+
+    .settings-list {
+      padding: 22px 18px;
+    }
+
+    .setting-row {
+      height: 70px;
+      background: #f6f7fa;
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 16px;
+      padding: 0 20px;
+      margin-bottom: 28px;
+      border-radius: 3px;
+    }
+
+    .setting-icon {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      color: #24305e;
+      border-radius: 3px;
+    }
+
+    .setting-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .setting-desc {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .list-head {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .device-query {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(180px, 1fr)) auto auto;
+      gap: 22px 20px;
+      align-items: end;
+      padding: 0 0 18px;
+      margin-bottom: 18px;
+      border-bottom: 1px dashed var(--line);
+    }
+
+    .device-query-spacer {
+      grid-column: 3 / 4;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      min-width: 1480px;
+    }
+
+    th {
+      height: 40px;
+      color: var(--muted);
+      text-align: left;
+      font-size: 12px;
+      font-weight: 700;
+      border-bottom: 2px solid var(--line-dark);
+      padding: 0 8px;
+      white-space: nowrap;
+    }
+
+    td {
+      height: 54px;
+      padding: 0 8px;
+      border-bottom: 1px solid var(--line-dark);
+      font-size: 14px;
+      color: #24252a;
+      vertical-align: middle;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 22px;
+      min-width: 52px;
+      padding: 0 8px;
+      border-radius: 2px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .status.active {
+      color: #087443;
+      background: var(--green-soft);
+    }
+
+    .status.inactive {
+      color: #8a5b00;
+      background: var(--yellow-soft);
+    }
+
+    .scope-text {
+      color: #24252a;
+      font-size: 13px;
+    }
+
+    .link-btn {
+      border: 0;
+      background: transparent;
+      color: var(--blue);
+      padding: 6px 0;
+      font-size: 14px;
+    }
+
+    .link-btn.danger {
+      color: var(--red);
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pagination {
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      font-size: 14px;
+      color: #24252a;
+    }
+
+    .page-btn,
+    .page-num,
+    .page-size {
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 2px;
+    }
+
+    .page-btn {
+      width: 26px;
+      border: 0;
+      color: #a4a7ad;
+      background: transparent;
+    }
+
+    .page-num {
+      width: 32px;
+      border: 1px solid var(--blue);
+      color: var(--blue);
+      background: #fff;
+    }
+
+    .page-size {
+      min-width: 86px;
+      padding: 0 10px;
+      background: #f2f2f3;
+      color: #25262b;
+    }
+
+    .mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .32);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .16s ease;
+      z-index: 20;
+    }
+
+    body.drawer-open .mask,
+    body.dialog-open .mask {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 720px;
+      max-width: calc(100vw - 120px);
+      height: 100vh;
+      background: #fff;
+      box-shadow: var(--shadow);
+      transform: translateX(102%);
+      transition: transform .2s ease;
+      z-index: 21;
+      display: grid;
+      grid-template-rows: 56px minmax(0, 1fr) 62px;
+    }
+
+    body.drawer-open .drawer {
+      transform: translateX(0);
+    }
+
+    .drawer-head,
+    .dialog-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .drawer-title,
+    .dialog-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      background: transparent;
+      color: #565a61;
+      display: grid;
+      place-items: center;
+    }
+
+    .drawer-body {
+      overflow-y: auto;
+      padding: 18px 22px 28px;
+    }
+
+    .drawer-foot,
+    .dialog-foot {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      padding: 0 22px;
+      border-top: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin: 0 0 14px;
+    }
+
+    .subsection {
+      margin: 0 0 26px;
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr);
+      gap: 10px 14px;
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .kv dt {
+      color: var(--muted);
+    }
+
+    .kv dd {
+      margin: 0;
+      color: var(--text);
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .detail-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .detail-overview {
+      padding: 0 18px 26px;
+      margin-bottom: 12px;
+    }
+
+    .detail-headline,
+    .detail-block-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 26px;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .detail-headline::before,
+    .detail-block-title::before {
+      content: "";
+      width: 3px;
+      height: 17px;
+      background: #202124;
+      display: inline-block;
+    }
+
+    .detail-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 26px 64px;
+    }
+
+    .detail-summary-item dt,
+    .detail-field dt {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .detail-summary-item dd,
+    .detail-field dd {
+      margin: 0;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .detail-block {
+      padding: 0 18px;
+      margin: 0 0 34px;
+    }
+
+    .detail-info-layout {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px 72px;
+      max-width: 1180px;
+    }
+
+    .detail-field {
+      min-width: 0;
+    }
+
+    .detail-table-wrap {
+      overflow-x: auto;
+      margin-left: 0;
+    }
+
+    .detail-block-note {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px 38px;
+      margin-bottom: 24px;
+    }
+
+    .info-card {
+      border: 1px solid var(--line);
+      padding: 16px;
+      min-height: 138px;
+    }
+
+    .option-group {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .option {
+      border: 1px solid #d8d9dd;
+      border-radius: 4px;
+      padding: 14px 14px 14px 42px;
+      position: relative;
+      background: #fff;
+      min-height: 58px;
+    }
+
+    .option input {
+      position: absolute;
+      left: 14px;
+      top: 17px;
+    }
+
+    .option.active {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .option-name {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .option-desc {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .form-row {
+      margin-bottom: 16px;
+    }
+
+    .form-row label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 7px;
+      font-weight: 600;
+    }
+
+    .notice {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      margin-top: 14px;
+      color: #6b4d12;
+      background: var(--yellow-soft);
+      border: 1px solid #f2dd9a;
+      border-radius: 3px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .confirm-message {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .confirm-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--red);
+      background: var(--red-soft);
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .confirm-title {
+      margin: 2px 0 8px;
+      color: #202124;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .confirm-desc {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .dialog {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: 620px;
+      max-width: calc(100vw - 96px);
+      max-height: calc(100vh - 96px);
+      background: #fff;
+      box-shadow: var(--shadow);
+      transform: translate(-50%, -48%) scale(.98);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index: 22;
+      display: grid;
+      grid-template-rows: 56px minmax(0, 1fr) 62px;
+    }
+
+    body.dialog-open .dialog {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .dialog-body {
+      overflow-y: auto;
+      padding: 24px 28px 28px;
+    }
+
+    .success-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .success-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 0 0 12px;
+    }
+
+    .success-desc {
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0 0 20px;
+    }
+
+    .qr {
+      width: 190px;
+      height: 190px;
+      padding: 13px;
+      border: 1px solid var(--line);
+      background: #fff;
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      grid-template-rows: repeat(9, 1fr);
+      gap: 4px;
+    }
+
+    .qr span {
+      background: #111;
+    }
+
+    .qr-label {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .change-table {
+      min-width: 900px;
+    }
+
+    .change-table th {
+      height: 42px;
+      background: #f7f8fa;
+      border-bottom: 1px solid var(--line);
+      color: #5f636b;
+    }
+
+    .change-table td {
+      height: 86px;
+      vertical-align: top;
+      white-space: normal;
+      line-height: 1.5;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .detail-page-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .detail-page-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .page-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: 70px;
+      transform: translateX(-50%) translateY(-12px);
+      min-width: 220px;
+      height: 42px;
+      background: rgba(24, 25, 33, .92);
+      color: #fff;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 18px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index: 40;
+      font-size: 14px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        min-width: 760px;
+      }
+
+      .top-nav {
+        gap: 22px;
+      }
+
+      .shell {
+        grid-template-columns: 150px minmax(0, 1fr);
+      }
+
+      .basic-grid,
+      .info-grid,
+      .success-layout,
+      .detail-summary-grid,
+      .detail-info-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="logo">
+        <span class="logo-mark">收</span>
+        <span>收钱吧</span>
+      </div>
+      <nav class="top-nav" aria-label="主导航">
+        <span>首页</span>
+        <span>电子发票</span>
+        <span>电子小票</span>
+        <span class="active">支付业务</span>
+        <span>门店收银</span>
+        <span>管理功能</span>
+      </nav>
+      <div class="top-actions">
+        <svg class="top-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 3v12"></path><path d="m7 8 5-5 5 5"></path><path d="M5 14v6h14v-6"></path>
+        </svg>
+        <svg class="top-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 21v-2a4 4 0 0 0-8 0v2"></path><circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <svg class="top-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span class="divider"></span>
+        <span>admin</span>
+        <span>文A</span>
+      </div>
+    </header>
+
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="side-item has-caret">销售类订单 <span>⌄</span></div>
+        <div class="side-item">退款规则</div>
+        <div class="side-item">分期活动管理</div>
+        <div class="side-item active">门店POS管理</div>
+      </aside>
+
+      <main class="main">
+        <div class="breadcrumb" id="breadcrumb">
+          <svg class="home-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m3 10 9-7 9 7"></path><path d="M5 10v10h14V10"></path><path d="M9 20v-6h6v6"></path>
+          </svg>
+          <span>/</span>
+          <span>门店POS管理</span>
+          <span id="detailCrumb" class="hidden">/</span>
+          <strong id="crumbTitle">门店列表</strong>
+        </div>
+
+        <section class="panel content-panel" id="storePage">
+          <h1 class="page-title">门店POS管理</h1>
+          <div class="store-query">
+            <div class="toolbar">
+              <div class="search-field">
+                <label for="storeNameSearch">门店名</label>
+                <input id="storeNameSearch" class="control" placeholder="请输入门店名">
+              </div>
+              <div class="search-field">
+                <label for="storeNoSearch">门店号</label>
+                <input id="storeNoSearch" class="control" placeholder="请输入门店号">
+              </div>
+              <div class="search-field">
+                <label for="storeIdSearch">门店ID</label>
+                <input id="storeIdSearch" class="control" placeholder="请输入门店ID">
+              </div>
+              <div class="search-field">
+                <label for="storeDeviceNoSearch">设备号</label>
+                <input id="storeDeviceNoSearch" class="control" placeholder="请输入设备号">
+              </div>
+              <button class="btn text" id="clearSearch">清空条件</button>
+              <button class="btn primary" id="searchStore">搜索</button>
+            </div>
+          </div>
+          <div class="list-area">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width:260px;">门店名</th>
+                    <th style="width:180px;">门店号</th>
+                    <th style="width:190px;">门店ID</th>
+                    <th style="width:150px;">已激活POS设备</th>
+                    <th style="width:230px;">操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>新葡京娱乐城</td>
+                    <td class="mono">mocclub</td>
+                    <td class="mono">161247762931</td>
+                    <td>2</td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="link-btn">退款范围</button>
+                        <button class="link-btn" id="enterDetail">详情</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>litepos</td>
+                    <td class="mono">KAGroup店</td>
+                    <td class="mono">161247766776</td>
+                    <td>0</td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="link-btn">退款范围</button>
+                        <button class="link-btn">详情</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>上海悦投贸易有限公司</td>
+                    <td class="mono">WX</td>
+                    <td class="mono">161247765350</td>
+                    <td>0</td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="link-btn">退款范围</button>
+                        <button class="link-btn">详情</button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination">
+              <span>共132条</span>
+              <button class="page-btn">‹</button>
+              <span class="page-num">1</span>
+              <span>2</span>
+              <span>3</span>
+              <span>4</span>
+              <span>5</span>
+              <span>...</span>
+              <span>14</span>
+              <button class="page-btn">›</button>
+              <span class="page-size">10 条/页⌄</span>
+            </div>
+          </div>
+        </section>
+
+        <section id="detailPage" class="hidden">
+          <section class="panel">
+            <div class="panel-title">基本信息</div>
+            <div class="basic-grid">
+              <div>
+                <div class="field-label">门店名称</div>
+                <div class="field-value">新葡京娱乐城</div>
+              </div>
+              <div>
+                <div class="field-label">门店号</div>
+                <div class="field-value mono">mocclub</div>
+              </div>
+              <div>
+                <div class="field-label">门店ID</div>
+                <div class="field-value mono">161247762931</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel content-panel">
+            <div class="tabs">
+              <button class="tab" data-tab="settings">门店POS设置</button>
+              <button class="tab active" data-tab="devices">门店POS列表</button>
+            </div>
+
+            <div class="tab-page hidden" id="settingsTab">
+              <div class="settings-list">
+                <div class="setting-row">
+                  <div class="setting-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M8 2v4"></path><path d="M16 2v4"></path><path d="M7 14l3 3 7-7"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="setting-title">可退时间范围</div>
+                    <div class="setting-desc">控制 POS 机首页上退款入口，可退订单的时间范围</div>
+                  </div>
+                  <button class="btn ghost">修改</button>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="setting-title">退款密码设置</div>
+                    <div class="setting-desc">在 POS 上发起退款时，需要输入的门店 POS 退款密码</div>
+                  </div>
+                  <button class="btn ghost">修改</button>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="setting-title">管理密码设置</div>
+                    <div class="setting-desc">在 POS 上进行重要操作时，需要输入门店 POS 管理密码</div>
+                  </div>
+                  <button class="btn ghost">修改</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-page" id="devicesTab">
+              <div class="device-query">
+                <div class="search-field">
+                  <label for="deviceIdQuery">设备 ID</label>
+                  <input id="deviceIdQuery" class="control" placeholder="请输入设备 ID">
+                </div>
+                <div class="search-field">
+                  <label for="deviceNoQuery">设备号</label>
+                  <input id="deviceNoQuery" class="control" placeholder="请输入设备号">
+                </div>
+                <div class="search-field">
+                  <label for="deviceTypeQuery">设备类型</label>
+                  <select id="deviceTypeQuery" class="control">
+                    <option value="">全部</option>
+                    <option>未知设备</option>
+                    <option>百富A920</option>
+                    <option>百富A920 PRO</option>
+                    <option>百富A910</option>
+                    <option>联迪A8</option>
+                    <option>联迪A8S</option>
+                    <option>新大陆N910</option>
+                    <option>祥承P8neo</option>
+                    <option>联迪P30</option>
+                    <option>新大陆N910 PRO</option>
+                  </select>
+                </div>
+                <div class="search-field">
+                  <label for="deviceStatusQuery">设备状态</label>
+                  <select id="deviceStatusQuery" class="control">
+                    <option value="">全部</option>
+                    <option value="INACTIVE">未激活</option>
+                    <option value="ACTIVE">已激活</option>
+                  </select>
+                </div>
+                <div class="search-field">
+                  <label for="terminalNoQuery">收钱吧终端号</label>
+                  <input id="terminalNoQuery" class="control" placeholder="请输入收钱吧终端号">
+                </div>
+                <div class="search-field">
+                  <label for="scopeQuery">接单范围</label>
+                  <select id="scopeQuery" class="control">
+                    <option value="">全部</option>
+                    <option value="STORE">全门店</option>
+                    <option value="WORKSTATION">指定收银机</option>
+                  </select>
+                </div>
+                <div class="search-field">
+                  <label for="workstationQuery">关联收银机号</label>
+                  <input id="workstationQuery" class="control" placeholder="请输入收银机号">
+                </div>
+                <span class="device-query-spacer"></span>
+                <button class="btn text" id="clearDeviceQuery">清空条件</button>
+                <button class="btn primary" id="searchDevice">搜索</button>
+              </div>
+              <div class="list-head">
+                <button class="btn primary" id="addDevice">添加设备</button>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="width:150px;">生成时间</th>
+                      <th style="width:150px;">设备 ID</th>
+                      <th style="width:170px;">接单范围</th>
+                      <th style="width:92px;">设备状态</th>
+                      <th style="width:150px;">设备号</th>
+                      <th style="width:100px;">设备类型</th>
+                      <th style="width:178px;">收钱吧终端号</th>
+                      <th style="width:150px;">状态变更时间</th>
+                      <th style="width:280px;">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="deviceRows"></tbody>
+                </table>
+              </div>
+              <div class="pagination">
+                <span id="deviceTotal">共3条</span>
+                <button class="page-btn">‹</button>
+                <span class="page-num">1</span>
+                <button class="page-btn">›</button>
+                <span class="page-size">10 条/页⌄</span>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section id="deviceDetailPage" class="hidden">
+          <section class="panel content-panel">
+            <div class="detail-page-head">
+              <h1 class="detail-page-title">设备详情</h1>
+              <div class="page-actions" id="deviceDetailActions"></div>
+            </div>
+            <div id="deviceDetailBody"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="mask" id="mask"></div>
+
+  <aside class="drawer" aria-label="操作抽屉" aria-hidden="true">
+    <header class="drawer-head">
+      <div class="drawer-title" id="drawerTitle">设备详情</div>
+      <button class="icon-btn" id="closeDrawer" aria-label="关闭">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>
+        </svg>
+      </button>
+    </header>
+    <div class="drawer-body" id="drawerBody"></div>
+    <footer class="drawer-foot" id="drawerFoot"></footer>
+  </aside>
+
+  <section class="dialog" aria-label="弹窗" aria-hidden="true">
+    <header class="dialog-head">
+      <div class="dialog-title" id="dialogTitle">添加设备</div>
+      <button class="icon-btn" id="closeDialog" aria-label="关闭">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>
+        </svg>
+      </button>
+    </header>
+    <div class="dialog-body" id="dialogBody"></div>
+    <footer class="dialog-foot" id="dialogFoot"></footer>
+  </section>
+
+  <div class="toast" id="toast">已保存</div>
+
+  <template id="qrTemplate">
+    <div>
+      <div class="qr" aria-label="激活二维码">
+        <span style="grid-area:1/1/2/2"></span><span style="grid-area:1/2/2/3"></span><span style="grid-area:1/3/2/4"></span><span style="grid-area:1/7/2/8"></span><span style="grid-area:1/8/2/9"></span><span style="grid-area:1/9/2/10"></span>
+        <span style="grid-area:2/1/3/2"></span><span style="grid-area:2/3/3/4"></span><span style="grid-area:2/5/3/6"></span><span style="grid-area:2/7/3/8"></span><span style="grid-area:2/9/3/10"></span>
+        <span style="grid-area:3/1/4/2"></span><span style="grid-area:3/2/4/3"></span><span style="grid-area:3/3/4/4"></span><span style="grid-area:3/5/4/6"></span><span style="grid-area:3/6/4/7"></span><span style="grid-area:3/7/4/8"></span><span style="grid-area:3/8/4/9"></span><span style="grid-area:3/9/4/10"></span>
+        <span style="grid-area:4/2/5/3"></span><span style="grid-area:4/4/5/5"></span><span style="grid-area:4/6/5/7"></span><span style="grid-area:4/8/5/9"></span>
+        <span style="grid-area:5/1/6/2"></span><span style="grid-area:5/3/6/4"></span><span style="grid-area:5/4/6/5"></span><span style="grid-area:5/5/6/6"></span><span style="grid-area:5/7/6/8"></span><span style="grid-area:5/9/6/10"></span>
+        <span style="grid-area:6/2/7/3"></span><span style="grid-area:6/5/7/6"></span><span style="grid-area:6/6/7/7"></span><span style="grid-area:6/8/7/9"></span>
+        <span style="grid-area:7/1/8/2"></span><span style="grid-area:7/2/8/3"></span><span style="grid-area:7/3/8/4"></span><span style="grid-area:7/5/8/6"></span><span style="grid-area:7/7/8/8"></span><span style="grid-area:7/8/8/9"></span><span style="grid-area:7/9/8/10"></span>
+        <span style="grid-area:8/1/9/2"></span><span style="grid-area:8/3/9/4"></span><span style="grid-area:8/4/9/5"></span><span style="grid-area:8/6/9/7"></span><span style="grid-area:8/9/9/10"></span>
+        <span style="grid-area:9/1/10/2"></span><span style="grid-area:9/2/10/3"></span><span style="grid-area:9/3/10/4"></span><span style="grid-area:9/5/10/6"></span><span style="grid-area:9/6/10/7"></span><span style="grid-area:9/7/10/8"></span><span style="grid-area:9/8/10/9"></span><span style="grid-area:9/9/10/10"></span>
+      </div>
+      <div class="qr-label">请用 POS 扫码激活</div>
+    </div>
+  </template>
+
+  <script>
+    const store = {
+      brandName: "WOSAI Demo Shop",
+      brandNo: "700001",
+      storeName: "新葡京娱乐城",
+      storeNo: "mocclub",
+      storeId: "161247762931",
+      sqbStoreNo: "1580000011171677"
+    };
+
+    const devices = [
+      {
+        id: "2301247759226",
+        createdAt: "2026-05-07 14:22:18",
+        statusUpdatedAt: "2026-05-07 14:22:18",
+        status: "INACTIVE",
+        scopeType: "STORE",
+        workstation: "",
+        deviceNo: "",
+        deviceType: "",
+        terminalNo: "",
+        activatedAt: "",
+        bank: null,
+        logs: []
+      },
+      {
+        id: "2301247759225",
+        createdAt: "2026-04-22 17:18:02",
+        statusUpdatedAt: "2026-04-22 17:20:49",
+        status: "ACTIVE",
+        scopeType: "WORKSTATION",
+        workstation: "WS-MOC-001",
+        deviceNo: "259KCASS8557",
+        deviceType: "联迪A8S",
+        terminalNo: "100058800054379913",
+        activatedAt: "2026-04-22 17:20:49",
+        bank: {
+          acquirer: "通华",
+          merchantNo: "55358405732HSEO",
+          terminalNo: "13717601"
+        },
+        logs: [
+          {
+            time: "2026-05-03 17:22",
+            type: "银行卡参数变更",
+            ownership: "品牌：WOSAI Demo Shop（700001）\n门店：新葡京娱乐城（mocclub）\n设备ID：2301247759225",
+            terminal: "门店名：新葡京娱乐城\n门店号：mocclub\n终端号：100058800054379913",
+            bank: "收单机构：通华\n机构商户号：55358405732HSEO\n机构终端号：13717601"
+          },
+          {
+            time: "2026-04-22 17:20",
+            type: "设备激活",
+            ownership: "品牌：WOSAI Demo Shop（700001）\n门店：新葡京娱乐城（mocclub）\n设备ID：2301247759225",
+            terminal: "门店名：新葡京娱乐城\n门店号：mocclub\n终端号：100058800054379913",
+            bank: "--"
+          }
+        ]
+      },
+      {
+        id: "2301247759224",
+        createdAt: "2026-04-16 11:20:36",
+        statusUpdatedAt: "2026-04-16 11:22:13",
+        status: "ACTIVE",
+        scopeType: "STORE",
+        workstation: "",
+        deviceNo: "242SCASC0494",
+        deviceType: "百富A920 PRO",
+        terminalNo: "100058800054192246",
+        activatedAt: "2026-04-16 11:22:13",
+        bank: null,
+        logs: [
+          {
+            time: "2026-04-16 11:22",
+            type: "设备激活",
+            ownership: "品牌：WOSAI Demo Shop（700001）\n门店：新葡京娱乐城（mocclub）\n设备ID：2301247759224",
+            terminal: "门店名：新葡京娱乐城\n门店号：mocclub\n终端号：100058800054192246",
+            bank: "--"
+          }
+        ]
+      }
+    ];
+
+    let activeTab = "devices";
+    let currentDeviceId = null;
+    let drawerMode = "detail";
+    let scopeDraft = { type: "STORE", workstation: "" };
+
+    const body = document.body;
+    const mask = document.getElementById("mask");
+    const storePage = document.getElementById("storePage");
+    const detailPage = document.getElementById("detailPage");
+    const deviceDetailPage = document.getElementById("deviceDetailPage");
+    const crumbTitle = document.getElementById("crumbTitle");
+    const detailCrumb = document.getElementById("detailCrumb");
+    const deviceDetailActions = document.getElementById("deviceDetailActions");
+    const deviceDetailBody = document.getElementById("deviceDetailBody");
+    const drawer = document.querySelector(".drawer");
+    const drawerTitle = document.getElementById("drawerTitle");
+    const drawerBody = document.getElementById("drawerBody");
+    const drawerFoot = document.getElementById("drawerFoot");
+    const dialog = document.querySelector(".dialog");
+    const dialogTitle = document.getElementById("dialogTitle");
+    const dialogBody = document.getElementById("dialogBody");
+    const dialogFoot = document.getElementById("dialogFoot");
+    const toast = document.getElementById("toast");
+    const qrTemplate = document.getElementById("qrTemplate");
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    function scopeText(device) {
+      return device.scopeType === "WORKSTATION" ? `收银机：${device.workstation}` : "全门店";
+    }
+
+    function emptyText(value) {
+      return value || "--";
+    }
+
+    function statusHtml(device) {
+      return device.status === "ACTIVE"
+        ? '<span class="status active">已激活</span>'
+        : '<span class="status inactive">未激活</span>';
+    }
+
+    function statusText(device) {
+      return device.status === "ACTIVE" ? "已激活" : "未激活";
+    }
+
+    function canDeactivateInMeta(device) {
+      return !["百富A920", "百富A910", "百富A920 PRO"].includes(device.deviceType);
+    }
+
+    function deviceQuery() {
+      const value = (id) => document.getElementById(id).value.trim();
+      return {
+        deviceId: value("deviceIdQuery"),
+        deviceNo: value("deviceNoQuery"),
+        deviceType: value("deviceTypeQuery"),
+        deviceStatus: value("deviceStatusQuery"),
+        terminalNo: value("terminalNoQuery"),
+        scopeType: value("scopeQuery"),
+        workstation: value("workstationQuery")
+      };
+    }
+
+    function filterDevices() {
+      const query = deviceQuery();
+      return devices.filter((device) => {
+        const matchesText = (source, keyword) => !keyword || source.includes(keyword);
+        if (!matchesText(device.id, query.deviceId)) return false;
+        if (!matchesText(device.deviceNo, query.deviceNo)) return false;
+        if (query.deviceType && device.deviceType !== query.deviceType) return false;
+        if (query.deviceStatus && device.status !== query.deviceStatus) return false;
+        if (!matchesText(device.terminalNo, query.terminalNo)) return false;
+        if (query.scopeType && device.scopeType !== query.scopeType) return false;
+        if (!matchesText(device.workstation, query.workstation)) return false;
+        return true;
+      });
+    }
+
+    function renderDevices() {
+      const tbody = document.getElementById("deviceRows");
+      const visibleDevices = filterDevices();
+      if (!visibleDevices.length) {
+        tbody.innerHTML = `<tr><td colspan="9" class="muted">暂无符合条件的设备</td></tr>`;
+        document.getElementById("deviceTotal").textContent = "共0条";
+        return;
+      }
+      tbody.innerHTML = visibleDevices.map((device) => {
+        const actions = device.status === "ACTIVE"
+          ? `<button class="link-btn" data-action="scope" data-id="${device.id}">接单范围</button><button class="link-btn" data-action="detail" data-id="${device.id}">详情</button>`
+          : `<button class="link-btn" data-action="scope" data-id="${device.id}">接单范围</button><button class="link-btn" data-action="activate" data-id="${device.id}">激活</button><button class="link-btn" data-action="detail" data-id="${device.id}">详情</button>`;
+        return `
+          <tr>
+            <td>${device.createdAt}</td>
+            <td class="mono">${device.id}</td>
+            <td class="scope-text ${device.scopeType === "WORKSTATION" ? "mono" : ""}">${scopeText(device)}</td>
+            <td>${statusHtml(device)}</td>
+            <td class="mono">${emptyText(device.deviceNo)}</td>
+            <td>${emptyText(device.deviceType)}</td>
+            <td class="mono">${emptyText(device.terminalNo)}</td>
+            <td>${emptyText(device.statusUpdatedAt)}</td>
+            <td><div class="row-actions">${actions}</div></td>
+          </tr>
+        `;
+      }).join("");
+      document.getElementById("deviceTotal").textContent = `共${visibleDevices.length}条`;
+      tbody.querySelectorAll("[data-action]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const id = button.dataset.id;
+          const action = button.dataset.action;
+          if (action === "detail") openDeviceDetailPage(id);
+          if (action === "scope") openScope(id);
+          if (action === "activate") openActivate(id);
+        });
+      });
+    }
+
+    function setTab(tab) {
+      activeTab = tab;
+      document.querySelectorAll(".tab").forEach((button) => {
+        button.classList.toggle("active", button.dataset.tab === tab);
+      });
+      document.getElementById("settingsTab").classList.toggle("hidden", tab !== "settings");
+      document.getElementById("devicesTab").classList.toggle("hidden", tab !== "devices");
+    }
+
+    function enterDetailPage() {
+      storePage.classList.add("hidden");
+      detailPage.classList.remove("hidden");
+      deviceDetailPage.classList.add("hidden");
+      detailCrumb.classList.remove("hidden");
+      crumbTitle.textContent = "门店详情";
+      setTab("devices");
+    }
+
+    function enterDeviceListPage() {
+      storePage.classList.add("hidden");
+      detailPage.classList.remove("hidden");
+      deviceDetailPage.classList.add("hidden");
+      detailCrumb.classList.remove("hidden");
+      crumbTitle.textContent = "门店详情";
+      currentDeviceId = null;
+      setTab("devices");
+    }
+
+    function showDeviceDetailPage(id) {
+      currentDeviceId = id;
+      storePage.classList.add("hidden");
+      detailPage.classList.add("hidden");
+      deviceDetailPage.classList.remove("hidden");
+      detailCrumb.classList.remove("hidden");
+      crumbTitle.textContent = "设备详情";
+      renderDeviceDetailPage(id);
+    }
+
+    function openDrawer(title, mode) {
+      drawerMode = mode;
+      drawerTitle.textContent = title;
+      drawer.setAttribute("aria-hidden", "false");
+      body.classList.add("drawer-open");
+    }
+
+    function closeDrawer() {
+      body.classList.remove("drawer-open");
+      drawer.setAttribute("aria-hidden", "true");
+      currentDeviceId = null;
+      drawerBody.innerHTML = "";
+      drawerFoot.innerHTML = "";
+    }
+
+    function openDialog(title) {
+      dialogTitle.textContent = title;
+      dialog.setAttribute("aria-hidden", "false");
+      body.classList.add("dialog-open");
+    }
+
+    function closeDialog() {
+      body.classList.remove("dialog-open");
+      dialog.setAttribute("aria-hidden", "true");
+      dialogBody.innerHTML = "";
+      dialogFoot.innerHTML = "";
+    }
+
+    function qrHtml() {
+      return qrTemplate.innerHTML;
+    }
+
+    function deviceById(id) {
+      return devices.find((device) => device.id === id);
+    }
+
+    function ownerKv() {
+      return `
+        <dt>品牌名称</dt><dd>${store.brandName}</dd>
+        <dt>品牌编号</dt><dd class="mono">${store.brandNo}</dd>
+        <dt>门店名称</dt><dd>${store.storeName}</dd>
+        <dt>门店编号</dt><dd class="mono">${store.storeNo}</dd>
+      `;
+    }
+
+    function renderScopeForm(device) {
+      scopeDraft = { type: device.scopeType, workstation: device.workstation };
+      return `
+        <p class="section-title">接单范围</p>
+        <div class="option-group">
+          <label class="option ${device.scopeType === "STORE" ? "active" : ""}" id="scopeStoreOption">
+            <input type="radio" name="scope" value="STORE" ${device.scopeType === "STORE" ? "checked" : ""}>
+            <div class="option-name">全门店</div>
+            <div class="option-desc">POS 查询当前门店全部待办订单。</div>
+          </label>
+          <label class="option ${device.scopeType === "WORKSTATION" ? "active" : ""}" id="scopeWorkstationOption">
+            <input type="radio" name="scope" value="WORKSTATION" ${device.scopeType === "WORKSTATION" ? "checked" : ""}>
+            <div class="option-name">指定收银机</div>
+            <div class="option-desc">POS 只查询指定收银机号对应的待办订单。</div>
+          </label>
+        </div>
+        <div class="form-row ${device.scopeType === "WORKSTATION" ? "" : "hidden"}" id="workstationField">
+          <label for="workstationInput">收银机号</label>
+          <input class="control mono" id="workstationInput" value="${device.workstation}" placeholder="请输入收银机号">
+        </div>
+        <div class="notice">保存后，POS 下一次查询待办订单时按新接单范围过滤。</div>
+      `;
+    }
+
+    function bindScopeForm() {
+      const update = () => {
+        const value = document.querySelector("input[name='scope']:checked").value;
+        document.getElementById("scopeStoreOption").classList.toggle("active", value === "STORE");
+        document.getElementById("scopeWorkstationOption").classList.toggle("active", value === "WORKSTATION");
+        document.getElementById("workstationField").classList.toggle("hidden", value !== "WORKSTATION");
+      };
+      document.querySelectorAll("input[name='scope']").forEach((input) => input.addEventListener("change", update));
+    }
+
+    function saveScope() {
+      const device = deviceById(currentDeviceId);
+      const savedDeviceId = currentDeviceId;
+      const scope = document.querySelector("input[name='scope']:checked").value;
+      const workstationInput = document.getElementById("workstationInput");
+      if (scope === "WORKSTATION" && !workstationInput.value.trim()) {
+        showToast("请填写收银机号");
+        return;
+      }
+      device.scopeType = scope;
+      device.workstation = scope === "WORKSTATION" ? workstationInput.value.trim() : "";
+      device.statusUpdatedAt = "2026-05-07 15:06:30";
+      renderDevices();
+      closeDialog();
+      if (!deviceDetailPage.classList.contains("hidden")) {
+        renderDeviceDetailPage(savedDeviceId);
+      }
+      showToast("接单范围已保存");
+    }
+
+    function openScope(id) {
+      currentDeviceId = id;
+      const device = deviceById(id);
+      dialogBody.innerHTML = `
+        <div class="subsection">
+          <p class="section-title">设备信息</p>
+          <dl class="kv">
+            <dt>设备 ID</dt><dd class="mono">${device.id}</dd>
+            <dt>设备状态</dt><dd>${statusText(device)}</dd>
+            <dt>门店名称</dt><dd>${store.storeName}</dd>
+            <dt>门店编号</dt><dd class="mono">${store.storeNo}</dd>
+            <dt>收钱吧终端号</dt><dd class="mono">${emptyText(device.terminalNo)}</dd>
+          </dl>
+        </div>
+        ${renderScopeForm(device)}
+      `;
+      dialogFoot.innerHTML = `<button class="btn" id="dialogCancel">取消</button><button class="btn primary" id="saveScope">保存</button>`;
+      openDialog("接单范围设置");
+      bindScopeForm();
+      document.getElementById("dialogCancel").addEventListener("click", closeDialog);
+      document.getElementById("saveScope").addEventListener("click", saveScope);
+    }
+
+    function openActivate(id) {
+      const device = deviceById(id);
+      dialogBody.innerHTML = `
+        <div class="success-layout">
+          <div>
+            <p class="success-desc">该设备当前为未激活。请使用 POS 扫码完成激活。</p>
+            <dl class="kv">
+              <dt>品牌名称</dt><dd>${store.brandName}</dd>
+              <dt>品牌编号</dt><dd class="mono">${store.brandNo}</dd>
+              <dt>门店名称</dt><dd>${store.storeName}</dd>
+              <dt>门店编号</dt><dd class="mono">${store.storeNo}</dd>
+              <dt>收钱吧门店号</dt><dd class="mono">${store.sqbStoreNo}</dd>
+              <dt>设备 ID</dt><dd class="mono">${device.id}</dd>
+            </dl>
+          </div>
+          ${qrHtml()}
+        </div>
+      `;
+      dialogFoot.innerHTML = `<button class="btn primary" id="dialogCloseOnly">关闭</button>`;
+      openDialog("设备激活");
+      document.getElementById("dialogCloseOnly").addEventListener("click", closeDialog);
+    }
+
+    function logRows(device) {
+      if (!device.logs.length) {
+        return `<tr><td colspan="5" class="muted">暂无设备变更记录</td></tr>`;
+      }
+      return device.logs.map((log) => `
+        <tr>
+          <td>${log.time}</td>
+          <td>${log.type}</td>
+          <td>${log.ownership.replaceAll("\n", "<br>")}</td>
+          <td>${log.terminal.replaceAll("\n", "<br>")}</td>
+          <td>${log.bank.replaceAll("\n", "<br>")}</td>
+        </tr>
+      `).join("");
+    }
+
+    function openDeviceDetailPage(id) {
+      showDeviceDetailPage(id);
+    }
+
+    function renderDeviceDetailPage(id) {
+      const device = deviceById(id);
+      const deviceInfoItems = [
+        ["设备 ID", device.id, "mono"],
+        ["接单范围", scopeText(device), ""],
+        ["设备状态", statusText(device), ""],
+        ["创建时间", device.createdAt, ""],
+        ["状态更新时间", device.statusUpdatedAt, ""]
+      ];
+      if (device.status === "ACTIVE") {
+        deviceInfoItems.push(
+          ["设备号", device.deviceNo, "mono"],
+          ["设备类型", device.deviceType, ""],
+          ["终端号", device.terminalNo, "mono"]
+        );
+      }
+      const ownerItems = [
+        ["品牌名称", store.brandName, ""],
+        ["品牌编号", store.brandNo, "mono"],
+        ["门店名称", store.storeName, ""],
+        ["门店编号", store.storeNo, "mono"]
+      ];
+      const bankItems = [
+        ["收单机构", emptyText(device.bank?.acquirer), ""],
+        ["机构商户号", emptyText(device.bank?.merchantNo), "mono"],
+        ["机构终端号", emptyText(device.bank?.terminalNo), "mono"]
+      ];
+      const detailFields = (items) => items.map(([label, value, className]) => `
+        <dl class="detail-field">
+          <dt>${label}</dt>
+          <dd class="${className}">${value}</dd>
+        </dl>
+      `).join("");
+      const bankHtml = device.status === "ACTIVE"
+        ? `
+          <section class="detail-block">
+            <h2 class="detail-block-title">银行卡终端信息 <span class="detail-block-note">由 POS 完成银行卡参数设置后上报的最新信息</span></h2>
+            <div class="detail-info-layout">${detailFields(bankItems)}</div>
+          </section>
+        `
+        : "";
+      const activeActions = canDeactivateInMeta(device)
+        ? `<button class="btn" id="backToDeviceList">返回</button><button class="btn danger" id="deactivateDevice">反激活</button><button class="btn ghost" id="scopeFromDetail">修改接单范围</button>`
+        : `<button class="btn" id="backToDeviceList">返回</button><button class="btn ghost" id="scopeFromDetail">修改接单范围</button>`;
+      const actions = device.status === "ACTIVE"
+        ? activeActions
+        : `<button class="btn" id="backToDeviceList">返回</button><button class="btn ghost" id="activateFromDetail">激活</button><button class="btn ghost" id="scopeFromDetail">修改接单范围</button>`;
+      deviceDetailActions.innerHTML = actions;
+      deviceDetailBody.innerHTML = `
+        <section class="detail-block">
+          <h2 class="detail-block-title">设备信息</h2>
+          <div class="detail-info-layout">${detailFields(deviceInfoItems)}</div>
+        </section>
+        <section class="detail-block">
+          <h2 class="detail-block-title">设备归属</h2>
+          <div class="detail-info-layout">${detailFields(ownerItems)}</div>
+        </section>
+        ${bankHtml}
+        <section class="detail-block">
+          <h2 class="detail-block-title">设备变更记录</h2>
+          <div class="detail-table-wrap">
+          <table class="change-table">
+            <thead>
+              <tr>
+                <th style="width:140px;">变更时间</th>
+                <th style="width:130px;">变更内容</th>
+                <th style="width:230px;">变更后设备归属</th>
+                <th style="width:230px;">变更后收钱吧终端信息</th>
+                <th style="width:230px;">变更后银行卡终端信息</th>
+              </tr>
+            </thead>
+            <tbody>${logRows(device)}</tbody>
+          </table>
+          </div>
+        </section>
+      `;
+      document.getElementById("backToDeviceList").addEventListener("click", enterDeviceListPage);
+      document.getElementById("scopeFromDetail").addEventListener("click", () => openScope(device.id));
+      if (device.status === "ACTIVE" && canDeactivateInMeta(device)) {
+        document.getElementById("deactivateDevice").addEventListener("click", () => openDeactivateConfirm(device.id));
+      } else if (device.status !== "ACTIVE") {
+        document.getElementById("activateFromDetail").addEventListener("click", () => openActivate(device.id));
+      }
+    }
+
+    function openDeactivateConfirm(id) {
+      const device = deviceById(id);
+      dialogBody.innerHTML = `
+        <div class="confirm-message">
+          <div class="confirm-icon">!</div>
+          <div>
+            <p class="confirm-title">确认反激活设备？</p>
+            <p class="confirm-desc">反激活后设备将无法进行交易</p>
+            <dl class="kv">
+              <dt>设备 ID</dt><dd class="mono">${device.id}</dd>
+              <dt>设备号</dt><dd class="mono">${emptyText(device.deviceNo)}</dd>
+              <dt>终端号</dt><dd class="mono">${emptyText(device.terminalNo)}</dd>
+              <dt>门店名称</dt><dd>${store.storeName}</dd>
+            </dl>
+          </div>
+        </div>
+      `;
+      dialogFoot.innerHTML = `<button class="btn" id="cancelDeactivate">取消</button><button class="btn danger" id="confirmDeactivate">确认反激活</button>`;
+      openDialog("反激活确认");
+      document.getElementById("cancelDeactivate").addEventListener("click", closeDialog);
+      document.getElementById("confirmDeactivate").addEventListener("click", () => {
+        closeDialog();
+        deactivateDevice(id, true);
+      });
+    }
+
+    function deactivateDevice(id, stayOnDetail = false) {
+      const device = deviceById(id);
+      device.status = "INACTIVE";
+      device.statusUpdatedAt = "2026-05-07 15:12:08";
+      device.deviceNo = "";
+      device.deviceType = "";
+      device.terminalNo = "";
+      device.activatedAt = "";
+      device.bank = null;
+      device.logs.unshift({
+        time: "2026-05-07 15:12",
+        type: "设备反激活",
+        ownership: "--",
+        terminal: "--",
+        bank: "--"
+      });
+      renderDevices();
+      if (stayOnDetail) {
+        renderDeviceDetailPage(id);
+      } else {
+        closeDrawer();
+      }
+      showToast("设备已反激活");
+    }
+
+    function renderAddForm() {
+      dialogBody.innerHTML = `
+        <div class="form-row">
+          <label>所属门店</label>
+          <input class="control" value="${store.storeName} / ${store.storeNo}" disabled>
+        </div>
+        ${renderScopeForm({ scopeType: "STORE", workstation: "" })}
+      `;
+      dialogFoot.innerHTML = `<button class="btn" id="cancelAdd">取消</button><button class="btn primary" id="saveAdd">保存</button>`;
+      openDialog("添加设备");
+      bindScopeForm();
+      document.getElementById("cancelAdd").addEventListener("click", closeDialog);
+      document.getElementById("saveAdd").addEventListener("click", saveNewDevice);
+    }
+
+    function saveNewDevice() {
+      const scope = document.querySelector("input[name='scope']:checked").value;
+      const workstationInput = document.getElementById("workstationInput");
+      if (scope === "WORKSTATION" && !workstationInput.value.trim()) {
+        showToast("请填写收银机号");
+        return;
+      }
+      const workstation = scope === "WORKSTATION" ? workstationInput.value.trim() : "";
+      const newDevice = {
+        id: String(2301247759230 + devices.length),
+        createdAt: "2026-05-07 15:18:26",
+        statusUpdatedAt: "2026-05-07 15:18:26",
+        status: "INACTIVE",
+        scopeType: scope,
+        workstation,
+        deviceNo: "",
+        deviceType: "",
+        terminalNo: "",
+        activatedAt: "",
+        bank: null,
+        logs: []
+      };
+      devices.unshift(newDevice);
+      renderDevices();
+      dialogTitle.textContent = "添加设备";
+      dialogBody.innerHTML = `
+        <div class="success-layout">
+          <div>
+            <h2 class="success-title">设备添加成功，请扫码激活</h2>
+            <p class="success-desc">系统已生成未激活设备记录。关闭后可在门店 POS 列表中再次点击“激活”查看同一二维码。</p>
+            <dl class="kv">
+              <dt>设备 ID</dt><dd class="mono">${newDevice.id}</dd>
+              <dt>接单范围</dt><dd>${scopeText(newDevice)}</dd>
+              <dt>品牌名称</dt><dd>${store.brandName}</dd>
+              <dt>品牌编号</dt><dd class="mono">${store.brandNo}</dd>
+              <dt>门店名称</dt><dd>${store.storeName}</dd>
+              <dt>门店编号</dt><dd class="mono">${store.storeNo}</dd>
+              <dt>收钱吧门店号</dt><dd class="mono">${store.sqbStoreNo}</dd>
+            </dl>
+          </div>
+          ${qrHtml()}
+        </div>
+      `;
+      dialogFoot.innerHTML = `<button class="btn primary" id="finishAdd">关闭</button>`;
+      document.getElementById("finishAdd").addEventListener("click", closeDialog);
+    }
+
+    document.getElementById("enterDetail").addEventListener("click", enterDetailPage);
+    document.getElementById("searchStore").addEventListener("click", () => showToast("已按当前条件查询"));
+    document.getElementById("clearSearch").addEventListener("click", () => {
+      ["storeNameSearch", "storeNoSearch", "storeIdSearch", "storeDeviceNoSearch"].forEach((id) => {
+        document.getElementById(id).value = "";
+      });
+      showToast("已清空查询条件");
+    });
+    document.getElementById("searchDevice").addEventListener("click", () => {
+      renderDevices();
+      showToast("已按设备条件查询");
+    });
+    document.getElementById("clearDeviceQuery").addEventListener("click", () => {
+      ["deviceIdQuery", "deviceNoQuery", "deviceTypeQuery", "deviceStatusQuery", "terminalNoQuery", "scopeQuery", "workstationQuery"].forEach((id) => {
+        document.getElementById(id).value = "";
+      });
+      renderDevices();
+      showToast("已清空设备查询条件");
+    });
+    document.getElementById("addDevice").addEventListener("click", renderAddForm);
+    document.querySelectorAll(".tab").forEach((button) => {
+      button.addEventListener("click", () => setTab(button.dataset.tab));
+    });
+    document.getElementById("closeDrawer").addEventListener("click", closeDrawer);
+    document.getElementById("closeDialog").addEventListener("click", closeDialog);
+    mask.addEventListener("click", () => {
+      closeDrawer();
+      closeDialog();
+    });
+
+    renderDevices();
+  </script>
+</body>
+</html>

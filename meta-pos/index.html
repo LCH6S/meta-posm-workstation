@@ -741,6 +741,50 @@
       line-height: 1.35;
     }
 
+    .sim-rule-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      min-height: 84px;
+    }
+
+    .sim-rule-copy {
+      min-width: 0;
+    }
+
+    .sim-rule-title {
+      color: var(--text-1);
+      font-size: 28px;
+      line-height: 1.3;
+      font-weight: 700;
+    }
+
+    .sim-rule-desc {
+      margin-top: 8px;
+      color: var(--text-3);
+      font-size: 22px;
+      line-height: 1.35;
+    }
+
+    .sim-switch {
+      flex: 0 0 auto;
+      min-width: 138px;
+      height: 62px;
+      border: 1px solid var(--line-2);
+      border-radius: 999px;
+      background: #F0F1F3;
+      color: var(--text-2);
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .sim-switch.active {
+      border-color: var(--success);
+      background: rgba(6, 174, 87, .10);
+      color: var(--success);
+    }
+
     .sim-preview {
       display: grid;
       gap: 18px;
@@ -2382,11 +2426,23 @@
         </div>
 
         <div class="sim-card">
+          <div class="sim-card-title">品牌配置</div>
+          <div class="sim-rule-row">
+            <div class="sim-rule-copy">
+              <div class="sim-rule-title">允许 POS 分笔收款</div>
+              <div class="sim-rule-desc">开启时收银台展示分笔收款入口；关闭时 POS 不允许分笔收款，入口不展示。</div>
+            </div>
+            <button class="sim-switch active" type="button" data-sim-split-enabled>已开启</button>
+          </div>
+        </div>
+
+        <div class="sim-card">
           <div class="sim-card-title">生成预览</div>
           <div class="sim-preview">
             <div class="sim-preview-row"><span class="sim-preview-label">类型</span><span class="sim-preview-value strong" data-sim-preview-type>收款订单</span></div>
             <div class="sim-preview-row"><span class="sim-preview-label">金额</span><span class="sim-preview-value strong">HK$ <span data-sim-preview-amount>1,000.00</span></span></div>
             <div class="sim-preview-row"><span class="sim-preview-label" data-sim-preview-method-label>支付方式</span><span class="sim-preview-value" data-sim-preview-method>收银员选择</span></div>
+            <div class="sim-preview-row"><span class="sim-preview-label">分笔收款</span><span class="sim-preview-value" data-sim-preview-split>品牌已开启，收银台展示入口</span></div>
             <div class="sim-preview-row"><span class="sim-preview-label">生成位置</span><span class="sim-preview-value">首页第一笔待办订单</span></div>
           </div>
           <div class="sim-actions">
@@ -2937,6 +2993,9 @@
       amount: "1000.00",
       paymentMethod: ""
     };
+    const brandConfig = {
+      splitPaymentEnabled: true
+    };
     const posBinding = {
       bound: true,
       terminal: "WS-AIDA-TERMINAL-03"
@@ -3434,6 +3493,9 @@
       document.querySelector("[data-sim-preview-amount]").textContent = amount;
       document.querySelector("[data-sim-preview-method-label]").textContent = simDraft.type === "auth" ? "预授权方式" : simDraft.type === "refund" ? "原交易方式" : "支付方式";
       document.querySelector("[data-sim-preview-method]").textContent = previewMethod;
+      document.querySelector("[data-sim-preview-split]").textContent = brandConfig.splitPaymentEnabled
+        ? "品牌已开启，收银台展示入口"
+        : "品牌已关闭，收银台不展示入口";
       document.querySelector("[data-sim-method-title]").textContent = simDraft.type === "auth" ? "预授权方式" : "支付方式 / 原交易方式";
       document.querySelector("[data-sim-method-hint]").textContent = simDraft.type === "auth"
         ? "本期仅支持银行卡预授权；不指定时由 POS 按银行卡预授权处理。"
@@ -3449,6 +3511,9 @@
           button.textContent = "银行卡支付";
         }
       });
+      const splitSwitch = document.querySelector("[data-sim-split-enabled]");
+      splitSwitch.textContent = brandConfig.splitPaymentEnabled ? "已开启" : "已关闭";
+      splitSwitch.classList.toggle("active", brandConfig.splitPaymentEnabled);
     }
 
     function updateOrderDisplay() {
@@ -3590,7 +3655,7 @@
           option.disabled = remainingAmount <= 0;
         }
       });
-      const showSplitCapability = currentOrder.type === "payment" && !currentOrder.paymentMethod;
+      const showSplitCapability = brandConfig.splitPaymentEnabled && currentOrder.type === "payment" && !currentOrder.paymentMethod;
       document.querySelector("[data-split-capability]").hidden = !showSplitCapability;
       document.querySelector("[data-split-capability-label]").hidden = !showSplitCapability;
 
@@ -4134,6 +4199,13 @@
       if (methodChoice) {
         simDraft.paymentMethod = methodChoice.dataset.simMethod;
         updateSimPreview();
+        return;
+      }
+
+      if (event.target.closest("[data-sim-split-enabled]")) {
+        brandConfig.splitPaymentEnabled = !brandConfig.splitPaymentEnabled;
+        updateSimPreview();
+        updateOrderDisplay();
         return;
       }
 

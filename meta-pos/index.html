@@ -85,68 +85,6 @@
       display: block;
     }
 
-    #home {
-      --pull-offset: 0px;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-
-    #home.pulling,
-    #home.refreshing {
-      background: var(--mr);
-    }
-
-    #home .home-top,
-    #home .home-content {
-      transform: translateY(var(--pull-offset));
-      transition: transform .2s ease;
-    }
-
-    #home.pulling .home-top,
-    #home.pulling .home-content {
-      transition: none;
-    }
-
-    .home-refresh-indicator {
-      position: absolute;
-      top: 28px;
-      left: 50%;
-      z-index: 5;
-      height: 44px;
-      padding: 0 20px;
-      border-radius: 22px;
-      background: rgba(255, 255, 255, .14);
-      color: rgba(255, 255, 255, .86);
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 20px;
-      font-weight: 600;
-      opacity: 0;
-      pointer-events: none;
-      transform: translate(-50%, -8px);
-      transition: opacity .16s ease, transform .16s ease;
-    }
-
-    #home.pulling .home-refresh-indicator,
-    #home.refreshing .home-refresh-indicator {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-
-    .home-refresh-indicator::before {
-      content: "";
-      width: 20px;
-      height: 20px;
-      border: 3px solid currentColor;
-      border-right-color: transparent;
-      border-radius: 50%;
-    }
-
-    #home.refreshing .home-refresh-indicator::before {
-      animation: spin .8s linear infinite;
-    }
-
     .system-bar {
       height: 48px;
       background: var(--black);
@@ -297,15 +235,17 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 18px;
+      gap: 16px;
     }
 
     .pending-title {
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 14px;
       font-size: 35px;
       font-weight: 700;
       color: var(--text-1);
+      min-width: 0;
     }
 
     .dot {
@@ -317,16 +257,46 @@
     }
 
     .count-pill {
-      height: 50px;
-      padding: 0 20px;
+      height: 42px;
+      padding: 0 16px;
       border: 1px solid var(--line);
-      border-radius: 25px;
+      border-radius: 21px;
       background: var(--bg);
       color: var(--text-2);
-      font-size: 25px;
+      font-size: 22px;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
+      flex: 0 0 auto;
+    }
+
+    .pending-refresh-button {
+      width: 48px;
+      height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--bg);
+      color: var(--text-2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      cursor: pointer;
+    }
+
+    .pending-refresh-button:active {
+      background: #e8edf5;
+      color: var(--mr);
+    }
+
+    .pending-refresh-button svg {
+      width: 25px;
+      height: 25px;
+      stroke-width: 2.4;
+    }
+
+    .pending-refresh-button.refreshing svg {
+      animation: spin .8s linear infinite;
     }
 
     .pending-scope {
@@ -396,9 +366,21 @@
       font-weight: 500;
     }
 
+    .negative-amount .currency,
+    .inline-amount .currency {
+      font-size: 1em;
+      font-weight: inherit;
+    }
+
     .money-value {
       font-size: 1em;
       font-weight: inherit;
+    }
+
+    .inline-amount {
+      display: inline-flex;
+      align-items: baseline;
+      white-space: nowrap;
     }
 
     .time {
@@ -903,15 +885,7 @@
       padding: 32px 35px 35px;
     }
 
-    .task-hero {
-      position: relative;
-      margin-bottom: 32px;
-    }
-
     .task-status {
-      position: absolute;
-      top: 0;
-      right: 0;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -943,21 +917,6 @@
       background: var(--warn);
     }
 
-    .task-source {
-      margin-bottom: 10px;
-      padding-right: 110px;
-      font-size: 29px;
-      line-height: 1.28;
-      color: var(--text-2);
-    }
-
-    .task-time {
-      margin-bottom: 10px;
-      color: var(--text-3);
-      font-size: 24px;
-      line-height: 1.25;
-    }
-
     .task-meta {
       display: flex;
       align-items: center;
@@ -975,7 +934,6 @@
       min-width: 0;
     }
 
-    .task-source .mono,
     .task-meta .mono {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
@@ -1033,6 +991,14 @@
     .pending-trade-amount.long-amount,
     .pending-trade-amount.xlong-amount {
       font-size: 27px;
+    }
+
+    .pending-trade-hint {
+      margin-top: -12px;
+      color: var(--text-3);
+      font-size: 24px;
+      line-height: 1.35;
+      text-align: center;
     }
 
     .card-title {
@@ -1155,9 +1121,10 @@
     }
 
     .detail-page {
-      padding: 0 40px 50px;
+      padding: 0 40px 170px;
       min-height: calc(1600px - 160px);
       background: var(--white);
+      position: relative;
     }
 
     .detail-page .summary-card,
@@ -1175,12 +1142,18 @@
       padding-bottom: 32px;
     }
 
+    .detail-status-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 24px;
+    }
+
     .detail-page .operation-card {
       margin-top: 14px;
-      padding: 32px;
-      background: var(--bg);
-      border: 1px solid var(--line);
-      border-radius: 18px;
+      padding: 0;
+      background: var(--white);
+      border: 0;
+      border-radius: 0;
     }
 
     .detail-page .info-card {
@@ -1227,11 +1200,21 @@
     }
 
     .detail-page .info-rows.collapsible {
-      max-height: 248px;
+      max-height: 372px;
     }
 
     .detail-page .info-toggle {
       margin-top: 18px;
+    }
+
+    .detail-bottom-actions {
+      position: absolute;
+      left: 40px;
+      right: 40px;
+      bottom: 40px;
+      padding: 0;
+      background: var(--white);
+      z-index: 5;
     }
 
     .pending-list {
@@ -2305,9 +2288,6 @@
   <div class="viewport-fit">
   <main class="app" aria-label="Meta POS H5 prototype">
     <section class="screen home active" id="home" aria-label="首页">
-      <div class="home-refresh-indicator" data-home-refresh-indicator>
-        <span data-home-refresh-text>下拉刷新</span>
-      </div>
       <div class="home-top">
         <div class="home-status">
           <span>9:41</span>
@@ -2326,8 +2306,17 @@
       <div class="home-content">
         <div class="pending-panel">
           <div class="pending-head">
-            <div class="pending-title"><span class="dot"></span><span>待办订单</span></div>
-            <span class="count-pill" data-pending-count>5 笔</span>
+            <div class="pending-title">
+              <span class="dot"></span>
+              <span>待办订单</span>
+              <span class="count-pill" data-pending-count>3 笔</span>
+            </div>
+            <button class="pending-refresh-button" type="button" data-home-refresh-trigger aria-label="刷新待办订单">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M21 12a9 9 0 1 1-2.64-6.36" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M21 3v6h-6" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </button>
           </div>
           <div class="pending-scope" data-pending-scope>收银机：<span class="scope-value" data-pending-scope-value>WS-AIDA-TERMINAL-03</span></div>
 
@@ -2352,12 +2341,12 @@
               <button class="mini-action" type="button" data-route="detail-pending" data-order-key="waiting-payment" data-sample-action>查看</button>
             </div>
 
-            <div class="mini-card" role="button" tabindex="0" data-route="detail-pending" data-order-key="pending-auth">
+            <div class="mini-card" role="button" tabindex="0" data-route="detail-pending" data-order-key="pending-refund">
               <span class="mini-main">
-                <span class="mini-line"><span class="mini-amount"><span class="currency">HK$</span><span class="money-value">89.00</span></span><span class="mini-time">14:19</span></span>
-                <span class="mini-sub" data-mini-terminal-row><span>收银机</span><span class="mono">WS-AIDA-TERMINAL-06</span></span>
+                <span class="mini-line"><span class="mini-amount negative-amount"><span class="currency">-HK$</span><span class="money-value">120.00</span></span><span class="mini-time">14:08</span></span>
+                <span class="mini-sub" data-mini-terminal-row><span>收银机</span><span class="mono">WS-AIDA-TERMINAL-02</span></span>
               </span>
-              <button class="mini-action" type="button" data-route="pay-method" data-order-key="pending-auth" data-sample-action>预授权</button>
+              <button class="mini-action" type="button" data-route="detail-pending" data-order-key="pending-refund" data-sample-action>退款</button>
             </div>
           </div>
 
@@ -2400,12 +2389,11 @@
           <div class="sim-card-title">订单类型</div>
           <div class="sim-segment-grid" data-sim-group="type">
             <button class="sim-choice active" type="button" data-sim-type="payment">收款订单</button>
-            <button class="sim-choice" type="button" data-sim-type="auth">预授权订单</button>
             <button class="sim-choice" type="button" data-sim-type="refund">退款订单</button>
           </div>
         </div>
 
-        <div class="sim-card">
+        <div class="sim-card" hidden>
           <div class="sim-card-title">订单金额</div>
           <label class="sim-amount-field">
             <span class="sim-currency">HK$</span>
@@ -2429,10 +2417,10 @@
           <div class="sim-card-title">品牌配置</div>
           <div class="sim-rule-row">
             <div class="sim-rule-copy">
-              <div class="sim-rule-title">允许 POS 分笔收款</div>
-              <div class="sim-rule-desc">开启时收银台展示分笔收款入口；关闭时 POS 不允许分笔收款，入口不展示。</div>
+              <div class="sim-rule-title">POS 分笔收款</div>
+              <div class="sim-rule-desc">一期不启用，入口不展示。</div>
             </div>
-            <button class="sim-switch active" type="button" data-sim-split-enabled>已开启</button>
+            <button class="sim-switch" type="button" data-sim-split-enabled>已关闭</button>
           </div>
         </div>
 
@@ -2442,7 +2430,7 @@
             <div class="sim-preview-row"><span class="sim-preview-label">类型</span><span class="sim-preview-value strong" data-sim-preview-type>收款订单</span></div>
             <div class="sim-preview-row"><span class="sim-preview-label">金额</span><span class="sim-preview-value strong">HK$ <span data-sim-preview-amount>1,000.00</span></span></div>
             <div class="sim-preview-row"><span class="sim-preview-label" data-sim-preview-method-label>支付方式</span><span class="sim-preview-value" data-sim-preview-method>收银员选择</span></div>
-            <div class="sim-preview-row"><span class="sim-preview-label">分笔收款</span><span class="sim-preview-value" data-sim-preview-split>品牌已开启，收银台展示入口</span></div>
+            <div class="sim-preview-row" hidden><span class="sim-preview-label">分笔收款</span><span class="sim-preview-value" data-sim-preview-split>本期不展示入口</span></div>
             <div class="sim-preview-row"><span class="sim-preview-label">生成位置</span><span class="sim-preview-value">首页第一笔待办订单</span></div>
           </div>
           <div class="sim-actions">
@@ -2506,31 +2494,10 @@
         </div>
 
         <div class="pending-item" role="button" tabindex="0" data-route="detail-pending">
-          <div class="record-sn">CHK-AIDA-20260427-000000000673EF</div>
-          <div class="record-divider"></div>
-          <div class="pending-item-head">
-            <div class="item-amount"><span class="currency">HK$</span><span class="money-value">89.00</span></div>
-            <span class="status-tag processing">操作中</span>
-          </div>
-          <div class="order-type-line">
-            <div class="order-type"><span class="type-icon auth">预</span><span>预授权订单</span></div>
-            <div class="record-time">2026-04-29 14:19:07</div>
-          </div>
-          <div class="record-dashed"></div>
-          <div class="record-fields">
-            <div class="record-field"><span>Register</span><span class="record-field-value mono">WS-AIDA-TERMINAL-06</span></div>
-            <div class="record-field"><span>Check SN</span><span class="record-field-value mono">CHK-AIDA-20260427-000000000673EF</span></div>
-          </div>
-          <div class="item-actions single-action">
-            <button class="compact-button full-primary" type="button" data-route="detail-pending">查看</button>
-          </div>
-        </div>
-
-        <div class="pending-item" role="button" tabindex="0" data-route="detail-pending">
           <div class="record-sn">CHK-AIDA-20260427-000000000518GH</div>
           <div class="record-divider"></div>
           <div class="pending-item-head">
-            <div class="item-amount"><span class="currency">HK$</span><span class="money-value">-120.00</span></div>
+            <div class="item-amount negative-amount"><span class="currency">-HK$</span><span class="money-value">120.00</span></div>
             <span class="status-tag">待操作</span>
           </div>
           <div class="order-type-line">
@@ -2563,40 +2530,17 @@
           <div class="merchant">Shanghai Aida Duty-Free Store</div>
           <div class="merchant-sub">aida001</div>
           <div class="summary-amount"><span class="currency">HK$</span><span class="money-value" data-order-amount>1,000.00</span></div>
-        </div>
-
-        <div class="operation-card">
-          <div class="task-hero">
+          <div class="detail-status-row">
             <div class="task-status" data-order-status-pill>
               <span data-order-status>待操作</span>
             </div>
-            <div class="task-source">来自 <span class="mono">cn0012</span></div>
-            <div class="task-time">2026-04-29 14:26:18</div>
-          </div>
-          <div class="pending-trade-summary" data-waiting-summary hidden>
-            <span class="pending-trade-icon" data-trade-icon>支</span>
-            <span>
-              <span class="pending-trade-method" data-trade-method>Alipay</span>
-              <span class="pending-trade-time" data-trade-time>2026-04-29 14:32:24</span>
-            </span>
-            <span class="pending-trade-amount"><span class="currency">HK$</span><span class="money-value" data-waiting-amount>1,000.00</span></span>
-          </div>
-          <div class="pending-trade-summary" data-designated-summary hidden>
-            <span class="pending-trade-icon" data-designated-icon>微</span>
-            <span>
-              <span class="pending-trade-method" data-designated-method>微信支付</span>
-              <span class="pending-trade-time" data-designated-time>2026-04-29 14:26:18</span>
-            </span>
-            <span class="pending-trade-amount"><span class="currency">HK$</span><span class="money-value" data-order-amount>1,000.00</span></span>
-          </div>
-          <div class="action-row single-action">
-            <button class="full-primary" type="button" data-route="pay-method" data-pending-action data-order-action>收款</button>
-            <button class="full-primary" type="button" data-route="querying" data-refresh-action hidden>刷新</button>
           </div>
         </div>
 
         <div class="info-card">
           <div class="info-rows collapsible">
+            <div class="info-row"><span class="info-label">收银机</span><span class="info-value mono" data-order-terminal>WS-AIDA-TERMINAL-03</span></div>
+            <div class="info-row"><span class="info-label">订单时间</span><span class="info-value" data-order-time>2026-04-29 14:26:18</span></div>
             <div class="info-row"><span class="info-label">商家订单号</span><span class="info-value mono" data-order-sn>CHK-AIDA-20260427-000000001234AB</span></div>
             <div class="info-row"><span class="info-label">业务订单号</span><span class="info-value mono" data-order-upstream-sn>UPGUCCI26042921020800000001</span></div>
             <div class="info-row"><span class="info-label">POS 订单号</span><span class="info-value mono">7902247706075574</span></div>
@@ -2613,8 +2557,33 @@
           </button>
         </div>
 
+        <div class="operation-card" data-operation-card hidden>
+          <div class="pending-trade-summary" data-waiting-summary hidden>
+            <span class="pending-trade-icon" data-trade-icon>支</span>
+            <span>
+              <span class="pending-trade-method" data-trade-method>Alipay</span>
+              <span class="pending-trade-time" data-trade-time>2026-04-29 14:32:24</span>
+            </span>
+            <span class="pending-trade-amount"><span class="currency">HK$</span><span class="money-value" data-waiting-amount>1,000.00</span></span>
+          </div>
+          <div class="pending-trade-summary" data-designated-summary hidden>
+            <span class="pending-trade-icon" data-designated-icon>微</span>
+            <span>
+              <span class="pending-trade-method" data-designated-method>微信支付</span>
+              <span class="pending-trade-time" data-designated-time>2026-04-29 14:26:18</span>
+            </span>
+            <span class="pending-trade-amount"><span class="currency">HK$</span><span class="money-value" data-order-amount>1,000.00</span></span>
+          </div>
+          <div class="pending-trade-hint" data-pending-trade-hint hidden>交易结果未知，请点击刷新</div>
+        </div>
+
         <div class="paid-records" data-paid-records hidden>
           <div data-paid-record-list></div>
+        </div>
+
+        <div class="detail-bottom-actions action-row single-action">
+          <button class="full-primary" type="button" data-route="pay-method" data-pending-action data-order-action>收款</button>
+          <button class="full-primary" type="button" data-route="querying" data-refresh-action hidden>刷新</button>
         </div>
       </div>
     </section>
@@ -2688,11 +2657,11 @@
           <div class="pay-breakdown">
             <div>
               <span class="pay-breakdown-label">订单金额</span>
-              <span class="pay-breakdown-value">HK$ <span data-pay-total-amount>1,000.00</span></span>
+              <span class="pay-breakdown-value inline-amount"><span class="currency">HK$</span><span data-pay-total-amount>1,000.00</span></span>
             </div>
             <div>
               <span class="pay-breakdown-label">已收金额</span>
-              <span class="pay-breakdown-value">HK$ <span data-pay-paid-amount>0.00</span></span>
+              <span class="pay-breakdown-value inline-amount"><span class="currency">HK$</span><span data-pay-paid-amount>0.00</span></span>
             </div>
           </div>
         </div>
@@ -2739,7 +2708,7 @@
         </div>
         <div class="direct-pay-summary">
           <div class="direct-pay-row"><span>支付方式</span><span data-direct-method>微信支付</span></div>
-          <div class="direct-pay-row"><span>支付金额</span><span>HK$ <span data-current-payment-amount>1,000.00</span></span></div>
+          <div class="direct-pay-row"><span>支付金额</span><span class="inline-amount"><span class="currency">HK$</span><span data-current-payment-amount>1,000.00</span></span></div>
         </div>
         <button class="full-primary" type="button" data-start-direct-pay>模拟扫码完成</button>
       </div>
@@ -2759,7 +2728,7 @@
         </div>
         <div class="direct-pay-summary">
           <div class="direct-pay-row"><span data-card-method-label>支付方式</span><span data-card-method>银行卡</span></div>
-          <div class="direct-pay-row"><span data-card-amount-label>支付金额</span><span>HK$ <span data-current-payment-amount>1,000.00</span></span></div>
+          <div class="direct-pay-row"><span data-card-amount-label>支付金额</span><span class="inline-amount"><span class="currency">HK$</span><span data-current-payment-amount>1,000.00</span></span></div>
         </div>
         <button class="full-primary" type="button" data-start-direct-pay data-card-submit>模拟刷卡完成</button>
       </div>
@@ -2839,7 +2808,7 @@
           <div class="refund-verify-head">
             <span class="trade-icon" data-refund-verify-icon>卡</span>
             <span data-refund-verify-method>银行卡</span>
-            <span class="refund-verify-amount-small">退款 HK$ <span data-refund-verify-amount-small>0.00</span></span>
+            <span class="refund-verify-amount-small">退款 <span class="inline-amount"><span class="currency">HK$</span><span data-refund-verify-amount-small>0.00</span></span></span>
           </div>
           <div class="info-rows">
             <div class="info-row"><span class="info-label">Trans SN</span><span class="info-value mono" data-refund-verify-trans-sn>626040800106507731</span></div>
@@ -2891,9 +2860,10 @@
             <span class="toggle-arrow"></span>
           </button>
 
-          <div class="paid-records" data-paid-records hidden>
-            <div data-paid-record-list></div>
-          </div>
+        </div>
+
+        <div class="paid-records" data-paid-records hidden>
+          <div data-paid-record-list></div>
         </div>
       </div>
 
@@ -2983,18 +2953,13 @@
     let demoNoPending = false;
     let demoSinglePending = false;
     let homeRefreshing = false;
-    let pullStartY = 0;
-    let pullOffset = 0;
-    let pullActive = false;
-    let pullPointerId = null;
-    let suppressNextClick = false;
     let simDraft = {
       type: "payment",
       amount: "1000.00",
       paymentMethod: ""
     };
     const brandConfig = {
-      splitPaymentEnabled: true
+      splitPaymentEnabled: false
     };
     const posBinding = {
       bound: true,
@@ -3017,21 +2982,21 @@
         upstreamSn: "SIM1779914260001",
         terminal: "WS-AIDA-TERMINAL-01"
       },
-      "pending-auth": {
-        type: "auth",
-        amount: "89.00",
-        paymentMethod: "",
+      "pending-refund": {
+        type: "refund",
+        amount: "120.00",
+        paymentMethod: "WeChat Pay",
         status: "pending",
-        tradeMethod: "",
+        tradeMethod: "WeChat Pay",
         tradeTime: "",
         waitingOperation: "",
         waitingTradeId: "",
         paidTransactions: [],
         cancelled: false,
-        designatedTime: "2026-04-29 14:19:07",
-        checkSn: "CHK-AIDA-20260427-000000000673EF",
-        upstreamSn: "SIM1779914190002",
-        terminal: "WS-AIDA-TERMINAL-06"
+        designatedTime: "2026-04-29 14:08:22",
+        checkSn: "CHK-AIDA-20260427-000000000518GH",
+        upstreamSn: "SIM1779914080003",
+        terminal: "WS-AIDA-TERMINAL-02"
       }
     };
     let currentOrder = {
@@ -3130,18 +3095,51 @@
       return currentOrder.type === "refund" || currentOperation === "tradeRefund" || lastResultOperation === "tradeRefund" ? "-" + amount : amount;
     }
 
+    function amountParts(value) {
+      const raw = String(value ?? "").trim();
+      const negative = raw.startsWith("-");
+      const amount = raw.replace(/^-+\s*/, "");
+      return {
+        negative,
+        amount: amount || "0.00"
+      };
+    }
+
+    function amountDisplayText(value) {
+      const parts = amountParts(value);
+      return (parts.negative ? "-HK$" : "HK$") + parts.amount;
+    }
+
+    function amountClassName(value) {
+      return [
+        amountSizeClass(value),
+        amountParts(value).negative ? "negative-amount" : ""
+      ].filter(Boolean).join(" ");
+    }
+
+    function renderAmountSpans(value) {
+      const parts = amountParts(value);
+      return `<span class="currency">${parts.negative ? "-HK$" : "HK$"}</span><span class="money-value">${parts.amount}</span>`;
+    }
+
     function amountSizeClass(value) {
-      const textLength = String(value || "").length;
+      const textLength = amountDisplayText(value).length;
       if (textLength >= 13) return "xlong-amount";
       if (textLength >= 12) return "long-amount";
       return "";
     }
 
     function setAmountText(node, value) {
-      node.textContent = value;
-      const wrapper = node.closest(".amount, .mini-amount, .summary-amount, .pending-trade-amount, .item-amount, .pay-breakdown-value, .pay-amount, .success-amount, .trade-amount, .refund-verify-amount");
+      const parts = amountParts(value);
+      node.textContent = parts.amount;
+      const wrapper = node.closest(".amount, .mini-amount, .summary-amount, .pending-trade-amount, .item-amount, .pay-breakdown-value, .pay-amount, .success-amount, .trade-amount, .refund-verify-amount, .inline-amount");
       if (!wrapper) return;
-      wrapper.classList.remove("long-amount", "xlong-amount");
+      wrapper.classList.remove("long-amount", "xlong-amount", "negative-amount");
+      wrapper.classList.toggle("negative-amount", parts.negative);
+      const currency = wrapper.querySelector(".currency");
+      if (currency) {
+        currency.textContent = parts.negative ? "-HK$" : "HK$";
+      }
       const className = amountSizeClass(value);
       if (className) {
         wrapper.classList.add(className);
@@ -3335,7 +3333,7 @@
       if (!trade) return;
       const amount = formatAmount(trade.amount);
       setAmountText(document.querySelector("[data-refund-verify-amount]"), amount);
-      document.querySelector("[data-refund-verify-amount-small]").textContent = amount;
+      setAmountText(document.querySelector("[data-refund-verify-amount-small]"), amount);
       document.querySelector("[data-refund-verify-method]").textContent = tradeDisplayName(trade.method);
       document.querySelector("[data-refund-verify-icon]").textContent = tradeIcon(trade.method);
       document.querySelector("[data-refund-verify-trans-sn]").textContent = trade.transSn;
@@ -3442,7 +3440,7 @@
         const method = tradeDisplayName(trade.method);
         const icon = tradeIcon(trade.method);
         const tradeAmount = formatTradeCardAmount(trade);
-        const tradeAmountClass = amountSizeClass(tradeAmount);
+        const tradeAmountClass = amountClassName(tradeAmount);
         const refundedTag = trade.refunded ? '<span class="trade-refunded-tag">已全额退款</span>' : "";
         const refundAction = canRefundTrade && !trade.refunded && trade.refundStatus !== "waiting"
           ? `<button class="trade-refund-action" type="button" data-refund-trade-id="${trade.id}">退款</button>`
@@ -3456,7 +3454,7 @@
                 <span class="trade-time">${trade.time}</span>
               </span>
               <span class="trade-side">
-                <span class="trade-amount ${tradeAmountClass}"><span class="currency">HK$</span><span class="money-value">${tradeAmount}</span></span>
+                <span class="trade-amount ${tradeAmountClass}">${renderAmountSpans(tradeAmount)}</span>
                 ${refundedTag}
               </span>
             </div>
@@ -3493,9 +3491,7 @@
       document.querySelector("[data-sim-preview-amount]").textContent = amount;
       document.querySelector("[data-sim-preview-method-label]").textContent = simDraft.type === "auth" ? "预授权方式" : simDraft.type === "refund" ? "原交易方式" : "支付方式";
       document.querySelector("[data-sim-preview-method]").textContent = previewMethod;
-      document.querySelector("[data-sim-preview-split]").textContent = brandConfig.splitPaymentEnabled
-        ? "品牌已开启，收银台展示入口"
-        : "品牌已关闭，收银台不展示入口";
+      document.querySelector("[data-sim-preview-split]").textContent = "本期不展示入口";
       document.querySelector("[data-sim-method-title]").textContent = simDraft.type === "auth" ? "预授权方式" : "支付方式 / 原交易方式";
       document.querySelector("[data-sim-method-hint]").textContent = simDraft.type === "auth"
         ? "本期仅支持银行卡预授权；不指定时由 POS 按银行卡预授权处理。"
@@ -3567,7 +3563,7 @@
       document.querySelector(".all-link").hidden = demoNoPending || demoSinglePending;
       document.querySelector("[data-pending-empty]").hidden = !demoNoPending;
       document.querySelector("[data-pending-count]").hidden = demoNoPending;
-      document.querySelector("[data-pending-count]").textContent = demoSinglePending ? "1 笔" : isCancelled ? "4 笔" : "5 笔";
+      document.querySelector("[data-pending-count]").textContent = demoSinglePending ? "1 笔" : isCancelled ? "2 笔" : "3 笔";
       document.querySelector("[data-pending-empty-desc]").textContent = posBinding.bound ? "当前收银机暂无待办订单" : "当前门店暂无待办订单";
 
       const typeIcon = document.querySelector("[data-order-type-icon]");
@@ -3611,6 +3607,11 @@
 
       document.querySelector("[data-waiting-summary]").hidden = !isWaiting;
       document.querySelector("[data-designated-summary]").hidden = !hasDesignatedPayment;
+      document.querySelector("[data-operation-card]").hidden = !isWaiting && !hasDesignatedPayment;
+      const pendingTradeHint = document.querySelector("[data-pending-trade-hint]");
+      const showRefundPendingHint = currentOrder.type === "refund" && currentOrder.status === "pending";
+      pendingTradeHint.hidden = !isWaiting && !showRefundPendingHint;
+      pendingTradeHint.textContent = isWaiting ? "交易结果未知，请点击刷新" : "请核对订单信息后，完成退款";
       document.querySelector("[data-pending-action]").hidden = isWaiting;
       document.querySelector("[data-refresh-action]").hidden = !isWaiting;
       const pendingAction = document.querySelector("[data-pending-action]");
@@ -3872,70 +3873,20 @@
       return document.getElementById("home").classList.contains("active");
     }
 
-    function canStartHomePull(target) {
-      if (!isHomeVisible() || homeRefreshing || viewportShell.scrollTop > 0) return false;
-      return !target.closest("button, input, textarea, select, a");
-    }
-
-    function setHomePull(offset, text) {
-      const home = document.getElementById("home");
-      pullOffset = offset;
-      home.style.setProperty("--pull-offset", offset + "px");
-      home.classList.toggle("pulling", offset > 0 && !homeRefreshing);
-      home.classList.toggle("refreshing", homeRefreshing);
-      document.querySelector("[data-home-refresh-text]").textContent = text;
-    }
-
-    function resetHomePull() {
-      pullActive = false;
-      pullStartY = 0;
-      pullPointerId = null;
-      setHomePull(0, "下拉刷新");
-    }
-
     function startHomeRefresh() {
       homeRefreshing = true;
-      pullActive = false;
-      setHomePull(58, "查询中");
+      document.querySelector("[data-home-refresh-trigger]")?.classList.add("refreshing");
       window.setTimeout(() => {
         homeRefreshing = false;
-        resetHomePull();
+        document.querySelector("[data-home-refresh-trigger]")?.classList.remove("refreshing");
       }, 800);
-    }
-
-    function updateHomePull(currentY, event) {
-      if (!pullStartY || homeRefreshing || !isHomeVisible()) return;
-      const deltaY = currentY - pullStartY;
-      if (deltaY <= 0) return;
-      const nextOffset = Math.min(92, Math.round(deltaY * .45));
-      if (nextOffset < 8) return;
-      event.preventDefault();
-      pullActive = true;
-      setHomePull(nextOffset, nextOffset >= 62 ? "松开刷新" : "下拉刷新");
-    }
-
-    function finishHomePull(event) {
-      if (!pullActive) {
-        resetHomePull();
-        return;
-      }
-      event.preventDefault();
-      suppressNextClick = true;
-      window.setTimeout(() => {
-        suppressNextClick = false;
-      }, 0);
-      if (pullOffset >= 62) {
-        startHomeRefresh();
-      } else {
-        resetHomePull();
-      }
     }
 
     function routeTo(id, syncHash = true) {
       clearTimers();
       if (id !== "home") {
         homeRefreshing = false;
-        resetHomePull();
+        document.querySelector("[data-home-refresh-trigger]")?.classList.remove("refreshing");
       }
       if (id === "pay-method" && currentOrder.type === "payment" && !currentOrder.paymentMethod) {
         const remaining = getRemainingAmount();
@@ -4018,51 +3969,7 @@
       }, 1000);
     }
 
-    viewportShell.addEventListener("mousedown", (event) => {
-      if (event.button !== 0 || !canStartHomePull(event.target)) return;
-      pullStartY = event.clientY;
-      pullPointerId = "mouse";
-    });
-
-    window.addEventListener("mousemove", (event) => {
-      if (pullPointerId !== "mouse") return;
-      updateHomePull(event.clientY, event);
-    }, { passive: false });
-
-    window.addEventListener("mouseup", (event) => {
-      if (pullPointerId !== "mouse") return;
-      finishHomePull(event);
-    });
-
-    viewportShell.addEventListener("touchstart", (event) => {
-      if (event.touches.length !== 1 || !canStartHomePull(event.target)) return;
-      pullStartY = event.touches[0].clientY;
-      pullPointerId = "touch";
-    }, { passive: true });
-
-    viewportShell.addEventListener("touchmove", (event) => {
-      if (pullPointerId !== "touch" || event.touches.length !== 1) return;
-      updateHomePull(event.touches[0].clientY, event);
-    }, { passive: false });
-
-    viewportShell.addEventListener("touchend", (event) => {
-      if (pullPointerId !== "touch") return;
-      finishHomePull(event);
-    });
-
-    viewportShell.addEventListener("touchcancel", () => {
-      if (pullPointerId !== "touch") return;
-      resetHomePull();
-    });
-
     document.addEventListener("click", (event) => {
-      if (suppressNextClick) {
-        event.preventDefault();
-        event.stopPropagation();
-        suppressNextClick = false;
-        return;
-      }
-
       if (event.target.closest("[data-cancel-modal-close]") || event.target === cancelModal) {
         event.preventDefault();
         event.stopPropagation();
@@ -4211,6 +4118,15 @@
 
       if (event.target.closest("[data-create-order]")) {
         createSimulatedOrder();
+        return;
+      }
+
+      if (event.target.closest("[data-home-refresh-trigger]")) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!homeRefreshing) {
+          startHomeRefresh();
+        }
         return;
       }
 

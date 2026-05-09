@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Meta 后台门店 POS 设备管理原型</title>
+  <title>Meta 后台 POS 设备管理原型</title>
   <style>
     :root {
       --top: #181921;
@@ -179,6 +179,37 @@
       top: 0;
       width: 3px;
       height: 100%;
+      background: #202124;
+    }
+
+    .side-children {
+      margin: -2px 0 10px;
+    }
+
+    .side-subitem {
+      height: 36px;
+      display: flex;
+      align-items: center;
+      padding: 0 15px 0 30px;
+      color: #5f6368;
+      font-size: 13px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .side-subitem.active {
+      color: #202124;
+      font-weight: 700;
+      background: #eeeeef;
+    }
+
+    .side-subitem.active::before {
+      content: "";
+      position: absolute;
+      left: 18px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
       background: #202124;
     }
 
@@ -427,7 +458,7 @@
 
     .device-query {
       display: grid;
-      grid-template-columns: repeat(3, minmax(180px, 1fr)) auto auto;
+      grid-template-columns: repeat(4, minmax(170px, 1fr)) auto auto;
       gap: 22px 20px;
       align-items: end;
       padding: 0 0 18px;
@@ -436,7 +467,7 @@
     }
 
     .device-query-spacer {
-      grid-column: 3 / 4;
+      grid-column: 4 / 5;
     }
 
     .table-wrap {
@@ -447,7 +478,11 @@
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
-      min-width: 1480px;
+      min-width: 1780px;
+    }
+
+    #storeSettingsList table {
+      min-width: 900px;
     }
 
     th {
@@ -698,6 +733,22 @@
       font-weight: 800;
     }
 
+    .detail-block-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 26px;
+    }
+
+    .detail-block-head .detail-block-title {
+      margin: 0;
+    }
+
+    .detail-block-head .page-actions {
+      margin-bottom: 0;
+    }
+
     .detail-headline::before,
     .detail-block-title::before {
       content: "";
@@ -738,9 +789,9 @@
 
     .detail-info-layout {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 22px 72px;
-      max-width: 1180px;
+      max-width: none;
     }
 
     .detail-field {
@@ -756,6 +807,148 @@
       color: var(--muted);
       font-size: 13px;
       font-weight: 500;
+    }
+
+    .suggest-wrap {
+      position: relative;
+    }
+
+    .suggest-list {
+      position: absolute;
+      z-index: 30;
+      left: 0;
+      right: 0;
+      top: calc(100% + 4px);
+      background: #fff;
+      border: 1px solid #d8d9dd;
+      box-shadow: 0 12px 26px rgba(24, 25, 33, .12);
+      max-height: 190px;
+      overflow-y: auto;
+    }
+
+    .suggest-item {
+      width: 100%;
+      min-height: 46px;
+      border: 0;
+      border-bottom: 1px solid #eeeeef;
+      background: #fff;
+      padding: 7px 10px;
+      text-align: left;
+      display: block;
+    }
+
+    .suggest-item:hover {
+      background: #f6f7fa;
+    }
+
+    .suggest-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .suggest-meta {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .placeholder-panel {
+      min-height: 260px;
+      border: 1px dashed #d9dce1;
+      background: #fafafa;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .global-settings-list {
+      padding: 22px 0 0;
+    }
+
+    .global-setting-block {
+      padding: 0 4px 22px;
+      border-bottom: 1px dashed var(--line);
+      margin-bottom: 22px;
+    }
+
+    .global-setting-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 24px;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .global-setting-title::before {
+      content: "";
+      width: 3px;
+      height: 17px;
+      background: #202124;
+      display: inline-block;
+    }
+
+    .global-setting-row {
+      display: grid;
+      grid-template-columns: 170px 180px auto;
+      align-items: center;
+      gap: 18px;
+      min-height: 36px;
+      margin-bottom: 14px;
+      font-size: 13px;
+    }
+
+    .global-setting-label {
+      color: #24252a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .help-dot {
+      width: 15px;
+      height: 15px;
+      border: 1px solid #9a9da3;
+      border-radius: 50%;
+      color: #565a61;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .switch-on {
+      width: 32px;
+      height: 18px;
+      border-radius: 999px;
+      background: #16c96f;
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .switch-on::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .18);
+    }
+
+    .setting-inline-action {
+      border: 0;
+      background: transparent;
+      color: var(--blue);
+      padding: 0;
+      font-size: 13px;
     }
 
     .info-grid {
@@ -962,23 +1155,11 @@
       border-bottom: 1px solid var(--line);
     }
 
-    .detail-page-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
-    }
-
-    .detail-page-title {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 800;
-    }
-
     .page-actions {
       display: flex;
       gap: 10px;
       align-items: center;
+      justify-content: flex-end;
     }
 
     .toast {
@@ -1075,6 +1256,10 @@
         <div class="side-item">退款规则</div>
         <div class="side-item">分期活动管理</div>
         <div class="side-item active">门店POS管理</div>
+        <div class="side-children">
+          <div class="side-subitem active" id="sideDeviceList">POS设备列表</div>
+          <div class="side-subitem" id="sideSettings">POS功能设置</div>
+        </div>
       </aside>
 
       <main class="main">
@@ -1085,248 +1270,208 @@
           <span>/</span>
           <span>门店POS管理</span>
           <span id="detailCrumb" class="hidden">/</span>
-          <strong id="crumbTitle">门店列表</strong>
+          <strong id="crumbTitle">POS设备列表</strong>
         </div>
 
-        <section class="panel content-panel" id="storePage">
-          <h1 class="page-title">门店POS管理</h1>
-          <div class="store-query">
-            <div class="toolbar">
-              <div class="search-field">
-                <label for="storeNameSearch">门店名</label>
-                <input id="storeNameSearch" class="control" placeholder="请输入门店名">
-              </div>
-              <div class="search-field">
-                <label for="storeNoSearch">门店号</label>
-                <input id="storeNoSearch" class="control" placeholder="请输入门店号">
-              </div>
-              <div class="search-field">
-                <label for="storeIdSearch">门店ID</label>
-                <input id="storeIdSearch" class="control" placeholder="请输入门店ID">
-              </div>
-              <div class="search-field">
-                <label for="storeDeviceNoSearch">设备号</label>
-                <input id="storeDeviceNoSearch" class="control" placeholder="请输入设备号">
-              </div>
-              <button class="btn text" id="clearSearch">清空条件</button>
-              <button class="btn primary" id="searchStore">搜索</button>
+        <section class="panel content-panel" id="deviceListPage">
+          <h1 class="page-title">POS设备列表</h1>
+          <div class="device-query">
+            <div class="search-field">
+              <label for="storeKeywordQuery">门店</label>
+              <input id="storeKeywordQuery" class="control" placeholder="门店名 / 门店号">
             </div>
+            <div class="search-field">
+              <label for="deviceIdQuery">设备 ID</label>
+              <input id="deviceIdQuery" class="control" placeholder="请输入设备 ID">
+            </div>
+            <div class="search-field">
+              <label for="deviceNoQuery">设备号</label>
+              <input id="deviceNoQuery" class="control" placeholder="请输入设备号">
+            </div>
+            <div class="search-field">
+              <label for="deviceTypeQuery">设备类型</label>
+              <select id="deviceTypeQuery" class="control">
+                <option value="">全部</option>
+                <option>未知设备</option>
+                <option>百富A920</option>
+                <option>百富A920 PRO</option>
+                <option>百富A910</option>
+                <option>联迪A8</option>
+                <option>联迪A8S</option>
+                <option>新大陆N910</option>
+                <option>祥承P8neo</option>
+                <option>联迪P30</option>
+                <option>新大陆N910 PRO</option>
+              </select>
+            </div>
+            <div class="search-field">
+              <label for="deviceStatusQuery">设备状态</label>
+              <select id="deviceStatusQuery" class="control">
+                <option value="">全部</option>
+                <option value="INACTIVE">未激活</option>
+                <option value="ACTIVE">已激活</option>
+              </select>
+            </div>
+            <div class="search-field">
+              <label for="terminalNoQuery">收钱吧终端号</label>
+              <input id="terminalNoQuery" class="control" placeholder="请输入收钱吧终端号">
+            </div>
+            <div class="search-field">
+              <label for="scopeQuery">接单范围</label>
+              <select id="scopeQuery" class="control">
+                <option value="">全部</option>
+                <option value="STORE">全门店</option>
+                <option value="WORKSTATION">指定收银机</option>
+              </select>
+            </div>
+            <div class="search-field">
+              <label for="workstationQuery">关联收银机号</label>
+              <input id="workstationQuery" class="control" placeholder="请输入收银机号">
+            </div>
+            <span class="device-query-spacer"></span>
+            <button class="btn text" id="clearDeviceQuery">清空条件</button>
+            <button class="btn primary" id="searchDevice">搜索</button>
           </div>
-          <div class="list-area">
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th style="width:260px;">门店名</th>
-                    <th style="width:180px;">门店号</th>
-                    <th style="width:190px;">门店ID</th>
-                    <th style="width:150px;">已激活POS设备</th>
-                    <th style="width:230px;">操作</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>新葡京娱乐城</td>
-                    <td class="mono">mocclub</td>
-                    <td class="mono">161247762931</td>
-                    <td>2</td>
-                    <td>
-                      <div class="row-actions">
-                        <button class="link-btn">退款范围</button>
-                        <button class="link-btn" id="enterDetail">详情</button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>litepos</td>
-                    <td class="mono">KAGroup店</td>
-                    <td class="mono">161247766776</td>
-                    <td>0</td>
-                    <td>
-                      <div class="row-actions">
-                        <button class="link-btn">退款范围</button>
-                        <button class="link-btn">详情</button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>上海悦投贸易有限公司</td>
-                    <td class="mono">WX</td>
-                    <td class="mono">161247765350</td>
-                    <td>0</td>
-                    <td>
-                      <div class="row-actions">
-                        <button class="link-btn">退款范围</button>
-                        <button class="link-btn">详情</button>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="pagination">
-              <span>共132条</span>
-              <button class="page-btn">‹</button>
-              <span class="page-num">1</span>
-              <span>2</span>
-              <span>3</span>
-              <span>4</span>
-              <span>5</span>
-              <span>...</span>
-              <span>14</span>
-              <button class="page-btn">›</button>
-              <span class="page-size">10 条/页⌄</span>
-            </div>
+          <div class="list-head">
+            <button class="btn primary" id="addDevice">添加设备</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:150px;">创建时间</th>
+                  <th style="width:150px;">设备 ID</th>
+                  <th style="width:190px;">门店名称</th>
+                  <th style="width:130px;">门店号</th>
+                  <th style="width:170px;">接单范围</th>
+                  <th style="width:92px;">设备状态</th>
+                  <th style="width:150px;">设备号</th>
+                  <th style="width:110px;">设备类型</th>
+                  <th style="width:178px;">收钱吧终端号</th>
+                  <th style="width:150px;">状态变更时间</th>
+                  <th style="width:280px;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="deviceRows"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <span id="deviceTotal">共3条</span>
+            <button class="page-btn">‹</button>
+            <span class="page-num">1</span>
+            <button class="page-btn">›</button>
+            <span class="page-size">10 条/页⌄</span>
           </div>
         </section>
 
-        <section id="detailPage" class="hidden">
-          <section class="panel">
-            <div class="panel-title">基本信息</div>
-            <div class="basic-grid">
-              <div>
-                <div class="field-label">门店名称</div>
-                <div class="field-value">新葡京娱乐城</div>
-              </div>
-              <div>
-                <div class="field-label">门店号</div>
-                <div class="field-value mono">mocclub</div>
-              </div>
-              <div>
-                <div class="field-label">门店ID</div>
-                <div class="field-value mono">161247762931</div>
-              </div>
-            </div>
-          </section>
+        <section class="panel content-panel hidden" id="settingsPage">
+          <h1 class="page-title">POS功能设置</h1>
+          <div class="tabs">
+            <button class="tab active" data-settings-tab="storeSettings">门店POS功能设置</button>
+            <button class="tab" data-settings-tab="globalSettings">全局POS功能设置</button>
+          </div>
 
-          <section class="panel content-panel">
-            <div class="tabs">
-              <button class="tab" data-tab="settings">门店POS设置</button>
-              <button class="tab active" data-tab="devices">门店POS列表</button>
-            </div>
-
-            <div class="tab-page hidden" id="settingsTab">
-              <div class="settings-list">
-                <div class="setting-row">
-                  <div class="setting-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M8 2v4"></path><path d="M16 2v4"></path><path d="M7 14l3 3 7-7"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <div class="setting-title">可退时间范围</div>
-                    <div class="setting-desc">控制 POS 机首页上退款入口，可退订单的时间范围</div>
-                  </div>
-                  <button class="btn ghost">修改</button>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                  </div>
-                  <div>
-                    <div class="setting-title">退款密码设置</div>
-                    <div class="setting-desc">在 POS 上发起退款时，需要输入的门店 POS 退款密码</div>
-                  </div>
-                  <button class="btn ghost">修改</button>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <div class="setting-title">管理密码设置</div>
-                    <div class="setting-desc">在 POS 上进行重要操作时，需要输入门店 POS 管理密码</div>
-                  </div>
-                  <button class="btn ghost">修改</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="tab-page" id="devicesTab">
-              <div class="device-query">
-                <div class="search-field">
-                  <label for="deviceIdQuery">设备 ID</label>
-                  <input id="deviceIdQuery" class="control" placeholder="请输入设备 ID">
-                </div>
-                <div class="search-field">
-                  <label for="deviceNoQuery">设备号</label>
-                  <input id="deviceNoQuery" class="control" placeholder="请输入设备号">
-                </div>
-                <div class="search-field">
-                  <label for="deviceTypeQuery">设备类型</label>
-                  <select id="deviceTypeQuery" class="control">
-                    <option value="">全部</option>
-                    <option>未知设备</option>
-                    <option>百富A920</option>
-                    <option>百富A920 PRO</option>
-                    <option>百富A910</option>
-                    <option>联迪A8</option>
-                    <option>联迪A8S</option>
-                    <option>新大陆N910</option>
-                    <option>祥承P8neo</option>
-                    <option>联迪P30</option>
-                    <option>新大陆N910 PRO</option>
-                  </select>
-                </div>
-                <div class="search-field">
-                  <label for="deviceStatusQuery">设备状态</label>
-                  <select id="deviceStatusQuery" class="control">
-                    <option value="">全部</option>
-                    <option value="INACTIVE">未激活</option>
-                    <option value="ACTIVE">已激活</option>
-                  </select>
-                </div>
-                <div class="search-field">
-                  <label for="terminalNoQuery">收钱吧终端号</label>
-                  <input id="terminalNoQuery" class="control" placeholder="请输入收钱吧终端号">
-                </div>
-                <div class="search-field">
-                  <label for="scopeQuery">接单范围</label>
-                  <select id="scopeQuery" class="control">
-                    <option value="">全部</option>
-                    <option value="STORE">全门店</option>
-                    <option value="WORKSTATION">指定收银机</option>
-                  </select>
-                </div>
-                <div class="search-field">
-                  <label for="workstationQuery">关联收银机号</label>
-                  <input id="workstationQuery" class="control" placeholder="请输入收银机号">
-                </div>
-                <span class="device-query-spacer"></span>
-                <button class="btn text" id="clearDeviceQuery">清空条件</button>
-                <button class="btn primary" id="searchDevice">搜索</button>
-              </div>
-              <div class="list-head">
-                <button class="btn primary" id="addDevice">添加设备</button>
-              </div>
+          <div class="tab-page" id="storeSettingsTab">
+            <div id="storeSettingsList">
               <div class="table-wrap">
                 <table>
                   <thead>
                     <tr>
-                      <th style="width:150px;">生成时间</th>
-                      <th style="width:150px;">设备 ID</th>
-                      <th style="width:170px;">接单范围</th>
-                      <th style="width:92px;">设备状态</th>
-                      <th style="width:150px;">设备号</th>
-                      <th style="width:100px;">设备类型</th>
-                      <th style="width:178px;">收钱吧终端号</th>
-                      <th style="width:150px;">状态变更时间</th>
-                      <th style="width:280px;">操作</th>
+                      <th style="width:260px;">门店名</th>
+                      <th style="width:180px;">门店号</th>
+                      <th style="width:190px;">门店 ID</th>
+                      <th style="width:260px;">操作</th>
                     </tr>
                   </thead>
-                  <tbody id="deviceRows"></tbody>
+                  <tbody id="storeSettingRows"></tbody>
                 </table>
               </div>
               <div class="pagination">
-                <span id="deviceTotal">共3条</span>
+                <span>共3条</span>
                 <button class="page-btn">‹</button>
                 <span class="page-num">1</span>
                 <button class="page-btn">›</button>
                 <span class="page-size">10 条/页⌄</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="tab-page hidden" id="globalSettingsTab">
+            <div class="global-settings-list">
+              <section class="global-setting-block">
+                <h2 class="global-setting-title">品牌通用小票打印设置</h2>
+                <div class="global-setting-row">
+                  <div class="global-setting-label">是否自动打印小票</div>
+                  <div><span class="switch-on" aria-label="已开启"></span></div>
+                  <div></div>
+                </div>
+                <div class="global-setting-row">
+                  <div class="global-setting-label">自动打印联数</div>
+                  <div>两联</div>
+                  <button class="setting-inline-action">修改</button>
+                </div>
+                <div class="global-setting-row">
+                  <div class="global-setting-label">条码内容 <span class="help-dot">?</span></div>
+                  <div>轻 POS 流水号</div>
+                  <button class="setting-inline-action">修改</button>
+                </div>
+                <div class="global-setting-row">
+                  <div class="global-setting-label">小票语言</div>
+                  <div>简体中文</div>
+                  <button class="setting-inline-action">修改</button>
+                </div>
+              </section>
+              <div class="placeholder-panel">后续全局POS功能设置预留</div>
+            </div>
+          </div>
+        </section>
+
+        <section id="storePosSettingsDetailPage" class="hidden">
+          <section class="panel">
+            <div class="panel-title">基本信息</div>
+            <div class="basic-grid" id="storeSettingsBasic"></div>
+          </section>
+          <section class="panel content-panel">
+            <div class="list-head">
+              <button class="btn" id="backToStoreSettingsList">返回列表</button>
+            </div>
+            <div class="settings-list">
+              <div class="setting-row">
+                <div class="setting-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M8 2v4"></path><path d="M16 2v4"></path><path d="M7 14l3 3 7-7"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="setting-title">可退时间范围</div>
+                  <div class="setting-desc">控制 POS 机首页上退款入口，可退订单的时间范围</div>
+                </div>
+                <button class="btn ghost">修改</button>
+              </div>
+              <div class="setting-row">
+                <div class="setting-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </div>
+                <div>
+                  <div class="setting-title">退款密码设置</div>
+                  <div class="setting-desc">在 POS 上发起退款时，需要输入的门店 POS 退款密码</div>
+                </div>
+                <button class="btn ghost">修改</button>
+              </div>
+              <div class="setting-row">
+                <div class="setting-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="setting-title">管理密码设置</div>
+                  <div class="setting-desc">在 POS 上进行重要操作时，需要输入门店 POS 管理密码</div>
+                </div>
+                <button class="btn ghost">修改</button>
               </div>
             </div>
           </section>
@@ -1334,10 +1479,7 @@
 
         <section id="deviceDetailPage" class="hidden">
           <section class="panel content-panel">
-            <div class="detail-page-head">
-              <h1 class="detail-page-title">设备详情</h1>
-              <div class="page-actions" id="deviceDetailActions"></div>
-            </div>
+            <div class="page-actions" id="deviceDetailActions"></div>
             <div id="deviceDetailBody"></div>
           </section>
         </section>
@@ -1393,18 +1535,39 @@
   </template>
 
   <script>
-    const store = {
-      brandName: "WOSAI Demo Shop",
-      brandNo: "700001",
-      storeName: "新葡京娱乐城",
-      storeNo: "mocclub",
-      storeId: "161247762931",
-      sqbStoreNo: "1580000011171677"
+    const brand = {
+      name: "WOSAI Demo Shop",
+      no: "700001"
     };
+
+    const stores = [
+      {
+        id: "161247762931",
+        name: "新葡京娱乐城",
+        no: "mocclub",
+        sqbStoreNo: "1580000011171677",
+        inScope: true
+      },
+      {
+        id: "161247766776",
+        name: "litepos",
+        no: "KAGroup店",
+        sqbStoreNo: "1580000011171688",
+        inScope: true
+      },
+      {
+        id: "161247765350",
+        name: "上海悦投贸易有限公司",
+        no: "WX",
+        sqbStoreNo: "1580000011171699",
+        inScope: false
+      }
+    ];
 
     const devices = [
       {
         id: "2301247759226",
+        storeId: "161247762931",
         createdAt: "2026-05-07 14:22:18",
         statusUpdatedAt: "2026-05-07 14:22:18",
         status: "INACTIVE",
@@ -1414,11 +1577,11 @@
         deviceType: "",
         terminalNo: "",
         activatedAt: "",
-        bank: null,
-        logs: []
+        bank: null
       },
       {
         id: "2301247759225",
+        storeId: "161247762931",
         createdAt: "2026-04-22 17:18:02",
         statusUpdatedAt: "2026-04-22 17:20:49",
         status: "ACTIVE",
@@ -1432,26 +1595,11 @@
           acquirer: "通华",
           merchantNo: "55358405732HSEO",
           terminalNo: "13717601"
-        },
-        logs: [
-          {
-            time: "2026-05-03 17:22",
-            type: "银行卡参数变更",
-            ownership: "品牌：WOSAI Demo Shop（700001）\n门店：新葡京娱乐城（mocclub）\n设备ID：2301247759225",
-            terminal: "门店名：新葡京娱乐城\n门店号：mocclub\n终端号：100058800054379913",
-            bank: "收单机构：通华\n机构商户号：55358405732HSEO\n机构终端号：13717601"
-          },
-          {
-            time: "2026-04-22 17:20",
-            type: "设备激活",
-            ownership: "品牌：WOSAI Demo Shop（700001）\n门店：新葡京娱乐城（mocclub）\n设备ID：2301247759225",
-            terminal: "门店名：新葡京娱乐城\n门店号：mocclub\n终端号：100058800054379913",
-            bank: "--"
-          }
-        ]
+        }
       },
       {
         id: "2301247759224",
+        storeId: "161247766776",
         createdAt: "2026-04-16 11:20:36",
         statusUpdatedAt: "2026-04-16 11:22:13",
         status: "ACTIVE",
@@ -1461,37 +1609,24 @@
         deviceType: "百富A920 PRO",
         terminalNo: "100058800054192246",
         activatedAt: "2026-04-16 11:22:13",
-        bank: null,
-        logs: [
-          {
-            time: "2026-04-16 11:22",
-            type: "设备激活",
-            ownership: "品牌：WOSAI Demo Shop（700001）\n门店：新葡京娱乐城（mocclub）\n设备ID：2301247759224",
-            terminal: "门店名：新葡京娱乐城\n门店号：mocclub\n终端号：100058800054192246",
-            bank: "--"
-          }
-        ]
+        bank: null
       }
     ];
 
-    let activeTab = "devices";
     let currentDeviceId = null;
-    let drawerMode = "detail";
-    let scopeDraft = { type: "STORE", workstation: "" };
+    let selectedStoreId = "";
 
     const body = document.body;
     const mask = document.getElementById("mask");
-    const storePage = document.getElementById("storePage");
-    const detailPage = document.getElementById("detailPage");
+    const deviceListPage = document.getElementById("deviceListPage");
+    const settingsPage = document.getElementById("settingsPage");
+    const storePosSettingsDetailPage = document.getElementById("storePosSettingsDetailPage");
     const deviceDetailPage = document.getElementById("deviceDetailPage");
     const crumbTitle = document.getElementById("crumbTitle");
     const detailCrumb = document.getElementById("detailCrumb");
     const deviceDetailActions = document.getElementById("deviceDetailActions");
     const deviceDetailBody = document.getElementById("deviceDetailBody");
     const drawer = document.querySelector(".drawer");
-    const drawerTitle = document.getElementById("drawerTitle");
-    const drawerBody = document.getElementById("drawerBody");
-    const drawerFoot = document.getElementById("drawerFoot");
     const dialog = document.querySelector(".dialog");
     const dialogTitle = document.getElementById("dialogTitle");
     const dialogBody = document.getElementById("dialogBody");
@@ -1505,12 +1640,20 @@
       window.setTimeout(() => toast.classList.remove("show"), 1600);
     }
 
+    function deviceStore(device) {
+      return stores.find((item) => item.id === device.storeId) || stores[0];
+    }
+
     function scopeText(device) {
       return device.scopeType === "WORKSTATION" ? `收银机：${device.workstation}` : "全门店";
     }
 
     function emptyText(value) {
       return value || "--";
+    }
+
+    function displayDeviceValue(device, value) {
+      return device.status === "ACTIVE" ? emptyText(value) : "未激活";
     }
 
     function statusHtml(device) {
@@ -1527,9 +1670,78 @@
       return !["百富A920", "百富A910", "百富A920 PRO"].includes(device.deviceType);
     }
 
+    function setSideActive(page) {
+      document.getElementById("sideDeviceList").classList.toggle("active", page === "devices");
+      document.getElementById("sideSettings").classList.toggle("active", page === "settings");
+    }
+
+    function showDeviceListPage() {
+      deviceListPage.classList.remove("hidden");
+      settingsPage.classList.add("hidden");
+      storePosSettingsDetailPage.classList.add("hidden");
+      deviceDetailPage.classList.add("hidden");
+      detailCrumb.classList.add("hidden");
+      crumbTitle.textContent = "POS设备列表";
+      currentDeviceId = null;
+      setSideActive("devices");
+      renderDevices();
+    }
+
+    function showSettingsPage() {
+      deviceListPage.classList.add("hidden");
+      settingsPage.classList.remove("hidden");
+      storePosSettingsDetailPage.classList.add("hidden");
+      deviceDetailPage.classList.add("hidden");
+      detailCrumb.classList.add("hidden");
+      crumbTitle.textContent = "POS功能设置";
+      currentDeviceId = null;
+      setSideActive("settings");
+      renderStoreSettingsList();
+    }
+
+    function showDeviceDetailPage(id) {
+      currentDeviceId = id;
+      deviceListPage.classList.add("hidden");
+      settingsPage.classList.add("hidden");
+      storePosSettingsDetailPage.classList.add("hidden");
+      deviceDetailPage.classList.remove("hidden");
+      detailCrumb.classList.remove("hidden");
+      crumbTitle.textContent = "设备详情";
+      setSideActive("devices");
+      renderDeviceDetailPage(id);
+    }
+
+    function openDialog(title) {
+      dialogTitle.textContent = title;
+      dialog.setAttribute("aria-hidden", "false");
+      body.classList.add("dialog-open");
+    }
+
+    function closeDialog() {
+      body.classList.remove("dialog-open");
+      dialog.setAttribute("aria-hidden", "true");
+      dialogBody.innerHTML = "";
+      dialogFoot.innerHTML = "";
+      selectedStoreId = "";
+    }
+
+    function closeDrawer() {
+      body.classList.remove("drawer-open");
+      drawer.setAttribute("aria-hidden", "true");
+    }
+
+    function qrHtml() {
+      return qrTemplate.innerHTML;
+    }
+
+    function deviceById(id) {
+      return devices.find((device) => device.id === id);
+    }
+
     function deviceQuery() {
       const value = (id) => document.getElementById(id).value.trim();
       return {
+        storeKeyword: value("storeKeywordQuery"),
         deviceId: value("deviceIdQuery"),
         deviceNo: value("deviceNoQuery"),
         deviceType: value("deviceTypeQuery"),
@@ -1543,7 +1755,10 @@
     function filterDevices() {
       const query = deviceQuery();
       return devices.filter((device) => {
+        const store = deviceStore(device);
         const matchesText = (source, keyword) => !keyword || source.includes(keyword);
+        const storeText = `${store.name} ${store.no}`;
+        if (!matchesText(storeText, query.storeKeyword)) return false;
         if (!matchesText(device.id, query.deviceId)) return false;
         if (!matchesText(device.deviceNo, query.deviceNo)) return false;
         if (query.deviceType && device.deviceType !== query.deviceType) return false;
@@ -1559,11 +1774,12 @@
       const tbody = document.getElementById("deviceRows");
       const visibleDevices = filterDevices();
       if (!visibleDevices.length) {
-        tbody.innerHTML = `<tr><td colspan="9" class="muted">暂无符合条件的设备</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="11" class="muted">暂无符合条件的设备</td></tr>`;
         document.getElementById("deviceTotal").textContent = "共0条";
         return;
       }
       tbody.innerHTML = visibleDevices.map((device) => {
+        const store = deviceStore(device);
         const actions = device.status === "ACTIVE"
           ? `<button class="link-btn" data-action="scope" data-id="${device.id}">接单范围</button><button class="link-btn" data-action="detail" data-id="${device.id}">详情</button>`
           : `<button class="link-btn" data-action="scope" data-id="${device.id}">接单范围</button><button class="link-btn" data-action="activate" data-id="${device.id}">激活</button><button class="link-btn" data-action="detail" data-id="${device.id}">详情</button>`;
@@ -1571,6 +1787,8 @@
           <tr>
             <td>${device.createdAt}</td>
             <td class="mono">${device.id}</td>
+            <td>${store.name}</td>
+            <td class="mono">${store.no}</td>
             <td class="scope-text ${device.scopeType === "WORKSTATION" ? "mono" : ""}">${scopeText(device)}</td>
             <td>${statusHtml(device)}</td>
             <td class="mono">${emptyText(device.deviceNo)}</td>
@@ -1586,98 +1804,68 @@
         button.addEventListener("click", () => {
           const id = button.dataset.id;
           const action = button.dataset.action;
-          if (action === "detail") openDeviceDetailPage(id);
+          if (action === "detail") showDeviceDetailPage(id);
           if (action === "scope") openScope(id);
           if (action === "activate") openActivate(id);
         });
       });
     }
 
-    function setTab(tab) {
-      activeTab = tab;
-      document.querySelectorAll(".tab").forEach((button) => {
-        button.classList.toggle("active", button.dataset.tab === tab);
+    function renderStoreSettingsList() {
+      const rows = document.getElementById("storeSettingRows");
+      if (!rows) return;
+      document.getElementById("storeSettingsList").classList.remove("hidden");
+      rows.innerHTML = stores.map((store) => `
+        <tr>
+          <td>${store.name}</td>
+          <td class="mono">${store.no}</td>
+          <td class="mono">${store.id}</td>
+          <td>
+            <div class="row-actions">
+              <button class="link-btn" data-store-action="detail" data-store-id="${store.id}">详情</button>
+              <button class="link-btn" data-store-action="refund" data-store-id="${store.id}">退款范围</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+      rows.querySelectorAll("[data-store-action]").forEach((button) => {
+        button.addEventListener("click", () => {
+          if (button.dataset.storeAction === "detail") {
+            openStoreSettingsDetail(button.dataset.storeId);
+          } else {
+            showToast("进入退款范围配置");
+          }
+        });
       });
-      document.getElementById("settingsTab").classList.toggle("hidden", tab !== "settings");
-      document.getElementById("devicesTab").classList.toggle("hidden", tab !== "devices");
     }
 
-    function enterDetailPage() {
-      storePage.classList.add("hidden");
-      detailPage.classList.remove("hidden");
+    function openStoreSettingsDetail(storeId) {
+      const store = stores.find((item) => item.id === storeId);
+      deviceListPage.classList.add("hidden");
+      settingsPage.classList.add("hidden");
       deviceDetailPage.classList.add("hidden");
+      storePosSettingsDetailPage.classList.remove("hidden");
       detailCrumb.classList.remove("hidden");
-      crumbTitle.textContent = "门店详情";
-      setTab("devices");
-    }
-
-    function enterDeviceListPage() {
-      storePage.classList.add("hidden");
-      detailPage.classList.remove("hidden");
-      deviceDetailPage.classList.add("hidden");
-      detailCrumb.classList.remove("hidden");
-      crumbTitle.textContent = "门店详情";
-      currentDeviceId = null;
-      setTab("devices");
-    }
-
-    function showDeviceDetailPage(id) {
-      currentDeviceId = id;
-      storePage.classList.add("hidden");
-      detailPage.classList.add("hidden");
-      deviceDetailPage.classList.remove("hidden");
-      detailCrumb.classList.remove("hidden");
-      crumbTitle.textContent = "设备详情";
-      renderDeviceDetailPage(id);
-    }
-
-    function openDrawer(title, mode) {
-      drawerMode = mode;
-      drawerTitle.textContent = title;
-      drawer.setAttribute("aria-hidden", "false");
-      body.classList.add("drawer-open");
-    }
-
-    function closeDrawer() {
-      body.classList.remove("drawer-open");
-      drawer.setAttribute("aria-hidden", "true");
-      currentDeviceId = null;
-      drawerBody.innerHTML = "";
-      drawerFoot.innerHTML = "";
-    }
-
-    function openDialog(title) {
-      dialogTitle.textContent = title;
-      dialog.setAttribute("aria-hidden", "false");
-      body.classList.add("dialog-open");
-    }
-
-    function closeDialog() {
-      body.classList.remove("dialog-open");
-      dialog.setAttribute("aria-hidden", "true");
-      dialogBody.innerHTML = "";
-      dialogFoot.innerHTML = "";
-    }
-
-    function qrHtml() {
-      return qrTemplate.innerHTML;
-    }
-
-    function deviceById(id) {
-      return devices.find((device) => device.id === id);
-    }
-
-    function ownerKv() {
-      return `
-        <dt>品牌名称</dt><dd>${store.brandName}</dd>
-        <dt>品牌编号</dt><dd class="mono">${store.brandNo}</dd>
-        <dt>门店名称</dt><dd>${store.storeName}</dd>
-        <dt>门店编号</dt><dd class="mono">${store.storeNo}</dd>
+      crumbTitle.textContent = "门店POS功能详情";
+      setSideActive("settings");
+      document.getElementById("storeSettingsBasic").innerHTML = `
+        <div>
+          <div class="field-label">门店名称</div>
+          <div class="field-value">${store.name}</div>
+        </div>
+        <div>
+          <div class="field-label">门店号</div>
+          <div class="field-value mono">${store.no}</div>
+        </div>
+        <div>
+          <div class="field-label">门店 ID</div>
+          <div class="field-value mono">${store.id}</div>
+        </div>
       `;
+      document.getElementById("backToStoreSettingsList").addEventListener("click", showSettingsPage);
     }
 
     function renderScopeForm(device) {
-      scopeDraft = { type: device.scopeType, workstation: device.workstation };
       return `
         <p class="section-title">接单范围</p>
         <div class="option-group">
@@ -1733,14 +1921,15 @@
     function openScope(id) {
       currentDeviceId = id;
       const device = deviceById(id);
+      const store = deviceStore(device);
       dialogBody.innerHTML = `
         <div class="subsection">
-          <p class="section-title">设备信息</p>
+          <p class="section-title">基础信息</p>
           <dl class="kv">
             <dt>设备 ID</dt><dd class="mono">${device.id}</dd>
             <dt>设备状态</dt><dd>${statusText(device)}</dd>
-            <dt>门店名称</dt><dd>${store.storeName}</dd>
-            <dt>门店编号</dt><dd class="mono">${store.storeNo}</dd>
+            <dt>门店名称</dt><dd>${store.name}</dd>
+            <dt>门店编号</dt><dd class="mono">${store.no}</dd>
             <dt>收钱吧终端号</dt><dd class="mono">${emptyText(device.terminalNo)}</dd>
           </dl>
         </div>
@@ -1755,15 +1944,16 @@
 
     function openActivate(id) {
       const device = deviceById(id);
+      const store = deviceStore(device);
       dialogBody.innerHTML = `
         <div class="success-layout">
           <div>
             <p class="success-desc">该设备当前为未激活。请使用 POS 扫码完成激活。</p>
             <dl class="kv">
-              <dt>品牌名称</dt><dd>${store.brandName}</dd>
-              <dt>品牌编号</dt><dd class="mono">${store.brandNo}</dd>
-              <dt>门店名称</dt><dd>${store.storeName}</dd>
-              <dt>门店编号</dt><dd class="mono">${store.storeNo}</dd>
+              <dt>品牌名称</dt><dd>${brand.name}</dd>
+              <dt>品牌编号</dt><dd class="mono">${brand.no}</dd>
+              <dt>门店名称</dt><dd>${store.name}</dd>
+              <dt>门店编号</dt><dd class="mono">${store.no}</dd>
               <dt>收钱吧门店号</dt><dd class="mono">${store.sqbStoreNo}</dd>
               <dt>设备 ID</dt><dd class="mono">${device.id}</dd>
             </dl>
@@ -1776,58 +1966,38 @@
       document.getElementById("dialogCloseOnly").addEventListener("click", closeDialog);
     }
 
-    function logRows(device) {
-      if (!device.logs.length) {
-        return `<tr><td colspan="5" class="muted">暂无设备变更记录</td></tr>`;
-      }
-      return device.logs.map((log) => `
-        <tr>
-          <td>${log.time}</td>
-          <td>${log.type}</td>
-          <td>${log.ownership.replaceAll("\n", "<br>")}</td>
-          <td>${log.terminal.replaceAll("\n", "<br>")}</td>
-          <td>${log.bank.replaceAll("\n", "<br>")}</td>
-        </tr>
+    function detailFields(items) {
+      return items.map(([label, value, className]) => `
+        <dl class="detail-field">
+          <dt>${label}</dt>
+          <dd class="${className}">${value}</dd>
+        </dl>
       `).join("");
-    }
-
-    function openDeviceDetailPage(id) {
-      showDeviceDetailPage(id);
     }
 
     function renderDeviceDetailPage(id) {
       const device = deviceById(id);
-      const deviceInfoItems = [
+      const store = deviceStore(device);
+      const basicItems = [
         ["设备 ID", device.id, "mono"],
-        ["接单范围", scopeText(device), ""],
-        ["设备状态", statusText(device), ""],
+        ["设备类型", displayDeviceValue(device, device.deviceType), ""],
+        ["设备号", displayDeviceValue(device, device.deviceNo), "mono"],
+        ["终端号", displayDeviceValue(device, device.terminalNo), "mono"],
         ["创建时间", device.createdAt, ""],
-        ["状态更新时间", device.statusUpdatedAt, ""]
+        ["状态更新时间", device.statusUpdatedAt, ""],
+        ["设备状态", statusText(device), ""]
       ];
-      if (device.status === "ACTIVE") {
-        deviceInfoItems.push(
-          ["设备号", device.deviceNo, "mono"],
-          ["设备类型", device.deviceType, ""],
-          ["终端号", device.terminalNo, "mono"]
-        );
-      }
-      const ownerItems = [
-        ["品牌名称", store.brandName, ""],
-        ["品牌编号", store.brandNo, "mono"],
-        ["门店名称", store.storeName, ""],
-        ["门店编号", store.storeNo, "mono"]
+      const businessItems = [
+        ["品牌名称", brand.name, ""],
+        ["品牌编号", brand.no, "mono"],
+        ["门店名称", store.name, ""],
+        ["门店编号", store.no, "mono"]
       ];
       const bankItems = [
         ["收单机构", emptyText(device.bank?.acquirer), ""],
         ["机构商户号", emptyText(device.bank?.merchantNo), "mono"],
         ["机构终端号", emptyText(device.bank?.terminalNo), "mono"]
       ];
-      const detailFields = (items) => items.map(([label, value, className]) => `
-        <dl class="detail-field">
-          <dt>${label}</dt>
-          <dd class="${className}">${value}</dd>
-        </dl>
-      `).join("");
       const bankHtml = device.status === "ACTIVE"
         ? `
           <section class="detail-block">
@@ -1837,41 +2007,32 @@
         `
         : "";
       const activeActions = canDeactivateInMeta(device)
-        ? `<button class="btn" id="backToDeviceList">返回</button><button class="btn danger" id="deactivateDevice">反激活</button><button class="btn ghost" id="scopeFromDetail">修改接单范围</button>`
-        : `<button class="btn" id="backToDeviceList">返回</button><button class="btn ghost" id="scopeFromDetail">修改接单范围</button>`;
-      const actions = device.status === "ACTIVE"
+        ? `<button class="btn danger" id="deactivateDevice">反激活</button>`
+        : "";
+      deviceDetailActions.innerHTML = device.status === "ACTIVE"
         ? activeActions
-        : `<button class="btn" id="backToDeviceList">返回</button><button class="btn ghost" id="activateFromDetail">激活</button><button class="btn ghost" id="scopeFromDetail">修改接单范围</button>`;
-      deviceDetailActions.innerHTML = actions;
+        : `<button class="btn ghost" id="activateFromDetail">激活</button>`;
       deviceDetailBody.innerHTML = `
         <section class="detail-block">
-          <h2 class="detail-block-title">设备信息</h2>
-          <div class="detail-info-layout">${detailFields(deviceInfoItems)}</div>
+          <div class="detail-block-head">
+            <h2 class="detail-block-title">基础信息</h2>
+            <div class="page-actions">${deviceDetailActions.innerHTML}</div>
+          </div>
+          <div class="detail-info-layout">${detailFields(basicItems)}</div>
         </section>
         <section class="detail-block">
-          <h2 class="detail-block-title">设备归属</h2>
-          <div class="detail-info-layout">${detailFields(ownerItems)}</div>
-        </section>
-        ${bankHtml}
-        <section class="detail-block">
-          <h2 class="detail-block-title">设备变更记录</h2>
-          <div class="detail-table-wrap">
-          <table class="change-table">
-            <thead>
-              <tr>
-                <th style="width:140px;">变更时间</th>
-                <th style="width:130px;">变更内容</th>
-                <th style="width:230px;">变更后设备归属</th>
-                <th style="width:230px;">变更后收钱吧终端信息</th>
-                <th style="width:230px;">变更后银行卡终端信息</th>
-              </tr>
-            </thead>
-            <tbody>${logRows(device)}</tbody>
-          </table>
+          <div class="detail-block-head">
+            <h2 class="detail-block-title">业务信息</h2>
+            <button class="btn ghost" id="scopeFromDetail">修改接单范围</button>
+          </div>
+          <div class="detail-info-layout">${detailFields(businessItems)}</div>
+          <div class="detail-info-layout">
+            ${detailFields([["接单范围", scopeText(device), device.scopeType === "WORKSTATION" ? "mono" : ""]])}
           </div>
         </section>
+        ${bankHtml}
       `;
-      document.getElementById("backToDeviceList").addEventListener("click", enterDeviceListPage);
+      deviceDetailActions.innerHTML = "";
       document.getElementById("scopeFromDetail").addEventListener("click", () => openScope(device.id));
       if (device.status === "ACTIVE" && canDeactivateInMeta(device)) {
         document.getElementById("deactivateDevice").addEventListener("click", () => openDeactivateConfirm(device.id));
@@ -1882,6 +2043,7 @@
 
     function openDeactivateConfirm(id) {
       const device = deviceById(id);
+      const store = deviceStore(device);
       dialogBody.innerHTML = `
         <div class="confirm-message">
           <div class="confirm-icon">!</div>
@@ -1892,7 +2054,7 @@
               <dt>设备 ID</dt><dd class="mono">${device.id}</dd>
               <dt>设备号</dt><dd class="mono">${emptyText(device.deviceNo)}</dd>
               <dt>终端号</dt><dd class="mono">${emptyText(device.terminalNo)}</dd>
-              <dt>门店名称</dt><dd>${store.storeName}</dd>
+              <dt>门店名称</dt><dd>${store.name}</dd>
             </dl>
           </div>
         </div>
@@ -1902,11 +2064,11 @@
       document.getElementById("cancelDeactivate").addEventListener("click", closeDialog);
       document.getElementById("confirmDeactivate").addEventListener("click", () => {
         closeDialog();
-        deactivateDevice(id, true);
+        deactivateDevice(id);
       });
     }
 
-    function deactivateDevice(id, stayOnDetail = false) {
+    function deactivateDevice(id) {
       const device = deviceById(id);
       device.status = "INACTIVE";
       device.statusUpdatedAt = "2026-05-07 15:12:08";
@@ -1915,47 +2077,88 @@
       device.terminalNo = "";
       device.activatedAt = "";
       device.bank = null;
-      device.logs.unshift({
-        time: "2026-05-07 15:12",
-        type: "设备反激活",
-        ownership: "--",
-        terminal: "--",
-        bank: "--"
-      });
       renderDevices();
-      if (stayOnDetail) {
-        renderDeviceDetailPage(id);
-      } else {
-        closeDrawer();
-      }
+      renderDeviceDetailPage(id);
       showToast("设备已反激活");
     }
 
+    function renderStoreSuggest(keyword = "") {
+      const list = document.getElementById("storeSuggestList");
+      const visibleStores = stores.filter((store) => {
+        if (!store.inScope) return false;
+        const source = `${store.name} ${store.no}`;
+        return !keyword || source.includes(keyword);
+      });
+      if (!visibleStores.length) {
+        list.innerHTML = `<div class="suggest-item"><div class="suggest-meta">暂无可选门店</div></div>`;
+        return;
+      }
+      list.innerHTML = visibleStores.map((store) => `
+        <button class="suggest-item" type="button" data-store-id="${store.id}">
+          <div class="suggest-name">${store.name}</div>
+          <div class="suggest-meta">门店号：${store.no}　门店ID：${store.id}</div>
+        </button>
+      `).join("");
+      list.querySelectorAll("[data-store-id]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const store = stores.find((item) => item.id === button.dataset.storeId);
+          selectedStoreId = store.id;
+          document.getElementById("storeSuggestInput").value = `${store.name} / ${store.no}`;
+          list.classList.add("hidden");
+        });
+      });
+    }
+
+    function bindStoreSuggest() {
+      const input = document.getElementById("storeSuggestInput");
+      const list = document.getElementById("storeSuggestList");
+      input.addEventListener("focus", () => {
+        list.classList.remove("hidden");
+        renderStoreSuggest(input.value.trim());
+      });
+      input.addEventListener("input", () => {
+        selectedStoreId = "";
+        list.classList.remove("hidden");
+        renderStoreSuggest(input.value.trim());
+      });
+    }
+
     function renderAddForm() {
+      selectedStoreId = "";
       dialogBody.innerHTML = `
         <div class="form-row">
-          <label>所属门店</label>
-          <input class="control" value="${store.storeName} / ${store.storeNo}" disabled>
+          <label for="storeSuggestInput">所属门店</label>
+          <div class="suggest-wrap">
+            <input class="control" id="storeSuggestInput" placeholder="请输入门店名或门店号">
+            <div class="suggest-list hidden" id="storeSuggestList"></div>
+          </div>
         </div>
         ${renderScopeForm({ scopeType: "STORE", workstation: "" })}
       `;
       dialogFoot.innerHTML = `<button class="btn" id="cancelAdd">取消</button><button class="btn primary" id="saveAdd">保存</button>`;
       openDialog("添加设备");
       bindScopeForm();
+      bindStoreSuggest();
       document.getElementById("cancelAdd").addEventListener("click", closeDialog);
       document.getElementById("saveAdd").addEventListener("click", saveNewDevice);
     }
 
     function saveNewDevice() {
+      if (!selectedStoreId) {
+        showToast("请先选择门店");
+        return;
+      }
       const scope = document.querySelector("input[name='scope']:checked").value;
       const workstationInput = document.getElementById("workstationInput");
       if (scope === "WORKSTATION" && !workstationInput.value.trim()) {
         showToast("请填写收银机号");
         return;
       }
+      const store = stores.find((item) => item.id === selectedStoreId);
       const workstation = scope === "WORKSTATION" ? workstationInput.value.trim() : "";
       const newDevice = {
         id: String(2301247759230 + devices.length),
+        storeId: selectedStoreId,
         createdAt: "2026-05-07 15:18:26",
         statusUpdatedAt: "2026-05-07 15:18:26",
         status: "INACTIVE",
@@ -1965,8 +2168,7 @@
         deviceType: "",
         terminalNo: "",
         activatedAt: "",
-        bank: null,
-        logs: []
+        bank: null
       };
       devices.unshift(newDevice);
       renderDevices();
@@ -1975,14 +2177,14 @@
         <div class="success-layout">
           <div>
             <h2 class="success-title">设备添加成功，请扫码激活</h2>
-            <p class="success-desc">系统已生成未激活设备记录。关闭后可在门店 POS 列表中再次点击“激活”查看同一二维码。</p>
+            <p class="success-desc">系统已生成未激活设备记录。关闭后可在 POS 设备列表中再次点击“激活”查看同一二维码。</p>
             <dl class="kv">
               <dt>设备 ID</dt><dd class="mono">${newDevice.id}</dd>
               <dt>接单范围</dt><dd>${scopeText(newDevice)}</dd>
-              <dt>品牌名称</dt><dd>${store.brandName}</dd>
-              <dt>品牌编号</dt><dd class="mono">${store.brandNo}</dd>
-              <dt>门店名称</dt><dd>${store.storeName}</dd>
-              <dt>门店编号</dt><dd class="mono">${store.storeNo}</dd>
+              <dt>品牌名称</dt><dd>${brand.name}</dd>
+              <dt>品牌编号</dt><dd class="mono">${brand.no}</dd>
+              <dt>门店名称</dt><dd>${store.name}</dd>
+              <dt>门店编号</dt><dd class="mono">${store.no}</dd>
               <dt>收钱吧门店号</dt><dd class="mono">${store.sqbStoreNo}</dd>
             </dl>
           </div>
@@ -1993,28 +2195,31 @@
       document.getElementById("finishAdd").addEventListener("click", closeDialog);
     }
 
-    document.getElementById("enterDetail").addEventListener("click", enterDetailPage);
-    document.getElementById("searchStore").addEventListener("click", () => showToast("已按当前条件查询"));
-    document.getElementById("clearSearch").addEventListener("click", () => {
-      ["storeNameSearch", "storeNoSearch", "storeIdSearch", "storeDeviceNoSearch"].forEach((id) => {
-        document.getElementById(id).value = "";
+    function setSettingsTab(tab) {
+      document.querySelectorAll("[data-settings-tab]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.settingsTab === tab);
       });
-      showToast("已清空查询条件");
-    });
+      document.getElementById("storeSettingsTab").classList.toggle("hidden", tab !== "storeSettings");
+      document.getElementById("globalSettingsTab").classList.toggle("hidden", tab !== "globalSettings");
+      if (tab === "storeSettings") renderStoreSettingsList();
+    }
+
+    document.getElementById("sideDeviceList").addEventListener("click", showDeviceListPage);
+    document.getElementById("sideSettings").addEventListener("click", showSettingsPage);
     document.getElementById("searchDevice").addEventListener("click", () => {
       renderDevices();
       showToast("已按设备条件查询");
     });
     document.getElementById("clearDeviceQuery").addEventListener("click", () => {
-      ["deviceIdQuery", "deviceNoQuery", "deviceTypeQuery", "deviceStatusQuery", "terminalNoQuery", "scopeQuery", "workstationQuery"].forEach((id) => {
+      ["storeKeywordQuery", "deviceIdQuery", "deviceNoQuery", "deviceTypeQuery", "deviceStatusQuery", "terminalNoQuery", "scopeQuery", "workstationQuery"].forEach((id) => {
         document.getElementById(id).value = "";
       });
       renderDevices();
       showToast("已清空设备查询条件");
     });
     document.getElementById("addDevice").addEventListener("click", renderAddForm);
-    document.querySelectorAll(".tab").forEach((button) => {
-      button.addEventListener("click", () => setTab(button.dataset.tab));
+    document.querySelectorAll("[data-settings-tab]").forEach((button) => {
+      button.addEventListener("click", () => setSettingsTab(button.dataset.settingsTab));
     });
     document.getElementById("closeDrawer").addEventListener("click", closeDrawer);
     document.getElementById("closeDialog").addEventListener("click", closeDialog);

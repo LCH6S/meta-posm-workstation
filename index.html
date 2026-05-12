@@ -544,6 +544,39 @@
       font-size: 13px;
     }
 
+    .scope-summary {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      max-width: 100%;
+      cursor: default;
+    }
+
+    .scope-summary[data-tooltip]:hover::after {
+      content: none;
+    }
+
+    .scope-summary[data-tooltip]:hover::before {
+      content: none;
+    }
+
+    .floating-tooltip {
+      position: fixed;
+      z-index: 120;
+      max-width: 360px;
+      min-width: 180px;
+      padding: 8px 10px;
+      color: #ffffff;
+      background: rgba(24, 25, 33, .94);
+      border-radius: 3px;
+      font-size: 12px;
+      line-height: 1.6;
+      white-space: normal;
+      word-break: break-all;
+      box-shadow: 0 8px 18px rgba(24, 25, 33, .16);
+      pointer-events: none;
+    }
+
     .link-btn {
       border: 0;
       background: transparent;
@@ -1012,6 +1045,54 @@
       color: var(--muted);
       margin-bottom: 7px;
       font-weight: 600;
+    }
+
+    .workstation-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .workstation-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 56px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .workstation-row .control {
+      width: 100%;
+    }
+
+    .workstation-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .form-tip {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .btn.small {
+      height: 30px;
+      padding: 0 12px;
+      font-size: 13px;
+    }
+
+    .btn.link-danger {
+      height: 30px;
+      padding: 0;
+      color: var(--red);
+      background: transparent;
+      border: 0;
+    }
+
+    .btn.link-danger:disabled {
+      color: var(--subtle);
+      cursor: not-allowed;
     }
 
     .notice {
@@ -1586,7 +1667,7 @@
         statusUpdatedAt: "2026-04-22 17:20:49",
         status: "ACTIVE",
         scopeType: "WORKSTATION",
-        workstation: "WS-MOC-001",
+        workstation: ["WS-MOC-001", "WS-MOC-002"],
         deviceNo: "259KCASS8557",
         deviceType: "联迪A8S",
         terminalNo: "100058800054379913",
@@ -1633,6 +1714,7 @@
     const dialogFoot = document.getElementById("dialogFoot");
     const toast = document.getElementById("toast");
     const qrTemplate = document.getElementById("qrTemplate");
+    let floatingTooltip = null;
 
     function showToast(message) {
       toast.textContent = message;
@@ -1644,8 +1726,68 @@
       return stores.find((item) => item.id === device.storeId) || stores[0];
     }
 
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;"
+      })[char]);
+    }
+
+    function workstationList(device) {
+      const value = device.workstation;
+      if (Array.isArray(value)) return value.map((item) => String(item).trim()).filter(Boolean);
+      return String(value || "")
+        .split(/[\n,，;；]+/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
     function scopeText(device) {
-      return device.scopeType === "WORKSTATION" ? `收银机：${device.workstation}` : "全门店";
+      if (device.scopeType !== "WORKSTATION") return "全门店";
+      return `收银机：${workstationList(device).join("、")}`;
+    }
+
+    function scopeSummaryHtml(device) {
+      if (device.scopeType !== "WORKSTATION") return "全门店";
+      const workstations = workstationList(device);
+      const count = workstations.length;
+      const tooltip = workstations.length ? `收银机号：${workstations.join("、")}` : "暂无收银机号";
+      return `<span class="scope-summary" data-tooltip="${escapeHtml(tooltip)}">收银机：${count} 台</span>`;
+    }
+
+    function showFloatingTooltip(target) {
+      hideFloatingTooltip();
+      const content = target.dataset.tooltip;
+      if (!content) return;
+      floatingTooltip = document.createElement("div");
+      floatingTooltip.className = "floating-tooltip";
+      floatingTooltip.textContent = content;
+      document.body.appendChild(floatingTooltip);
+      const rect = target.getBoundingClientRect();
+      const tooltipRect = floatingTooltip.getBoundingClientRect();
+      const left = Math.min(Math.max(rect.left, 8), window.innerWidth - tooltipRect.width - 8);
+      let top = rect.top - tooltipRect.height - 8;
+      if (top < 8) top = rect.bottom + 8;
+      floatingTooltip.style.left = `${left}px`;
+      floatingTooltip.style.top = `${top}px`;
+    }
+
+    function hideFloatingTooltip() {
+      if (!floatingTooltip) return;
+      floatingTooltip.remove();
+      floatingTooltip = null;
+    }
+
+    function bindScopeTooltips() {
+      document.querySelectorAll(".scope-summary[data-tooltip]").forEach((item) => {
+        item.addEventListener("mouseenter", () => showFloatingTooltip(item));
+        item.addEventListener("mouseleave", hideFloatingTooltip);
+        item.addEventListener("focus", () => showFloatingTooltip(item));
+        item.addEventListener("blur", hideFloatingTooltip);
+      });
     }
 
     function emptyText(value) {
@@ -1765,7 +1907,7 @@
         if (query.deviceStatus && device.status !== query.deviceStatus) return false;
         if (!matchesText(device.terminalNo, query.terminalNo)) return false;
         if (query.scopeType && device.scopeType !== query.scopeType) return false;
-        if (!matchesText(device.workstation, query.workstation)) return false;
+        if (!matchesText(workstationList(device).join(" "), query.workstation)) return false;
         return true;
       });
     }
@@ -1791,7 +1933,7 @@
             <td>${emptyText(device.deviceType)}</td>
             <td>${store.name}</td>
             <td class="mono">${store.no}</td>
-            <td class="scope-text ${device.scopeType === "WORKSTATION" ? "mono" : ""}">${scopeText(device)}</td>
+            <td class="scope-text">${scopeSummaryHtml(device)}</td>
             <td>${statusHtml(device)}</td>
             <td class="mono">${emptyText(device.terminalNo)}</td>
             <td>${emptyText(device.statusUpdatedAt)}</td>
@@ -1800,6 +1942,7 @@
         `;
       }).join("");
       document.getElementById("deviceTotal").textContent = `共${visibleDevices.length}条`;
+      bindScopeTooltips();
       tbody.querySelectorAll("[data-action]").forEach((button) => {
         button.addEventListener("click", () => {
           const id = button.dataset.id;
@@ -1866,6 +2009,8 @@
     }
 
     function renderScopeForm(device) {
+      const workstations = workstationList(device);
+      const rows = workstations.length ? workstations : [""];
       return `
         <p class="section-title">接单范围</p>
         <div class="option-group">
@@ -1877,15 +2022,74 @@
           <label class="option ${device.scopeType === "WORKSTATION" ? "active" : ""}" id="scopeWorkstationOption">
             <input type="radio" name="scope" value="WORKSTATION" ${device.scopeType === "WORKSTATION" ? "checked" : ""}>
             <div class="option-name">指定收银机</div>
-            <div class="option-desc">POS 只查询指定收银机号对应的待办订单。</div>
+            <div class="option-desc">POS 只查询指定收银机号对应的待办订单，最多可指定 10 台。</div>
           </label>
         </div>
         <div class="form-row ${device.scopeType === "WORKSTATION" ? "" : "hidden"}" id="workstationField">
-          <label for="workstationInput">收银机号</label>
-          <input class="control mono" id="workstationInput" value="${device.workstation}" placeholder="请输入收银机号">
+          <label>收银机号</label>
+          <div class="workstation-list" id="workstationRows">
+            ${rows.map((value, index) => workstationRowHtml(value, index, rows.length)).join("")}
+          </div>
+          <div class="workstation-actions">
+            <button class="btn ghost small" id="addWorkstationRow" type="button">添加收银机</button>
+            <span class="form-tip">每行一个收银机号，最多 10 台。</span>
+          </div>
         </div>
         <div class="notice">保存后，POS 下一次查询待办订单时按新接单范围过滤。</div>
       `;
+    }
+
+    function workstationRowHtml(value, index, total) {
+      return `
+        <div class="workstation-row" data-workstation-row>
+          <input class="control mono workstation-input" value="${escapeHtml(value)}" placeholder="请输入收银机号">
+          <button class="btn link-danger" type="button" data-remove-workstation="${index}" ${total <= 1 ? "disabled" : ""}>删除</button>
+        </div>
+      `;
+    }
+
+    function workstationInputValues() {
+      return Array.from(document.querySelectorAll(".workstation-input")).map((input) => input.value);
+    }
+
+    function renderWorkstationRows(values) {
+      const normalized = values.length ? values : [""];
+      const rows = document.getElementById("workstationRows");
+      rows.innerHTML = normalized.map((value, index) => workstationRowHtml(value, index, normalized.length)).join("");
+      rows.querySelectorAll("[data-remove-workstation]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const currentValues = workstationInputValues();
+          currentValues.splice(Number(button.dataset.removeWorkstation), 1);
+          renderWorkstationRows(currentValues);
+        });
+      });
+      const addButton = document.getElementById("addWorkstationRow");
+      if (addButton) addButton.disabled = normalized.length >= 10;
+    }
+
+    function bindWorkstationRows() {
+      renderWorkstationRows(workstationInputValues());
+      const addButton = document.getElementById("addWorkstationRow");
+      addButton.addEventListener("click", () => {
+        const values = workstationInputValues();
+        if (values.length >= 10) {
+          showToast("最多添加 10 台收银机");
+          return;
+        }
+        values.push("");
+        renderWorkstationRows(values);
+        const inputs = document.querySelectorAll(".workstation-input");
+        inputs[inputs.length - 1].focus();
+      });
+    }
+
+    function readWorkstationValues() {
+      const rawValues = workstationInputValues().map((value) => value.trim());
+      if (rawValues.some((value) => !value)) return { error: "请填写收银机号" };
+      if (rawValues.length > 10) return { error: "最多添加 10 台收银机" };
+      const uniqueValues = Array.from(new Set(rawValues));
+      if (uniqueValues.length !== rawValues.length) return { error: "收银机号不能重复" };
+      return { values: rawValues };
     }
 
     function bindScopeForm() {
@@ -1896,19 +2100,20 @@
         document.getElementById("workstationField").classList.toggle("hidden", value !== "WORKSTATION");
       };
       document.querySelectorAll("input[name='scope']").forEach((input) => input.addEventListener("change", update));
+      bindWorkstationRows();
     }
 
     function saveScope() {
       const device = deviceById(currentDeviceId);
       const savedDeviceId = currentDeviceId;
       const scope = document.querySelector("input[name='scope']:checked").value;
-      const workstationInput = document.getElementById("workstationInput");
-      if (scope === "WORKSTATION" && !workstationInput.value.trim()) {
-        showToast("请填写收银机号");
+      const workstationResult = scope === "WORKSTATION" ? readWorkstationValues() : { values: [] };
+      if (workstationResult.error) {
+        showToast(workstationResult.error);
         return;
       }
       device.scopeType = scope;
-      device.workstation = scope === "WORKSTATION" ? workstationInput.value.trim() : "";
+      device.workstation = scope === "WORKSTATION" ? workstationResult.values : "";
       device.statusUpdatedAt = "2026-05-07 15:06:30";
       renderDevices();
       closeDialog();
@@ -2149,13 +2354,13 @@
         return;
       }
       const scope = document.querySelector("input[name='scope']:checked").value;
-      const workstationInput = document.getElementById("workstationInput");
-      if (scope === "WORKSTATION" && !workstationInput.value.trim()) {
-        showToast("请填写收银机号");
+      const workstationResult = scope === "WORKSTATION" ? readWorkstationValues() : { values: [] };
+      if (workstationResult.error) {
+        showToast(workstationResult.error);
         return;
       }
       const store = stores.find((item) => item.id === selectedStoreId);
-      const workstation = scope === "WORKSTATION" ? workstationInput.value.trim() : "";
+      const workstation = scope === "WORKSTATION" ? workstationResult.values : "";
       const newDevice = {
         id: String(2301247759230 + devices.length),
         storeId: selectedStoreId,

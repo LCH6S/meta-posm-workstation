@@ -2338,7 +2338,7 @@
                 <span class="mini-line"><span class="mini-amount"><span class="currency">HK$</span><span class="money-value">356.00</span></span><span class="mini-time">14:23</span></span>
                 <span class="mini-sub" data-mini-terminal-row><span>收银机</span><span class="mono">WS-AIDA-TERMINAL-01</span></span>
               </span>
-              <button class="mini-action" type="button" data-route="detail-pending" data-order-key="waiting-payment" data-sample-action>查看</button>
+              <button class="mini-action" type="button" data-route="detail-pending" data-order-key="waiting-payment">查看</button>
             </div>
 
             <div class="mini-card" role="button" tabindex="0" data-route="detail-pending" data-order-key="pending-refund">
@@ -2346,7 +2346,7 @@
                 <span class="mini-line"><span class="mini-amount negative-amount"><span class="currency">-HK$</span><span class="money-value">120.00</span></span><span class="mini-time">14:08</span></span>
                 <span class="mini-sub" data-mini-terminal-row><span>收银机</span><span class="mono">WS-AIDA-TERMINAL-02</span></span>
               </span>
-              <button class="mini-action" type="button" data-route="detail-pending" data-order-key="pending-refund" data-sample-action>退款</button>
+              <button class="mini-action" type="button" data-route="detail-pending" data-order-key="pending-refund">查看</button>
             </div>
           </div>
 
@@ -4181,10 +4181,6 @@
       event.stopPropagation();
       if (trigger.dataset.orderKey) {
         loadSampleOrder(trigger.dataset.orderKey);
-        if (trigger.hasAttribute("data-sample-action")) {
-          trigger.dataset.route = getActionRoute();
-          trigger.textContent = getActionText(orderTypes[currentOrder.type]);
-        }
       }
       if (["pay-method", "split-pay", "scan-pay", "card-pay"].includes(trigger.dataset.route)) {
         currentOperation = currentOrder.type;

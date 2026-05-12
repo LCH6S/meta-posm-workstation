@@ -1341,12 +1341,12 @@
                 <tr>
                   <th style="width:150px;">创建时间</th>
                   <th style="width:150px;">设备 ID</th>
+                  <th style="width:150px;">设备号</th>
+                  <th style="width:110px;">设备类型</th>
                   <th style="width:190px;">门店名称</th>
                   <th style="width:130px;">门店号</th>
                   <th style="width:170px;">接单范围</th>
                   <th style="width:92px;">设备状态</th>
-                  <th style="width:150px;">设备号</th>
-                  <th style="width:110px;">设备类型</th>
                   <th style="width:178px;">收钱吧终端号</th>
                   <th style="width:150px;">状态变更时间</th>
                   <th style="width:280px;">操作</th>
@@ -1787,12 +1787,12 @@
           <tr>
             <td>${device.createdAt}</td>
             <td class="mono">${device.id}</td>
+            <td class="mono">${emptyText(device.deviceNo)}</td>
+            <td>${emptyText(device.deviceType)}</td>
             <td>${store.name}</td>
             <td class="mono">${store.no}</td>
             <td class="scope-text ${device.scopeType === "WORKSTATION" ? "mono" : ""}">${scopeText(device)}</td>
             <td>${statusHtml(device)}</td>
-            <td class="mono">${emptyText(device.deviceNo)}</td>
-            <td>${emptyText(device.deviceType)}</td>
             <td class="mono">${emptyText(device.terminalNo)}</td>
             <td>${emptyText(device.statusUpdatedAt)}</td>
             <td><div class="row-actions">${actions}</div></td>

@@ -206,6 +206,32 @@
       color: rgba(255, 255, 255, .68);
     }
 
+    .store-terminal-scope {
+      margin-top: 18px;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      color: rgba(255, 255, 255, .72);
+      font-size: 24px;
+      line-height: 1.25;
+      font-weight: 600;
+      text-align: left;
+      max-width: 100%;
+    }
+
+    .store-terminal-scope[hidden] {
+      display: none;
+    }
+
+    .store-terminal-scope .scope-value {
+      color: rgba(255, 255, 255, .92);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .store-terminal-scope.clickable {
+      cursor: pointer;
+    }
+
     .home-content {
       margin-top: -140px;
       padding: 0 30px 45px;
@@ -297,21 +323,6 @@
 
     .pending-refresh-button.refreshing svg {
       animation: spin .8s linear infinite;
-    }
-
-    .pending-scope {
-      margin-bottom: 38px;
-      padding-left: 33px;
-      color: var(--text-2);
-      font-size: 27px;
-      line-height: 1.25;
-      font-weight: 600;
-    }
-
-    .pending-scope .scope-value {
-      color: var(--text-1);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-weight: 600;
     }
 
     .primary-card {
@@ -435,6 +446,26 @@
       justify-content: center;
     }
 
+    .primary-actions {
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    .primary-actions.single {
+      grid-template-columns: 1fr;
+    }
+
+    .primary-view-action {
+      width: 100%;
+      height: 90px;
+      border-radius: 10px;
+      font-size: 35px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .full-primary.split-action {
       height: 112px;
       flex-direction: column;
@@ -546,15 +577,16 @@
 
     .pending-empty {
       display: flex;
-      min-height: 430px;
-      padding: 78px 20px 50px;
-      flex-direction: column;
+      min-height: 104px;
+      padding: 24px 12px 12px;
+      flex-direction: row;
       align-items: center;
       justify-content: center;
       text-align: center;
     }
 
     .pending-empty-mark {
+      display: none !important;
       width: 96px;
       height: 96px;
       margin-bottom: 28px;
@@ -2020,12 +2052,12 @@
 
     .refund-verify-page {
       min-height: calc(1600px - 160px);
-      padding: 90px 32px 150px;
+      padding: 72px 32px 150px;
       background: var(--white);
     }
 
     .refund-verify-summary {
-      margin-bottom: 70px;
+      margin-bottom: 44px;
       text-align: center;
     }
 
@@ -2045,10 +2077,25 @@
       line-height: 1;
     }
 
+    .refund-verify-hint {
+      width: 610px;
+      max-width: 100%;
+      margin: 28px auto 0;
+      color: var(--text-2);
+      font-size: 24px;
+      line-height: 1.45;
+    }
+
     .refund-verify-card {
       padding: 28px 30px;
-      border-top: 1px solid var(--line);
       background: #F5F6F8;
+    }
+
+    .refund-verify-card-title {
+      margin-bottom: 22px;
+      color: var(--text-2);
+      font-size: 24px;
+      font-weight: 650;
     }
 
     .refund-verify-head {
@@ -2062,10 +2109,14 @@
     }
 
     .refund-verify-amount-small {
-      color: #D93026;
+      color: var(--text-2);
       font-size: 24px;
       font-weight: 600;
       white-space: nowrap;
+    }
+
+    .refund-verify-amount-small .inline-amount {
+      color: #D93026;
     }
 
     .refund-confirm-button {
@@ -2132,8 +2183,8 @@
 
     .refund-password-panel {
       width: 100%;
-      min-height: 650px;
-      border-radius: 10px 10px 0 0;
+      min-height: 720px;
+      border-radius: 12px 12px 0 0;
       background: var(--white);
       overflow: hidden;
     }
@@ -2144,7 +2195,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border-bottom: 1px solid var(--line);
       color: var(--text-1);
       font-size: 30px;
       font-weight: 650;
@@ -2165,8 +2215,8 @@
 
     .password-boxes {
       width: 570px;
-      height: 76px;
-      margin: 76px auto 72px;
+      height: 86px;
+      margin: 56px auto 78px;
       display: grid;
       grid-template-columns: repeat(6, 1fr);
       border: 1px solid var(--line);
@@ -2201,11 +2251,11 @@
     }
 
     .refund-key {
-      height: 108px;
+      height: 116px;
       border: 0;
       background: var(--white);
       color: #17191F;
-      font-size: 34px;
+      font-size: 38px;
       font-weight: 650;
     }
 
@@ -2282,6 +2332,56 @@
     .confirm-button.danger {
       color: #D93026;
     }
+
+    .terminal-list-dialog {
+      align-self: flex-end;
+      width: 100%;
+      border-radius: 24px 24px 0 0;
+      background: var(--white);
+      overflow: hidden;
+      box-shadow: 0 -24px 60px rgba(0, 0, 0, .18);
+    }
+
+    .terminal-list-head {
+      height: 96px;
+      padding: 0 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      color: var(--text-1);
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .terminal-list-close {
+      border: 0;
+      background: transparent;
+      color: var(--text-3);
+      font-size: 42px;
+      line-height: 1;
+    }
+
+    .terminal-list-body {
+      padding: 18px 34px 34px;
+      display: grid;
+      gap: 0;
+    }
+
+    .terminal-list-item {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      color: var(--text-2);
+      font-size: 27px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 600;
+    }
+
+    .terminal-list-item:last-child {
+      border-bottom: 0;
+    }
   </style>
 </head>
 <body>
@@ -2293,7 +2393,7 @@
           <span>9:41</span>
           <span class="home-status-right">
             <button class="home-mode-link" type="button" data-toggle-receive-mode>收银机模式</button>
-            <button class="home-empty-link" type="button" data-toggle-empty-pending>无待办</button>
+            <button class="home-empty-link" type="button" data-toggle-empty-pending>无待处理</button>
             <button class="home-order-count-link" type="button" data-toggle-order-count>多订单</button>
             <button class="home-sim-link" type="button" data-route="simulate-order">模拟下单</button>
             <span>Wi-Fi 76%</span>
@@ -2301,6 +2401,9 @@
         </div>
         <div class="store-name">上海爱达免税店</div>
         <div class="store-sub">门店编号：aida001</div>
+        <button class="store-terminal-scope" type="button" data-store-terminal-scope hidden>
+          指定收银机：<span class="scope-value" data-store-terminal-scope-value></span>
+        </button>
       </div>
 
       <div class="home-content">
@@ -2308,28 +2411,30 @@
           <div class="pending-head">
             <div class="pending-title">
               <span class="dot"></span>
-              <span>待办订单</span>
+              <span>待处理订单</span>
               <span class="count-pill" data-pending-count>3 笔</span>
             </div>
-            <button class="pending-refresh-button" type="button" data-home-refresh-trigger aria-label="刷新待办订单">
+            <button class="pending-refresh-button" type="button" data-home-refresh-trigger aria-label="刷新待处理订单">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
                 <path d="M21 12a9 9 0 1 1-2.64-6.36" stroke-linecap="round" stroke-linejoin="round"></path>
                 <path d="M21 3v6h-6" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
             </button>
           </div>
-          <div class="pending-scope" data-pending-scope>收银机：<span class="scope-value" data-pending-scope-value>WS-AIDA-TERMINAL-03</span></div>
 
-          <div class="primary-card" role="button" tabindex="0" data-route="detail-pending" data-current-home-card aria-label="查看待办订单详情">
+          <div class="primary-card" role="button" tabindex="0" data-route="detail-pending" data-current-home-card aria-label="查看待处理订单详情">
             <div class="primary-card-top">
               <div class="amount"><span class="currency">HK$</span><span class="money-value" data-order-amount>1,000.00</span></div>
-              <div class="time">14:26</div>
+              <div class="time" data-order-short-time>14:26</div>
             </div>
             <div class="desc">
               <div class="kv" data-card-terminal-row><span class="kv-label">收银机</span><span class="mono" data-order-terminal>WS-AIDA-TERMINAL-03</span></div>
               <div class="kv"><span class="kv-label">单号</span><span class="mono" data-order-sn>CHK-AIDA-20260427-000000001234AB</span></div>
             </div>
-            <button class="primary-action" type="button" data-route="pay-method" data-order-action>收款</button>
+            <div class="primary-actions" data-home-primary-actions>
+              <button class="primary-view-action secondary-action" type="button" data-route="detail-pending" data-primary-view-action>查看</button>
+              <button class="primary-action" type="button" data-route="pay-method" data-order-action data-home-primary-action>收款</button>
+            </div>
           </div>
 
           <div class="queue">
@@ -2350,11 +2455,11 @@
             </div>
           </div>
 
-          <button class="all-link" type="button" data-route="pending-list">查看全部待办订单</button>
+          <button class="all-link" type="button" data-route="pending-list">查看全部待处理订单</button>
 
           <div class="pending-empty" data-pending-empty hidden>
             <div class="pending-empty-mark" aria-hidden="true"></div>
-            <div class="pending-empty-desc" data-pending-empty-desc>当前收银机暂无待办订单</div>
+            <div class="pending-empty-desc" data-pending-empty-desc>当前收银机暂无待处理订单</div>
           </div>
         </div>
 
@@ -2399,7 +2504,7 @@
             <span class="sim-currency">HK$</span>
             <input class="sim-amount-input" data-sim-amount inputmode="decimal" value="1000.00" aria-label="订单金额">
           </label>
-          <div class="sim-hint">用于生成待办订单、详情页和收银台金额展示。</div>
+          <div class="sim-hint">用于生成待处理订单、详情页和收银台金额展示。</div>
         </div>
 
         <div class="sim-card">
@@ -2431,97 +2536,91 @@
             <div class="sim-preview-row"><span class="sim-preview-label">金额</span><span class="sim-preview-value strong">HK$ <span data-sim-preview-amount>1,000.00</span></span></div>
             <div class="sim-preview-row"><span class="sim-preview-label" data-sim-preview-method-label>支付方式</span><span class="sim-preview-value" data-sim-preview-method>收银员选择</span></div>
             <div class="sim-preview-row" hidden><span class="sim-preview-label">分笔收款</span><span class="sim-preview-value" data-sim-preview-split>本期不展示入口</span></div>
-            <div class="sim-preview-row"><span class="sim-preview-label">生成位置</span><span class="sim-preview-value">首页第一笔待办订单</span></div>
+          <div class="sim-preview-row"><span class="sim-preview-label">生成位置</span><span class="sim-preview-value">首页第一笔待处理订单</span></div>
           </div>
           <div class="sim-actions">
-            <button class="full-primary" type="button" data-create-order>生成待办订单</button>
+            <button class="full-primary" type="button" data-create-order>生成待处理订单</button>
             <button class="secondary-action" type="button" data-route="home">返回首页</button>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="screen" id="pending-list" aria-label="全部待办订单">
+    <section class="screen" id="pending-list" aria-label="全部待处理订单">
       <div class="system-bar">12:30</div>
       <div class="nav">
         <button class="back" type="button" data-route="home" aria-label="返回"></button>
-        <div class="nav-title">全部待办订单</div>
+        <div class="nav-title">全部待处理订单</div>
         <div></div>
       </div>
 
       <div class="page pending-list">
         <div class="pending-item" role="button" tabindex="0" data-route="detail-pending" data-current-pending-item>
-          <div class="record-sn" data-order-sn>CHK-AIDA-20260427-000000001234AB</div>
-          <div class="record-divider"></div>
           <div class="pending-item-head">
             <div class="item-amount"><span class="currency">HK$</span><span class="money-value" data-order-amount>1,000.00</span></div>
             <span class="status-tag">待操作</span>
           </div>
           <div class="order-type-line">
             <div class="order-type"><span class="type-icon" data-order-type-icon>收</span><span data-order-type>收款订单</span></div>
-            <div class="record-time">2026-04-29 14:26:18</div>
+            <div class="record-time" data-order-short-time>14:26</div>
           </div>
           <div class="record-dashed"></div>
           <div class="record-fields">
-            <div class="record-field"><span>Register</span><span class="record-field-value mono" data-order-terminal>WS-AIDA-TERMINAL-03</span></div>
-            <div class="record-field"><span>Check SN</span><span class="record-field-value mono" data-order-sn>CHK-AIDA-20260427-000000001234AB</span></div>
+            <div class="record-field"><span>收银机</span><span class="record-field-value mono" data-order-terminal>WS-AIDA-TERMINAL-03</span></div>
+            <div class="record-field"><span>单号</span><span class="record-field-value mono" data-order-sn>CHK-AIDA-20260427-000000001234AB</span></div>
           </div>
-          <div class="item-actions">
-            <button class="compact-button secondary-action" type="button" data-cancel-order>取消</button>
+          <div class="item-actions" data-current-list-actions>
+            <button class="compact-button secondary-action" type="button" data-route="detail-pending" data-current-list-view-action>查看</button>
             <button class="compact-button full-primary" type="button" data-route="pay-method" data-order-action>收款</button>
           </div>
         </div>
 
         <div class="pending-item" role="button" tabindex="0" data-route="detail-pending">
-          <div class="record-sn">CHK-AIDA-20260427-000000000892CD</div>
-          <div class="record-divider"></div>
           <div class="pending-item-head">
             <div class="item-amount"><span class="currency">HK$</span><span class="money-value">356.00</span></div>
             <span class="status-tag warn">等待结果</span>
           </div>
           <div class="order-type-line">
             <div class="order-type"><span class="type-icon">收</span><span>收款订单</span></div>
-            <div class="record-time">2026-04-29 14:23:41</div>
+            <div class="record-time">14:23</div>
           </div>
           <div class="record-dashed"></div>
           <div class="record-fields">
-            <div class="record-field"><span>Register</span><span class="record-field-value mono">WS-AIDA-TERMINAL-01</span></div>
-            <div class="record-field"><span>Check SN</span><span class="record-field-value mono">CHK-AIDA-20260427-000000000892CD</span></div>
+            <div class="record-field"><span>收银机</span><span class="record-field-value mono">WS-AIDA-TERMINAL-01</span></div>
+            <div class="record-field"><span>单号</span><span class="record-field-value mono">CHK-AIDA-20260427-000000000892CD</span></div>
           </div>
           <div class="item-actions single-action">
             <button class="compact-button full-primary" type="button" data-route="detail-pending">查看</button>
           </div>
         </div>
 
-        <div class="pending-item" role="button" tabindex="0" data-route="detail-pending">
-          <div class="record-sn">CHK-AIDA-20260427-000000000518GH</div>
-          <div class="record-divider"></div>
+        <div class="pending-item" role="button" tabindex="0" data-route="detail-pending" data-order-key="pending-refund">
           <div class="pending-item-head">
             <div class="item-amount negative-amount"><span class="currency">-HK$</span><span class="money-value">120.00</span></div>
             <span class="status-tag">待操作</span>
           </div>
           <div class="order-type-line">
             <div class="order-type"><span class="type-icon refund">退</span><span>退款订单</span></div>
-            <div class="record-time">2026-04-29 14:08:22</div>
+            <div class="record-time">14:08</div>
           </div>
           <div class="record-dashed"></div>
           <div class="record-fields">
-            <div class="record-field"><span>Register</span><span class="record-field-value mono">WS-AIDA-TERMINAL-02</span></div>
-            <div class="record-field"><span>Check SN</span><span class="record-field-value mono">CHK-AIDA-20260427-000000000518GH</span></div>
+            <div class="record-field"><span>收银机</span><span class="record-field-value mono">WS-AIDA-TERMINAL-02</span></div>
+            <div class="record-field"><span>单号</span><span class="record-field-value mono">CHK-AIDA-20260427-000000000518GH</span></div>
           </div>
           <div class="item-actions">
-            <button class="compact-button secondary-action" type="button" data-cancel-order>取消</button>
-            <button class="compact-button full-primary" type="button" data-route="detail-pending">退款</button>
+            <button class="compact-button secondary-action" type="button" data-route="detail-pending" data-order-key="pending-refund">查看</button>
+            <button class="compact-button full-primary" type="button" data-route="processing" data-order-key="pending-refund" data-method="WeChat Pay">微信支付退款</button>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="screen" id="detail-pending" aria-label="待办订单详情">
+    <section class="screen" id="detail-pending" aria-label="待处理订单详情">
       <div class="system-bar">12:30</div>
       <div class="nav">
         <button class="back" type="button" data-route="home" aria-label="返回"></button>
-        <div class="nav-title">待办订单详情</div>
+        <div class="nav-title">待处理订单详情</div>
         <button class="nav-action" type="button" data-cancel-order data-detail-cancel>取消</button>
       </div>
 
@@ -2538,7 +2637,7 @@
         </div>
 
         <div class="info-card">
-          <div class="info-rows collapsible">
+          <div class="info-rows">
             <div class="info-row"><span class="info-label">收银机</span><span class="info-value mono" data-order-terminal>WS-AIDA-TERMINAL-03</span></div>
             <div class="info-row"><span class="info-label">订单时间</span><span class="info-value" data-order-time>2026-04-29 14:26:18</span></div>
             <div class="info-row"><span class="info-label">商家订单号</span><span class="info-value mono" data-order-sn>CHK-AIDA-20260427-000000001234AB</span></div>
@@ -2551,10 +2650,6 @@
             <div class="info-row"><span class="info-label">拓展信息-1</span><span class="info-value">航班 MU583</span></div>
             <div class="info-row"><span class="info-label">拓展信息-2</span><span class="info-value">登机口 D18</span></div>
           </div>
-          <button class="info-toggle" type="button" data-toggle-info>
-            <span data-toggle-text>展开更多</span>
-            <span class="toggle-arrow"></span>
-          </button>
         </div>
 
         <div class="operation-card" data-operation-card hidden>
@@ -2792,32 +2887,34 @@
       </div>
     </section>
 
-    <section class="screen" id="verify-refund" aria-label="核对退款信息">
+    <section class="screen" id="verify-refund" aria-label="确认退款信息">
       <div class="system-bar">12:30</div>
       <div class="nav">
         <button class="back" type="button" data-route="detail-pending" aria-label="返回"></button>
-        <div class="nav-title">核对退款信息</div>
+        <div class="nav-title">确认退款信息</div>
         <div></div>
       </div>
       <div class="refund-verify-page">
         <div class="refund-verify-summary">
           <div class="refund-verify-label">退款金额</div>
           <div class="refund-verify-amount"><span class="currency">HK$</span><span class="money-value" data-refund-verify-amount>0.00</span></div>
+          <div class="refund-verify-hint">请核对退款金额和原支付交易信息，确认后将发起退款。</div>
         </div>
         <div class="refund-verify-card">
+          <div class="refund-verify-card-title">原支付交易</div>
           <div class="refund-verify-head">
             <span class="trade-icon" data-refund-verify-icon>卡</span>
             <span data-refund-verify-method>银行卡</span>
-            <span class="refund-verify-amount-small">退款 <span class="inline-amount"><span class="currency">HK$</span><span data-refund-verify-amount-small>0.00</span></span></span>
+            <span class="refund-verify-amount-small">本次拟退 <span class="inline-amount"><span class="currency">HK$</span><span data-refund-verify-amount-small>0.00</span></span></span>
           </div>
           <div class="info-rows">
-            <div class="info-row"><span class="info-label">Trans SN</span><span class="info-value mono" data-refund-verify-trans-sn>626040800106507731</span></div>
-            <div class="info-row"><span class="info-label">Internal SN</span><span class="info-value mono" data-refund-verify-internal-sn>7895088691386188</span></div>
-            <div class="info-row"><span class="info-label">Channel SN</span><span class="info-value mono" data-refund-verify-channel-sn>420000303220260408</span></div>
+            <div class="info-row"><span class="info-label">原交易流水号</span><span class="info-value mono" data-refund-verify-trans-sn>626040800106507731</span></div>
+            <div class="info-row"><span class="info-label">内部流水号</span><span class="info-value mono" data-refund-verify-internal-sn>7895088691386188</span></div>
+            <div class="info-row"><span class="info-label">通道流水号</span><span class="info-value mono" data-refund-verify-channel-sn>420000303220260408</span></div>
           </div>
         </div>
       </div>
-      <button class="refund-confirm-button" type="button" data-confirm-trade-refund>确认退款</button>
+      <button class="refund-confirm-button" type="button" data-confirm-trade-refund>确认并发起退款</button>
     </section>
 
     <section class="screen" id="detail-success" aria-label="订单详情完成态">
@@ -2875,12 +2972,21 @@
       <div class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="cancel-title">
         <div class="confirm-body">
           <div class="confirm-title" id="cancel-title">确认取消订单？</div>
-          <div class="confirm-desc">取消后，该订单将从待办订单中移除。</div>
+          <div class="confirm-desc">取消后，该订单将从待处理订单中移除。</div>
         </div>
         <div class="confirm-actions">
           <button class="confirm-button" type="button" data-cancel-modal-close>再想想</button>
           <button class="confirm-button danger" type="button" data-confirm-cancel>确认取消</button>
         </div>
+      </div>
+    </div>
+    <div class="confirm-mask" data-terminal-list-modal hidden>
+      <div class="terminal-list-dialog" role="dialog" aria-modal="true" aria-labelledby="terminal-list-title">
+        <div class="terminal-list-head">
+          <div id="terminal-list-title">指定收银机</div>
+          <button class="terminal-list-close" type="button" data-terminal-list-close aria-label="关闭">×</button>
+        </div>
+        <div class="terminal-list-body" data-terminal-list-body></div>
       </div>
     </div>
     <div class="refund-password-mask" data-refund-password-modal hidden>
@@ -2949,6 +3055,8 @@
     let lastResultOperation = "payment";
     let selectedRefundTradeId = null;
     let refundPassword = "";
+    let refundPasswordMode = "tradeRefund";
+    let pendingRefundMethod = "";
     let demoNoPending = false;
     let demoSinglePending = false;
     let homeRefreshing = false;
@@ -2962,7 +3070,11 @@
     };
     const posBinding = {
       bound: true,
-      terminal: "WS-AIDA-TERMINAL-03"
+      terminals: [
+        "WS-AIDA-TERMINAL-01",
+        "WS-AIDA-TERMINAL-02",
+        "WS-AIDA-TERMINAL-03"
+      ]
     };
     const sampleOrders = {
       "waiting-payment": {
@@ -2995,7 +3107,15 @@
         designatedTime: "2026-04-29 14:08:22",
         checkSn: "CHK-AIDA-20260427-000000000518GH",
         upstreamSn: "SIM1779914080003",
-        terminal: "WS-AIDA-TERMINAL-02"
+        terminal: "WS-AIDA-TERMINAL-02",
+        originalTrade: {
+          method: "WeChat Pay",
+          amount: "120.00",
+          time: "2026-04-29 14:01:16",
+          transSn: "626040800106507731",
+          internalSn: "7895088691386188",
+          channelSn: "420000303220260408"
+        }
       }
     };
     let currentOrder = {
@@ -3314,8 +3434,10 @@
       });
     }
 
-    function openRefundPassword(tradeId) {
-      selectedRefundTradeId = tradeId;
+    function openRefundPassword(tradeId, options = {}) {
+      selectedRefundTradeId = tradeId || null;
+      refundPasswordMode = options.mode || "tradeRefund";
+      pendingRefundMethod = options.method || "";
       refundPassword = "";
       renderRefundPassword();
       refundPasswordModal.hidden = false;
@@ -3324,11 +3446,13 @@
     function closeRefundPassword() {
       refundPasswordModal.hidden = true;
       refundPassword = "";
+      refundPasswordMode = "tradeRefund";
+      pendingRefundMethod = "";
       renderRefundPassword();
     }
 
     function syncRefundVerifyPage() {
-      const trade = getSelectedRefundTrade();
+      const trade = getSelectedRefundTrade() || getPendingRefundTrade();
       if (!trade) return;
       const amount = formatAmount(trade.amount);
       setAmountText(document.querySelector("[data-refund-verify-amount]"), amount);
@@ -3341,9 +3465,30 @@
     }
 
     function completeRefundPassword() {
+      const mode = refundPasswordMode;
+      const method = pendingRefundMethod || currentOrder.paymentMethod || selectedMethod || "WeChat Pay";
       closeRefundPassword();
+      if (mode === "pendingRefund") {
+        selectedMethod = method;
+        syncRefundVerifyPage();
+        routeTo("verify-refund");
+        return;
+      }
       syncRefundVerifyPage();
       routeTo("verify-refund");
+    }
+
+    function getPendingRefundTrade() {
+      if (currentOrder.type !== "refund") return null;
+      const method = normalizeTradeMethod(currentOrder.originalTrade?.method || currentOrder.paymentMethod || selectedMethod || "WeChat Pay");
+      return {
+        method,
+        amount: normalizeAmount(currentOrder.amount),
+        time: currentOrder.originalTrade?.time || currentOrder.designatedTime,
+        transSn: currentOrder.originalTrade?.transSn || "626040800" + String(Date.now()).slice(-8),
+        internalSn: currentOrder.originalTrade?.internalSn || "789508869" + String(Date.now()).slice(-7),
+        channelSn: currentOrder.originalTrade?.channelSn || "4200003032" + String(Date.now()).slice(-8)
+      };
     }
 
     function buildOrderSn(type) {
@@ -3361,9 +3506,15 @@
       ].join("-") + " " + [pad(date.getHours()), pad(date.getMinutes()), pad(date.getSeconds())].join(":");
     }
 
+    function formatShortTime(value) {
+      const match = String(value || "").match(/\b(\d{2}):(\d{2})(?::\d{2})?\b/);
+      return match ? `${match[1]}:${match[2]}` : "";
+    }
+
     function cloneOrder(order) {
       return {
         ...order,
+        originalTrade: order.originalTrade ? { ...order.originalTrade } : null,
         paidTransactions: order.paidTransactions.map((trade) => ({ ...trade }))
       };
     }
@@ -3394,6 +3545,12 @@
       return typeMeta.action;
     }
 
+    function getHomePrimaryActionText(typeMeta) {
+      if (currentOrder.status !== "pending") return "";
+      if (currentOrder.type === "payment" && !currentOrder.paymentMethod) return "收款";
+      return getActionText(typeMeta);
+    }
+
     function getActionRoute() {
       if (currentOrder.status === "waiting") return "detail-pending";
       if (currentOrder.status === "operating") return "detail-pending";
@@ -3407,6 +3564,25 @@
         return currentOrder.paymentMethod === "Bank Card" ? "card-pay" : "scan-pay";
       }
       return "pay-method";
+    }
+
+    function getBoundTerminals() {
+      return posBinding.bound ? posBinding.terminals : [];
+    }
+
+    function getTerminalScopeText() {
+      const terminals = getBoundTerminals();
+      if (terminals.length === 0) return "";
+      if (terminals.length === 1) return terminals[0];
+      return terminals.length + " 台 >";
+    }
+
+    function renderTerminalListModal() {
+      const list = document.querySelector("[data-terminal-list-body]");
+      if (!list) return;
+      list.innerHTML = getBoundTerminals().map((terminal) => (
+        `<div class="terminal-list-item">${terminal}</div>`
+      )).join("");
     }
 
     function updateDirectPayPage() {
@@ -3520,9 +3696,9 @@
       const isOperating = currentOrder.status === "operating";
       const paidAmount = getPaidAmount();
       const remainingAmount = getRemainingAmount();
-      const hasDesignatedPayment = (currentOrder.type === "payment" || currentOrder.type === "refund" || currentOrder.type === "auth") && currentOrder.paymentMethod && currentOrder.status === "pending";
       const actionText = getActionText(typeMeta);
       const actionRoute = getActionRoute();
+      const homePrimaryActionText = getHomePrimaryActionText(typeMeta);
       document.querySelectorAll("[data-order-amount]").forEach((node) => {
         setAmountText(node, amount);
       });
@@ -3542,28 +3718,42 @@
       document.querySelectorAll("[data-order-time]").forEach((node) => {
         node.textContent = currentOrder.designatedTime;
       });
+      document.querySelectorAll("[data-order-short-time]").forEach((node) => {
+        node.textContent = formatShortTime(currentOrder.designatedTime);
+      });
       document.querySelectorAll("[data-order-terminal]").forEach((node) => {
         node.textContent = currentOrder.terminal;
       });
-      document.querySelector("[data-pending-scope]").hidden = !posBinding.bound;
-      document.querySelector("[data-pending-scope-value]").textContent = posBinding.terminal;
-      document.querySelector("[data-pending-scope]").firstChild.textContent = "收银机：";
+      const storeTerminalScope = document.querySelector("[data-store-terminal-scope]");
+      const boundTerminals = getBoundTerminals();
+      storeTerminalScope.hidden = boundTerminals.length === 0;
+      storeTerminalScope.classList.toggle("clickable", boundTerminals.length > 1);
+      storeTerminalScope.disabled = boundTerminals.length <= 1;
+      document.querySelector("[data-store-terminal-scope-value]").textContent = getTerminalScopeText();
       document.querySelector("[data-toggle-receive-mode]").textContent = posBinding.bound ? "收银机模式" : "门店模式";
       const emptyToggle = document.querySelector("[data-toggle-empty-pending]");
-      emptyToggle.textContent = demoNoPending ? "恢复待办" : "无待办";
+      emptyToggle.textContent = demoNoPending ? "恢复待处理" : "无待处理";
       emptyToggle.classList.toggle("active", demoNoPending);
       document.querySelector("[data-toggle-order-count]").textContent = demoSinglePending ? "单订单" : "多订单";
-      document.querySelectorAll("[data-card-terminal-row], [data-mini-terminal-row]").forEach((node) => {
-        node.hidden = posBinding.bound;
-      });
+      const visiblePendingCount = demoNoPending ? 0 : demoSinglePending ? 1 : isCancelled ? 2 : 3;
       document.querySelector("[data-current-home-card]").hidden = demoNoPending || isCancelled;
       document.querySelector("[data-current-pending-item]").hidden = demoNoPending || isCancelled;
       document.querySelector(".queue").hidden = demoNoPending || demoSinglePending;
-      document.querySelector(".all-link").hidden = demoNoPending || demoSinglePending;
+      document.querySelector(".all-link").hidden = visiblePendingCount < 2;
       document.querySelector("[data-pending-empty]").hidden = !demoNoPending;
       document.querySelector("[data-pending-count]").hidden = demoNoPending;
-      document.querySelector("[data-pending-count]").textContent = demoSinglePending ? "1 笔" : isCancelled ? "2 笔" : "3 笔";
-      document.querySelector("[data-pending-empty-desc]").textContent = posBinding.bound ? "当前收银机暂无待办订单" : "当前门店暂无待办订单";
+      document.querySelector("[data-pending-count]").textContent = visiblePendingCount + " 笔";
+      document.querySelector("[data-pending-empty-desc]").textContent = posBinding.bound ? "当前指定收银机暂无待处理订单" : "当前门店暂无待处理订单";
+      const homePrimaryActions = document.querySelector("[data-home-primary-actions]");
+      const homePrimaryAction = document.querySelector("[data-home-primary-action]");
+      homePrimaryActions.classList.toggle("single", !homePrimaryActionText);
+      homePrimaryAction.hidden = !homePrimaryActionText;
+      homePrimaryAction.textContent = homePrimaryActionText;
+      homePrimaryAction.dataset.route = actionRoute;
+      const listActions = document.querySelector("[data-current-list-actions]");
+      const listAction = listActions.querySelector("[data-order-action]");
+      listActions.classList.toggle("single-action", !homePrimaryActionText);
+      listAction.hidden = !homePrimaryActionText;
 
       const typeIcon = document.querySelector("[data-order-type-icon]");
       if (typeIcon) {
@@ -3605,12 +3795,11 @@
       document.querySelector("[data-order-status]").textContent = isWaiting ? "等待结果中" : isOperating ? "操作中" : "待操作";
 
       document.querySelector("[data-waiting-summary]").hidden = !isWaiting;
-      document.querySelector("[data-designated-summary]").hidden = !hasDesignatedPayment;
-      document.querySelector("[data-operation-card]").hidden = !isWaiting && !hasDesignatedPayment;
+      document.querySelector("[data-designated-summary]").hidden = true;
+      document.querySelector("[data-operation-card]").hidden = !isWaiting;
       const pendingTradeHint = document.querySelector("[data-pending-trade-hint]");
-      const showRefundPendingHint = currentOrder.type === "refund" && currentOrder.status === "pending";
-      pendingTradeHint.hidden = !isWaiting && !showRefundPendingHint;
-      pendingTradeHint.textContent = isWaiting ? "交易结果未知，请点击刷新" : "请核对订单信息后，完成退款";
+      pendingTradeHint.hidden = !isWaiting;
+      pendingTradeHint.textContent = "交易结果未知，请点击刷新";
       document.querySelector("[data-pending-action]").hidden = isWaiting;
       document.querySelector("[data-refresh-action]").hidden = !isWaiting;
       const pendingAction = document.querySelector("[data-pending-action]");
@@ -3623,12 +3812,6 @@
         pendingAction.textContent = actionText;
       }
       document.querySelector("[data-detail-cancel]").hidden = !canCancelCurrentOrder();
-
-      if (hasDesignatedPayment) {
-        document.querySelector("[data-designated-method]").textContent = currentOrder.type === "auth" ? "银行卡预授权" : methodNames[currentOrder.paymentMethod];
-        document.querySelector("[data-designated-time]").textContent = currentOrder.designatedTime;
-        document.querySelector("[data-designated-icon]").textContent = currentOrder.type === "auth" ? "预" : currentOrder.paymentMethod === "Bank Card" ? "卡" : currentOrder.paymentMethod === "WeChat Pay" ? "微" : "支";
-      }
 
       if (isWaiting) {
         const waitingRefundTrade = getWaitingRefundTrade();
@@ -3671,6 +3854,7 @@
 
     function createSimulatedOrder() {
       const paymentMethod = simDraft.type === "refund" && !simDraft.paymentMethod ? "WeChat Pay" : simDraft.type === "auth" ? simDraft.paymentMethod : simDraft.paymentMethod;
+      const now = Date.now();
       currentOrder = {
         type: simDraft.type,
         amount: normalizeAmount(simDraft.amount),
@@ -3681,11 +3865,19 @@
         waitingOperation: "",
         waitingTradeId: "",
         paidTransactions: [],
+        originalTrade: simDraft.type === "refund" ? {
+          method: paymentMethod || "WeChat Pay",
+          amount: normalizeAmount(simDraft.amount),
+          time: formatTradeTime(new Date(now - 1000 * 60 * 8)),
+          transSn: "626040800" + String(now).slice(-8),
+          internalSn: "789508869" + String(now).slice(-7),
+          channelSn: "4200003032" + String(now).slice(-8)
+        } : null,
         cancelled: false,
         designatedTime: formatTradeTime(),
         checkSn: buildOrderSn(simDraft.type),
         upstreamSn: "SIM" + String(Date.now()).slice(-14),
-        terminal: posBinding.bound ? posBinding.terminal : "WS-AIDA-TERMINAL-SIM"
+        terminal: posBinding.bound ? posBinding.terminals[0] : "WS-AIDA-TERMINAL-SIM"
       };
       selectedMethod = currentOrder.type === "auth" ? "Bank Card" : currentOrder.paymentMethod || "Alipay";
       lastTradeWasSplit = false;
@@ -3700,9 +3892,10 @@
 
     function showOriginalPaymentOrder() {
       if (currentOrder.type !== "refund") return;
-      const originalMethod = normalizeTradeMethod(currentOrder.paymentMethod || currentOrder.tradeMethod || "WeChat Pay");
-      const originalAmount = normalizeAmount(currentOrder.amount);
-      const originalTime = currentOrder.designatedTime;
+      const originalTrade = getPendingRefundTrade();
+      const originalMethod = normalizeTradeMethod(originalTrade?.method || currentOrder.paymentMethod || currentOrder.tradeMethod || "WeChat Pay");
+      const originalAmount = normalizeAmount(originalTrade?.amount || currentOrder.amount);
+      const originalTime = originalTrade?.time || currentOrder.designatedTime;
       currentOrder = {
         type: "payment",
         amount: originalAmount,
@@ -3717,9 +3910,9 @@
           method: originalMethod,
           amount: originalAmount,
           time: originalTime,
-          transSn: "626040800" + String(Date.now()).slice(-8),
-          internalSn: "789508869" + String(Date.now()).slice(-7),
-          channelSn: "4200003032" + String(Date.now()).slice(-8),
+          transSn: originalTrade?.transSn || "626040800" + String(Date.now()).slice(-8),
+          internalSn: originalTrade?.internalSn || "789508869" + String(Date.now()).slice(-7),
+          channelSn: originalTrade?.channelSn || "4200003032" + String(Date.now()).slice(-8),
           refunded: false,
           refundStatus: ""
         }],
@@ -3766,6 +3959,17 @@
       lastTradeWasSplit = false;
       updateOrderDisplay();
       routeTo("processing");
+    }
+
+    function confirmRefund() {
+      if (selectedRefundTradeId) {
+        startTradeRefund();
+        return;
+      }
+      if (currentOrder.type === "refund") {
+        startTransaction(currentOrder.paymentMethod || selectedMethod || "WeChat Pay");
+        routeTo("processing");
+      }
     }
 
     function markWaitingResult() {
@@ -4027,10 +4231,24 @@
         event.preventDefault();
         event.stopPropagation();
         posBinding.bound = !posBinding.bound;
-        if (posBinding.bound) {
-          currentOrder.terminal = posBinding.terminal;
-        }
         updateOrderDisplay();
+        return;
+      }
+
+      if (event.target.closest("[data-store-terminal-scope]")) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (getBoundTerminals().length > 1) {
+          renderTerminalListModal();
+          document.querySelector("[data-terminal-list-modal]").hidden = false;
+        }
+        return;
+      }
+
+      if (event.target.closest("[data-terminal-list-close]") || event.target === document.querySelector("[data-terminal-list-modal]")) {
+        event.preventDefault();
+        event.stopPropagation();
+        document.querySelector("[data-terminal-list-modal]").hidden = true;
         return;
       }
 
@@ -4087,7 +4305,7 @@
       if (event.target.closest("[data-confirm-trade-refund]")) {
         event.preventDefault();
         event.stopPropagation();
-        startTradeRefund();
+        confirmRefund();
         return;
       }
 
@@ -4180,6 +4398,19 @@
       event.stopPropagation();
       if (trigger.dataset.orderKey) {
         loadSampleOrder(trigger.dataset.orderKey);
+      }
+      if (trigger.dataset.route === "processing" && currentOrder.type === "refund") {
+        const method = trigger.dataset.method || currentOrder.paymentMethod || selectedMethod || "WeChat Pay";
+        selectedMethod = method;
+        isSplitPaymentFlow = false;
+        lastTradeWasSplit = false;
+        currentTradeAmount = getCurrentPaymentAmount();
+        setCurrentPaymentAmount(currentTradeAmount);
+        openRefundPassword(null, {
+          mode: "pendingRefund",
+          method
+        });
+        return;
       }
       if (["pay-method", "split-pay", "scan-pay", "card-pay"].includes(trigger.dataset.route)) {
         currentOperation = currentOrder.type;

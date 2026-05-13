@@ -545,19 +545,15 @@
     }
 
     .scope-summary {
-      position: relative;
       display: inline-flex;
       align-items: center;
       max-width: 100%;
-      cursor: default;
-    }
-
-    .scope-summary[data-tooltip]:hover::after {
-      content: none;
-    }
-
-    .scope-summary[data-tooltip]:hover::before {
-      content: none;
+      color: var(--blue);
+      border: 0;
+      background: transparent;
+      padding: 0;
+      font: inherit;
+      cursor: pointer;
     }
 
     .floating-tooltip {
@@ -575,6 +571,47 @@
       word-break: break-all;
       box-shadow: 0 8px 18px rgba(24, 25, 33, .16);
       pointer-events: none;
+    }
+
+    .workstation-popover {
+      position: fixed;
+      z-index: 120;
+      width: 260px;
+      color: var(--text);
+      background: #ffffff;
+      border: 1px solid #d8dce3;
+      border-radius: 3px;
+      box-shadow: 0 12px 28px rgba(24, 25, 33, .18);
+    }
+
+    .workstation-popover-title {
+      height: 38px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-bottom: 1px solid var(--line);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .workstation-popover-list {
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .workstation-popover-row {
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0f1f3;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      word-break: break-all;
+    }
+
+    .workstation-popover-row:last-child {
+      border-bottom: 0;
     }
 
     .link-btn {
@@ -974,6 +1011,10 @@
       border-radius: 50%;
       background: #fff;
       box-shadow: 0 1px 3px rgba(0, 0, 0, .18);
+    }
+
+    .muted-value {
+      color: var(--muted);
     }
 
     .setting-inline-action {
@@ -1754,23 +1795,29 @@
       if (device.scopeType !== "WORKSTATION") return "全门店";
       const workstations = workstationList(device);
       const count = workstations.length;
-      const tooltip = workstations.length ? `收银机号：${workstations.join("、")}` : "暂无收银机号";
-      return `<span class="scope-summary" data-tooltip="${escapeHtml(tooltip)}">收银机：${count} 台</span>`;
+      return `<button class="scope-summary" type="button" data-scope-device="${device.id}">收银机：${count} 台</button>`;
     }
 
-    function showFloatingTooltip(target) {
+    function showWorkstationPopover(target) {
       hideFloatingTooltip();
-      const content = target.dataset.tooltip;
-      if (!content) return;
+      const device = deviceById(target.dataset.scopeDevice);
+      if (!device) return;
+      const rows = workstationList(device);
       floatingTooltip = document.createElement("div");
-      floatingTooltip.className = "floating-tooltip";
-      floatingTooltip.textContent = content;
+      floatingTooltip.className = "workstation-popover";
+      floatingTooltip.innerHTML = `
+        <div class="workstation-popover-title">收银机信息</div>
+        <div class="workstation-popover-list">
+          ${rows.map((item) => `<div class="workstation-popover-row">${escapeHtml(item)}</div>`).join("")}
+        </div>
+      `;
       document.body.appendChild(floatingTooltip);
       const rect = target.getBoundingClientRect();
       const tooltipRect = floatingTooltip.getBoundingClientRect();
       const left = Math.min(Math.max(rect.left, 8), window.innerWidth - tooltipRect.width - 8);
-      let top = rect.top - tooltipRect.height - 8;
-      if (top < 8) top = rect.bottom + 8;
+      let top = rect.bottom + 8;
+      if (top + tooltipRect.height > window.innerHeight - 8) top = rect.top - tooltipRect.height - 8;
+      if (top < 8) top = 8;
       floatingTooltip.style.left = `${left}px`;
       floatingTooltip.style.top = `${top}px`;
     }
@@ -1781,12 +1828,12 @@
       floatingTooltip = null;
     }
 
-    function bindScopeTooltips() {
-      document.querySelectorAll(".scope-summary[data-tooltip]").forEach((item) => {
-        item.addEventListener("mouseenter", () => showFloatingTooltip(item));
-        item.addEventListener("mouseleave", hideFloatingTooltip);
-        item.addEventListener("focus", () => showFloatingTooltip(item));
-        item.addEventListener("blur", hideFloatingTooltip);
+    function bindScopePopovers(root = document) {
+      root.querySelectorAll(".scope-summary[data-scope-device]").forEach((item) => {
+        item.addEventListener("click", (event) => {
+          event.stopPropagation();
+          showWorkstationPopover(item);
+        });
       });
     }
 
@@ -1795,7 +1842,7 @@
     }
 
     function displayDeviceValue(device, value) {
-      return device.status === "ACTIVE" ? emptyText(value) : "未激活";
+      return device.status === "ACTIVE" ? emptyText(value) : '<span class="muted-value">未激活</span>';
     }
 
     function statusHtml(device) {
@@ -1806,6 +1853,14 @@
 
     function statusText(device) {
       return device.status === "ACTIVE" ? "已激活" : "未激活";
+    }
+
+    function statusValue(device) {
+      return device.status === "ACTIVE" ? "已激活" : '<span class="muted-value">未激活</span>';
+    }
+
+    function deviceManagementEnabled() {
+      return true;
     }
 
     function canDeactivateInMeta(device) {
@@ -1922,9 +1977,13 @@
       }
       tbody.innerHTML = visibleDevices.map((device) => {
         const store = deviceStore(device);
-        const actions = device.status === "ACTIVE"
-          ? `<button class="link-btn" data-action="scope" data-id="${device.id}">接单范围</button><button class="link-btn" data-action="detail" data-id="${device.id}">详情</button>`
-          : `<button class="link-btn" data-action="scope" data-id="${device.id}">接单范围</button><button class="link-btn" data-action="activate" data-id="${device.id}">激活</button><button class="link-btn" data-action="detail" data-id="${device.id}">详情</button>`;
+        const actions = [
+          `<button class="link-btn" data-action="scope" data-id="${device.id}">接单范围</button>`,
+          device.status !== "ACTIVE" && deviceManagementEnabled()
+            ? `<button class="link-btn" data-action="activate" data-id="${device.id}">激活</button>`
+            : "",
+          `<button class="link-btn" data-action="detail" data-id="${device.id}">详情</button>`
+        ].filter(Boolean).join("");
         return `
           <tr>
             <td>${device.createdAt}</td>
@@ -1942,7 +2001,7 @@
         `;
       }).join("");
       document.getElementById("deviceTotal").textContent = `共${visibleDevices.length}条`;
-      bindScopeTooltips();
+      bindScopePopovers(tbody);
       tbody.querySelectorAll("[data-action]").forEach((button) => {
         button.addEventListener("click", () => {
           const id = button.dataset.id;
@@ -2126,22 +2185,11 @@
     function openScope(id) {
       currentDeviceId = id;
       const device = deviceById(id);
-      const store = deviceStore(device);
       dialogBody.innerHTML = `
-        <div class="subsection">
-          <p class="section-title">基础信息</p>
-          <dl class="kv">
-            <dt>设备 ID</dt><dd class="mono">${device.id}</dd>
-            <dt>设备状态</dt><dd>${statusText(device)}</dd>
-            <dt>门店名称</dt><dd>${store.name}</dd>
-            <dt>门店编号</dt><dd class="mono">${store.no}</dd>
-            <dt>收钱吧终端号</dt><dd class="mono">${emptyText(device.terminalNo)}</dd>
-          </dl>
-        </div>
         ${renderScopeForm(device)}
       `;
       dialogFoot.innerHTML = `<button class="btn" id="dialogCancel">取消</button><button class="btn primary" id="saveScope">保存</button>`;
-      openDialog("接单范围设置");
+      openDialog(`接单范围设置 设备 ID：${device.id}`);
       bindScopeForm();
       document.getElementById("dialogCancel").addEventListener("click", closeDialog);
       document.getElementById("saveScope").addEventListener("click", saveScope);
@@ -2190,7 +2238,7 @@
         ["终端号", displayDeviceValue(device, device.terminalNo), "mono"],
         ["创建时间", device.createdAt, ""],
         ["状态更新时间", device.statusUpdatedAt, ""],
-        ["设备状态", statusText(device), ""]
+        ["设备状态", statusValue(device), ""]
       ];
       const businessItems = [
         ["品牌名称", brand.name, ""],
@@ -2211,12 +2259,14 @@
           </section>
         `
         : "";
-      const activeActions = canDeactivateInMeta(device)
+      const activeActions = deviceManagementEnabled() && canDeactivateInMeta(device)
         ? `<button class="btn danger" id="deactivateDevice">反激活</button>`
         : "";
       deviceDetailActions.innerHTML = device.status === "ACTIVE"
         ? activeActions
-        : `<button class="btn ghost" id="activateFromDetail">激活</button>`;
+        : deviceManagementEnabled()
+          ? `<button class="btn ghost" id="activateFromDetail">激活</button>`
+          : "";
       deviceDetailBody.innerHTML = `
         <section class="detail-block">
           <div class="detail-block-head">
@@ -2232,16 +2282,17 @@
           </div>
           <div class="detail-info-layout">${detailFields(businessItems)}</div>
           <div class="detail-info-layout">
-            ${detailFields([["接单范围", scopeText(device), device.scopeType === "WORKSTATION" ? "mono" : ""]])}
+            ${detailFields([["接单范围", scopeSummaryHtml(device), ""]])}
           </div>
         </section>
         ${bankHtml}
       `;
       deviceDetailActions.innerHTML = "";
       document.getElementById("scopeFromDetail").addEventListener("click", () => openScope(device.id));
-      if (device.status === "ACTIVE" && canDeactivateInMeta(device)) {
+      bindScopePopovers(deviceDetailBody);
+      if (device.status === "ACTIVE" && deviceManagementEnabled() && canDeactivateInMeta(device)) {
         document.getElementById("deactivateDevice").addEventListener("click", () => openDeactivateConfirm(device.id));
-      } else if (device.status !== "ACTIVE") {
+      } else if (device.status !== "ACTIVE" && deviceManagementEnabled()) {
         document.getElementById("activateFromDetail").addEventListener("click", () => openActivate(device.id));
       }
     }
@@ -2432,6 +2483,7 @@
       closeDrawer();
       closeDialog();
     });
+    document.addEventListener("click", hideFloatingTooltip);
 
     renderDevices();
   </script>

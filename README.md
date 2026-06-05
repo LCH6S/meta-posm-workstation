@@ -6,6 +6,7 @@
 
 - 门店 POS 管理原型：https://lch6s.github.io/meta-posm-workstation/
 - Meta POS 订单推送 H5 原型：https://lch6s.github.io/meta-posm-workstation/meta-pos/
+- Meta POS 外设模式 AIO Demo：https://lch6s.github.io/meta-posm-workstation/aio-peripheral/
 
 ## 当前覆盖
 
@@ -23,3 +24,9 @@
 ### Meta POS 订单推送 H5 原型
 
 - Meta POS 待办订单/推单相关 H5 交互原型
+
+### Meta POS 外设模式 AIO Demo
+
+- Meta POS 外设模式开启、退出、通讯设置和待机首页
+- AIO 下发读卡、取消读卡、银行卡支付、银行卡预授权等外设任务
+- 外设模式详情页展示设备号和设备号条码，便于运维人员绑定设备

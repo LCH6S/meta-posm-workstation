@@ -1424,9 +1424,9 @@
                 <div class="mode-pos-device"><div class="mode-contactless"></div></div>
               </div>
               <p class="mode-copy" data-mode-copy>设备互联，定向推送</p>
-              <div class="mode-device-card" aria-label="设备号条码">
-                <p class="mode-device-label">设备号</p>
-                <p class="mode-device-number" data-device-no>LANDI-A8S-001</p>
+              <div class="mode-device-card" aria-label="KA Device SN 条码">
+                <p class="mode-device-label">KA Device SN</p>
+                <p class="mode-device-number" data-ka-device-sn>KA-DEVICE-SN-0001</p>
                 <div class="mode-device-barcode" aria-hidden="true">
                   <span style="--w: 3"></span><span style="--w: 1"></span><span style="--w: 5"></span><span style="--w: 2"></span>
                   <span style="--w: 1"></span><span style="--w: 4"></span><span style="--w: 2"></span><span style="--w: 6"></span>
@@ -1650,7 +1650,7 @@
           <div class="state-line"><span>当前页面</span><strong data-current-screen>标准模式首页</strong></div>
           <div class="state-line"><span>设备模式</span><strong data-current-mode>标准模式</strong></div>
           <div class="state-line"><span>任务状态</span><strong data-current-task>空闲</strong></div>
-          <div class="state-line"><span>设备号</span><strong data-device-no>LANDI-A8S-001</strong></div>
+          <div class="state-line"><span>KA Device SN</span><strong data-ka-device-sn>KA-DEVICE-SN-0001</strong></div>
         </div>
       </div>
 
@@ -1684,7 +1684,7 @@
   </main>
 
   <script>
-    const DEVICE_NO = "LANDI-A8S-001";
+    const KA_DEVICE_SN = "KA-DEVICE-SN-0001";
 
     const state = {
       screen: "standard",
@@ -1869,8 +1869,8 @@
       document.querySelector("[data-current-screen]").textContent = screenNames[state.screen] || state.screen;
       document.querySelector("[data-current-mode]").textContent = state.mode === "peripheral" ? "外设模式" : "标准模式";
       document.querySelector("[data-current-task]").textContent = taskNames[state.task] || state.task;
-      document.querySelectorAll("[data-device-no]").forEach((el) => {
-        el.textContent = DEVICE_NO;
+      document.querySelectorAll("[data-ka-device-sn]").forEach((el) => {
+        el.textContent = KA_DEVICE_SN;
       });
 
       updateModeDetail();
@@ -1963,7 +1963,7 @@
 
     function currentStatus() {
       return {
-        deviceNo: DEVICE_NO,
+        kaDeviceSn: KA_DEVICE_SN,
         mode: state.mode === "peripheral" ? "PERIPHERAL" : "STANDARD",
         screen: state.screen,
         taskStatus: state.task.toUpperCase(),
@@ -1976,7 +1976,7 @@
       return {
         requestId: `AIO-${String(state.requestSeq).padStart(4, "0")}`,
         command,
-        deviceNo: DEVICE_NO,
+        kaDeviceSn: KA_DEVICE_SN,
         sentAt: new Date().toISOString(),
         body: definition.body()
       };

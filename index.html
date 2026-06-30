@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Meta 后台 POS 设备管理原型</title>
+  <title>Meta 后台 Meta POS 应用管理原型</title>
   <style>
     :root {
       --top: #181921;
@@ -1724,9 +1724,9 @@
         <span>首页</span>
         <span>电子发票</span>
         <span>电子小票</span>
-        <span class="active">支付业务</span>
+        <span>支付业务</span>
         <span>门店收银</span>
-        <span>管理功能</span>
+        <span class="active">管理功能</span>
       </nav>
       <div class="top-actions">
         <svg class="top-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1746,14 +1746,13 @@
 
     <div class="shell">
       <aside class="sidebar">
-        <div class="side-item has-caret">销售类订单 <span>⌄</span></div>
-        <div class="side-item">退款规则</div>
-        <div class="side-item">分期活动管理</div>
-        <div class="side-item active">门店POS管理</div>
+        <div class="side-item has-caret">用户管理 <span>⌄</span></div>
+        <div class="side-item has-caret">角色管理 <span>⌄</span></div>
+        <div class="side-item has-caret">组织管理 <span>⌄</span></div>
+        <div class="side-item">审批管理</div>
+        <div class="side-item active has-caret">应用管理 <span>⌃</span></div>
         <div class="side-children">
-          <div class="side-subitem active" id="sideDeviceList">POS设备列表</div>
-          <div class="side-subitem" id="sideSettings">POS功能设置</div>
-          <div class="side-subitem" id="sideMaterials">素材管理</div>
+          <div class="side-subitem active" id="sideMetaPos">Meta POS</div>
         </div>
       </aside>
 
@@ -1763,12 +1762,12 @@
             <path d="m3 10 9-7 9 7"></path><path d="M5 10v10h14V10"></path><path d="M9 20v-6h6v6"></path>
           </svg>
           <span>/</span>
-          <span>门店POS管理</span>
+          <span>应用管理</span>
           <span id="detailCrumb" class="hidden">/</span>
-          <strong id="crumbTitle">POS设备列表</strong>
+          <strong id="crumbTitle">Meta POS</strong>
         </div>
 
-        <section class="panel content-panel" id="deviceListPage">
+        <section class="panel content-panel hidden" id="deviceListPage">
           <h1 class="page-title">POS设备列表</h1>
           <div class="device-query">
             <div class="search-field">
@@ -1859,40 +1858,14 @@
           </div>
         </section>
 
-        <section class="panel content-panel hidden" id="settingsPage">
-          <h1 class="page-title">POS功能设置</h1>
+        <section class="panel content-panel" id="settingsPage">
+          <h1 class="page-title">Meta POS 应用管理</h1>
           <div class="tabs">
-            <button class="tab active" data-settings-tab="storeSettings">门店POS功能设置</button>
-            <button class="tab" data-settings-tab="globalSettings">全局POS功能设置</button>
+            <button class="tab active" data-app-tab="featureSettings">功能设置</button>
+            <button class="tab" data-app-tab="materials">素材管理</button>
           </div>
 
-          <div class="tab-page" id="storeSettingsTab">
-            <div id="storeSettingsList">
-              <div class="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th style="width:260px;">门店名</th>
-                      <th style="width:180px;">门店号</th>
-                      <th style="width:190px;">门店 ID</th>
-                      <th style="width:260px;">操作</th>
-                    </tr>
-                  </thead>
-                  <tbody id="storeSettingRows"></tbody>
-                </table>
-              </div>
-              <div class="pagination">
-                <span>共3条</span>
-                <button class="page-btn">‹</button>
-                <span class="page-num">1</span>
-                <button class="page-btn">›</button>
-                <span class="page-size">10 条/页⌄</span>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="tab-page hidden" id="globalSettingsTab">
+          <div class="tab-page" id="featureSettingsTab">
             <div class="global-settings-list">
               <section class="global-setting-block">
                 <h2 class="global-setting-title">品牌通用小票打印设置</h2>
@@ -1917,80 +1890,78 @@
                   <button class="setting-inline-action">修改</button>
                 </div>
               </section>
-              <div class="placeholder-panel">后续全局POS功能设置预留</div>
             </div>
           </div>
-        </section>
 
-        <section class="panel content-panel hidden" id="materialsPage">
-          <h1 class="page-title">素材管理</h1>
-          <div class="material-page">
-            <div class="material-banner">
-              <span class="material-banner-icon">!</span>
-              <div>素材将在 POS 设备开机、重启或进入首页等时机检查并下载。若 POS 使用 SIM 卡联网，请注意素材下载所需的流量消耗。</div>
+          <div class="tab-page hidden" id="materialsTab">
+            <div class="material-page">
+              <div class="material-banner">
+                <span class="material-banner-icon">!</span>
+                <div>素材将在 POS 设备开机、重启或进入首页等时机检查并下载。若 POS 使用 SIM 卡联网，请注意素材下载所需的流量消耗。</div>
+              </div>
+              <section class="material-config-card">
+                <div class="material-config-head">
+                  <h2 class="material-config-title">Meta POS 应用素材管理</h2>
+                  <p class="material-config-desc">用于配置 Meta POS 应用中的素材。未配置时，POS 端将使用默认素材。</p>
+                </div>
+
+                <div class="material-config-row">
+                  <div class="material-config-main">
+                    <div class="material-title-line">
+                      <h2>标准模式首页素材</h2>
+                      <span class="material-tag" data-material-status="standard">未配置</span>
+                    </div>
+                    <p class="material-row-desc">展示在 Meta POS 标准模式首页上半部分区域。</p>
+                    <p class="material-help">建议尺寸 720 × 600px，支持 PNG/JPG，文件大小 2M 以内。</p>
+                    <p class="material-file-line">当前文件：<span data-material-file-name="standard">未上传</span></p>
+                  </div>
+                  <div class="material-upload-area">
+                    <label class="material-upload-tile standard" data-material-upload-box="standard">
+                      <input class="material-file-input" type="file" accept="image/png,image/jpeg" data-material-input="standard">
+                      <img alt="标准模式首页素材预览" data-material-image="standard">
+                      <span class="material-upload-empty">
+                        <span class="material-upload-icon">+</span>
+                        <span>上传图片</span>
+                      </span>
+                    </label>
+                    <div class="material-inline-actions" data-material-actions="standard">
+                      <button class="btn ghost" data-preview-material="standard">效果预览</button>
+                      <button class="btn primary hidden" data-material-action="save" data-material-type="standard" disabled>保存</button>
+                      <button class="btn hidden" data-material-action="cancel" data-material-type="standard" disabled>取消</button>
+                      <button class="btn danger hidden" data-material-action="clear" data-material-type="standard" disabled>删除</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="material-config-row">
+                  <div class="material-config-main">
+                    <div class="material-title-line">
+                      <h2>外设模式首页素材</h2>
+                      <span class="material-tag" data-material-status="peripheral">未配置</span>
+                    </div>
+                    <p class="material-row-desc">展示在 Meta POS 外设模式待机首页，消费者未操作时全屏展示。</p>
+                    <p class="material-help">建议尺寸 720 × 1600px，支持 PNG/JPG，文件大小 2M 以内。</p>
+                    <p class="material-file-line">当前文件：<span data-material-file-name="peripheral">未上传</span></p>
+                  </div>
+                  <div class="material-upload-area">
+                    <label class="material-upload-tile peripheral" data-material-upload-box="peripheral">
+                      <input class="material-file-input" type="file" accept="image/png,image/jpeg" data-material-input="peripheral">
+                      <img alt="外设模式首页素材预览" data-material-image="peripheral">
+                      <span class="material-upload-empty">
+                        <span class="material-upload-icon">+</span>
+                        <span>上传图片</span>
+                      </span>
+                    </label>
+                    <div class="material-inline-actions" data-material-actions="peripheral">
+                      <button class="btn ghost" data-preview-material="peripheral">效果预览</button>
+                      <button class="btn primary hidden" data-material-action="save" data-material-type="peripheral" disabled>保存</button>
+                      <button class="btn hidden" data-material-action="cancel" data-material-type="peripheral" disabled>取消</button>
+                      <button class="btn danger hidden" data-material-action="clear" data-material-type="peripheral" disabled>删除</button>
+                    </div>
+                  </div>
+                </div>
+              </section>
             </div>
-            <section class="material-config-card">
-              <div class="material-config-head">
-                <h2 class="material-config-title">Meta POS 应用素材管理</h2>
-                <p class="material-config-desc">用于配置 Meta POS 应用中的素材。未配置时，POS 端将使用默认素材。</p>
-              </div>
-
-              <div class="material-config-row">
-                <div class="material-config-main">
-                  <div class="material-title-line">
-                    <h2>标准模式首页素材</h2>
-                    <span class="material-tag" data-material-status="standard">未配置</span>
-                  </div>
-                  <p class="material-row-desc">展示在 Meta POS 标准模式首页上半部分区域。</p>
-                  <p class="material-help">建议尺寸 720 × 600px，支持 PNG/JPG，文件大小 2M 以内。</p>
-                  <p class="material-file-line">当前文件：<span data-material-file-name="standard">未上传</span></p>
-                </div>
-                <div class="material-upload-area">
-                  <label class="material-upload-tile standard" data-material-upload-box="standard">
-                    <input class="material-file-input" type="file" accept="image/png,image/jpeg" data-material-input="standard">
-                    <img alt="标准模式首页素材预览" data-material-image="standard">
-                    <span class="material-upload-empty">
-                      <span class="material-upload-icon">+</span>
-                      <span>上传图片</span>
-                    </span>
-                  </label>
-                  <div class="material-inline-actions" data-material-actions="standard">
-                    <button class="btn ghost" data-preview-material="standard">效果预览</button>
-                    <button class="btn primary hidden" data-material-action="save" data-material-type="standard" disabled>保存</button>
-                    <button class="btn hidden" data-material-action="cancel" data-material-type="standard" disabled>取消</button>
-                    <button class="btn danger hidden" data-material-action="clear" data-material-type="standard" disabled>删除</button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="material-config-row">
-                <div class="material-config-main">
-                  <div class="material-title-line">
-                    <h2>外设模式首页素材</h2>
-                    <span class="material-tag" data-material-status="peripheral">未配置</span>
-                  </div>
-                  <p class="material-row-desc">展示在 Meta POS 外设模式待机首页，消费者未操作时全屏展示。</p>
-                  <p class="material-help">建议尺寸 720 × 1600px，支持 PNG/JPG，文件大小 2M 以内。</p>
-                  <p class="material-file-line">当前文件：<span data-material-file-name="peripheral">未上传</span></p>
-                </div>
-                <div class="material-upload-area">
-                  <label class="material-upload-tile peripheral" data-material-upload-box="peripheral">
-                    <input class="material-file-input" type="file" accept="image/png,image/jpeg" data-material-input="peripheral">
-                    <img alt="外设模式首页素材预览" data-material-image="peripheral">
-                    <span class="material-upload-empty">
-                      <span class="material-upload-icon">+</span>
-                      <span>上传图片</span>
-                    </span>
-                  </label>
-                  <div class="material-inline-actions" data-material-actions="peripheral">
-                    <button class="btn ghost" data-preview-material="peripheral">效果预览</button>
-                    <button class="btn primary hidden" data-material-action="save" data-material-type="peripheral" disabled>保存</button>
-                    <button class="btn hidden" data-material-action="cancel" data-material-type="peripheral" disabled>取消</button>
-                    <button class="btn danger hidden" data-material-action="clear" data-material-type="peripheral" disabled>删除</button>
-                  </div>
-                </div>
-              </div>
-            </section>
           </div>
         </section>
 
@@ -2191,7 +2162,8 @@
     const mask = document.getElementById("mask");
     const deviceListPage = document.getElementById("deviceListPage");
     const settingsPage = document.getElementById("settingsPage");
-    const materialsPage = document.getElementById("materialsPage");
+    const featureSettingsTab = document.getElementById("featureSettingsTab");
+    const materialsTab = document.getElementById("materialsTab");
     const storePosSettingsDetailPage = document.getElementById("storePosSettingsDetailPage");
     const deviceDetailPage = document.getElementById("deviceDetailPage");
     const crumbTitle = document.getElementById("crumbTitle");
@@ -2318,15 +2290,12 @@
     }
 
     function setSideActive(page) {
-      document.getElementById("sideDeviceList").classList.toggle("active", page === "devices");
-      document.getElementById("sideSettings").classList.toggle("active", page === "settings");
-      document.getElementById("sideMaterials").classList.toggle("active", page === "materials");
+      document.getElementById("sideMetaPos").classList.toggle("active", page === "metaPos");
     }
 
     function showDeviceListPage() {
       deviceListPage.classList.remove("hidden");
       settingsPage.classList.add("hidden");
-      materialsPage.classList.add("hidden");
       storePosSettingsDetailPage.classList.add("hidden");
       deviceDetailPage.classList.add("hidden");
       detailCrumb.classList.add("hidden");
@@ -2339,33 +2308,24 @@
     function showSettingsPage() {
       deviceListPage.classList.add("hidden");
       settingsPage.classList.remove("hidden");
-      materialsPage.classList.add("hidden");
       storePosSettingsDetailPage.classList.add("hidden");
       deviceDetailPage.classList.add("hidden");
       detailCrumb.classList.add("hidden");
-      crumbTitle.textContent = "POS功能设置";
+      crumbTitle.textContent = "Meta POS";
       currentDeviceId = null;
-      setSideActive("settings");
-      renderStoreSettingsList();
+      setSideActive("metaPos");
+      setAppTab("featureSettings");
     }
 
     function showMaterialsPage() {
-      deviceListPage.classList.add("hidden");
-      settingsPage.classList.add("hidden");
-      materialsPage.classList.remove("hidden");
-      storePosSettingsDetailPage.classList.add("hidden");
-      deviceDetailPage.classList.add("hidden");
-      detailCrumb.classList.add("hidden");
-      crumbTitle.textContent = "素材管理";
-      currentDeviceId = null;
-      setSideActive("materials");
+      showSettingsPage();
+      setAppTab("materials");
     }
 
     function showDeviceDetailPage(id) {
       currentDeviceId = id;
       deviceListPage.classList.add("hidden");
       settingsPage.classList.add("hidden");
-      materialsPage.classList.add("hidden");
       storePosSettingsDetailPage.classList.add("hidden");
       deviceDetailPage.classList.remove("hidden");
       detailCrumb.classList.remove("hidden");
@@ -2687,12 +2647,11 @@
       const store = stores.find((item) => item.id === storeId);
       deviceListPage.classList.add("hidden");
       settingsPage.classList.add("hidden");
-      materialsPage.classList.add("hidden");
       deviceDetailPage.classList.add("hidden");
       storePosSettingsDetailPage.classList.remove("hidden");
       detailCrumb.classList.remove("hidden");
       crumbTitle.textContent = "门店POS功能详情";
-      setSideActive("settings");
+      setSideActive("metaPos");
       document.getElementById("storeSettingsBasic").innerHTML = `
         <div>
           <div class="field-label">门店名称</div>
@@ -3094,18 +3053,15 @@
       document.getElementById("finishAdd").addEventListener("click", closeDialog);
     }
 
-    function setSettingsTab(tab) {
-      document.querySelectorAll("[data-settings-tab]").forEach((button) => {
-        button.classList.toggle("active", button.dataset.settingsTab === tab);
+    function setAppTab(tab) {
+      document.querySelectorAll("[data-app-tab]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.appTab === tab);
       });
-      document.getElementById("storeSettingsTab").classList.toggle("hidden", tab !== "storeSettings");
-      document.getElementById("globalSettingsTab").classList.toggle("hidden", tab !== "globalSettings");
-      if (tab === "storeSettings") renderStoreSettingsList();
+      featureSettingsTab.classList.toggle("hidden", tab !== "featureSettings");
+      materialsTab.classList.toggle("hidden", tab !== "materials");
     }
 
-    document.getElementById("sideDeviceList").addEventListener("click", showDeviceListPage);
-    document.getElementById("sideSettings").addEventListener("click", showSettingsPage);
-    document.getElementById("sideMaterials").addEventListener("click", showMaterialsPage);
+    document.getElementById("sideMetaPos").addEventListener("click", showSettingsPage);
     document.querySelectorAll("[data-preview-material]").forEach((button) => {
       button.addEventListener("click", () => openMaterialPreview(button.dataset.previewMaterial));
     });
@@ -3138,8 +3094,8 @@
       showToast("已清空设备查询条件");
     });
     document.getElementById("addDevice").addEventListener("click", renderAddForm);
-    document.querySelectorAll("[data-settings-tab]").forEach((button) => {
-      button.addEventListener("click", () => setSettingsTab(button.dataset.settingsTab));
+    document.querySelectorAll("[data-app-tab]").forEach((button) => {
+      button.addEventListener("click", () => setAppTab(button.dataset.appTab));
     });
     document.getElementById("closeDrawer").addEventListener("click", closeDrawer);
     document.getElementById("closeDialog").addEventListener("click", closeDialog);
@@ -3149,7 +3105,7 @@
     });
     document.addEventListener("click", hideFloatingTooltip);
 
-    renderDevices();
+    setAppTab("featureSettings");
   </script>
 </body>
 </html>

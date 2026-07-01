@@ -390,35 +390,6 @@
       cursor: not-allowed;
     }
 
-    .tabs {
-      height: 52px;
-      display: flex;
-      align-items: end;
-      gap: 38px;
-      padding: 0 0 0 0;
-      border-bottom: 1px solid var(--line);
-      margin-bottom: 22px;
-    }
-
-    .tab {
-      height: 38px;
-      border: 0;
-      border-bottom: 2px solid transparent;
-      background: transparent;
-      color: #24252a;
-      padding: 0;
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .tab.active {
-      border-bottom-color: #202124;
-    }
-
-    .tab-page.hidden {
-      display: none;
-    }
-
     .settings-list {
       padding: 22px 18px;
     }
@@ -938,86 +909,6 @@
       place-items: center;
       color: var(--muted);
       font-size: 14px;
-    }
-
-    .global-settings-list {
-      padding: 22px 0 0;
-    }
-
-    .global-setting-block {
-      padding: 0 4px 22px;
-      border-bottom: 1px dashed var(--line);
-      margin-bottom: 22px;
-    }
-
-    .global-setting-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 0 0 24px;
-      font-size: 15px;
-      font-weight: 800;
-    }
-
-    .global-setting-title::before {
-      content: "";
-      width: 3px;
-      height: 17px;
-      background: #202124;
-      display: inline-block;
-    }
-
-    .global-setting-row {
-      display: grid;
-      grid-template-columns: 170px 180px auto;
-      align-items: center;
-      gap: 18px;
-      min-height: 36px;
-      margin-bottom: 14px;
-      font-size: 13px;
-    }
-
-    .global-setting-label {
-      color: #24252a;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .help-dot {
-      width: 15px;
-      height: 15px;
-      border: 1px solid #9a9da3;
-      border-radius: 50%;
-      color: #565a61;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 700;
-      line-height: 1;
-    }
-
-    .switch-on {
-      width: 32px;
-      height: 18px;
-      border-radius: 999px;
-      background: #16c96f;
-      position: relative;
-      display: inline-block;
-      vertical-align: middle;
-    }
-
-    .switch-on::after {
-      content: "";
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, .18);
     }
 
     .muted-value {
@@ -1860,40 +1751,8 @@
 
         <section class="panel content-panel" id="settingsPage">
           <h1 class="page-title">Meta POS 应用管理</h1>
-          <div class="tabs">
-            <button class="tab active" data-app-tab="featureSettings">功能设置</button>
-            <button class="tab" data-app-tab="materials">素材管理</button>
-          </div>
 
-          <div class="tab-page" id="featureSettingsTab">
-            <div class="global-settings-list">
-              <section class="global-setting-block">
-                <h2 class="global-setting-title">品牌通用小票打印设置</h2>
-                <div class="global-setting-row">
-                  <div class="global-setting-label">是否自动打印小票</div>
-                  <div><span class="switch-on" aria-label="已开启"></span></div>
-                  <div></div>
-                </div>
-                <div class="global-setting-row">
-                  <div class="global-setting-label">自动打印联数</div>
-                  <div>两联</div>
-                  <button class="setting-inline-action">修改</button>
-                </div>
-                <div class="global-setting-row">
-                  <div class="global-setting-label">条码内容 <span class="help-dot">?</span></div>
-                  <div>轻 POS 流水号</div>
-                  <button class="setting-inline-action">修改</button>
-                </div>
-                <div class="global-setting-row">
-                  <div class="global-setting-label">小票语言</div>
-                  <div>简体中文</div>
-                  <button class="setting-inline-action">修改</button>
-                </div>
-              </section>
-            </div>
-          </div>
-
-          <div class="tab-page hidden" id="materialsTab">
+          <div id="materialsTab">
             <div class="material-page">
               <div class="material-banner">
                 <span class="material-banner-icon">!</span>
@@ -2162,8 +2021,6 @@
     const mask = document.getElementById("mask");
     const deviceListPage = document.getElementById("deviceListPage");
     const settingsPage = document.getElementById("settingsPage");
-    const featureSettingsTab = document.getElementById("featureSettingsTab");
-    const materialsTab = document.getElementById("materialsTab");
     const storePosSettingsDetailPage = document.getElementById("storePosSettingsDetailPage");
     const deviceDetailPage = document.getElementById("deviceDetailPage");
     const crumbTitle = document.getElementById("crumbTitle");
@@ -2314,12 +2171,6 @@
       crumbTitle.textContent = "Meta POS";
       currentDeviceId = null;
       setSideActive("metaPos");
-      setAppTab("featureSettings");
-    }
-
-    function showMaterialsPage() {
-      showSettingsPage();
-      setAppTab("materials");
     }
 
     function showDeviceDetailPage(id) {
@@ -3053,14 +2904,6 @@
       document.getElementById("finishAdd").addEventListener("click", closeDialog);
     }
 
-    function setAppTab(tab) {
-      document.querySelectorAll("[data-app-tab]").forEach((button) => {
-        button.classList.toggle("active", button.dataset.appTab === tab);
-      });
-      featureSettingsTab.classList.toggle("hidden", tab !== "featureSettings");
-      materialsTab.classList.toggle("hidden", tab !== "materials");
-    }
-
     document.getElementById("sideMetaPos").addEventListener("click", showSettingsPage);
     document.querySelectorAll("[data-preview-material]").forEach((button) => {
       button.addEventListener("click", () => openMaterialPreview(button.dataset.previewMaterial));
@@ -3094,9 +2937,6 @@
       showToast("已清空设备查询条件");
     });
     document.getElementById("addDevice").addEventListener("click", renderAddForm);
-    document.querySelectorAll("[data-app-tab]").forEach((button) => {
-      button.addEventListener("click", () => setAppTab(button.dataset.appTab));
-    });
     document.getElementById("closeDrawer").addEventListener("click", closeDrawer);
     document.getElementById("closeDialog").addEventListener("click", closeDialog);
     mask.addEventListener("click", () => {
@@ -3104,8 +2944,6 @@
       closeDialog();
     });
     document.addEventListener("click", hideFloatingTooltip);
-
-    setAppTab("featureSettings");
   </script>
 </body>
 </html>

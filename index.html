@@ -285,6 +285,31 @@
       line-height: 1.4;
     }
 
+    .app-tabs {
+      height: 42px;
+      display: flex;
+      align-items: flex-end;
+      gap: 36px;
+      margin: 0 0 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .app-tab {
+      height: 38px;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      color: #202124;
+      padding: 0;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 38px;
+    }
+
+    .app-tab.active {
+      border-bottom-color: #202124;
+    }
+
     .store-query {
       padding: 0 0 20px;
       border-bottom: 1px dashed var(--line);
@@ -955,16 +980,8 @@
     }
 
     .material-config-head {
-      padding: 18px 20px 14px;
+      padding: 14px 20px;
       border-bottom: 1px solid var(--line);
-    }
-
-    .material-config-title {
-      margin: 0 0 6px;
-      color: #202124;
-      font-size: 15px;
-      font-weight: 800;
-      line-height: 1.4;
     }
 
     .material-config-desc {
@@ -1750,7 +1767,9 @@
         </section>
 
         <section class="panel content-panel" id="settingsPage">
-          <h1 class="page-title">Meta POS 应用管理</h1>
+          <div class="app-tabs" role="tablist" aria-label="Meta POS 应用管理">
+            <button class="app-tab active" type="button" role="tab" aria-selected="true">素材管理</button>
+          </div>
 
           <div id="materialsTab">
             <div class="material-page">
@@ -1760,7 +1779,6 @@
               </div>
               <section class="material-config-card">
                 <div class="material-config-head">
-                  <h2 class="material-config-title">Meta POS 应用素材管理</h2>
                   <p class="material-config-desc">用于配置 Meta POS 应用中的素材。未配置时，POS 端将使用默认素材。</p>
                 </div>
 

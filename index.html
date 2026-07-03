@@ -617,6 +617,52 @@
       border-bottom: 0;
     }
 
+    .material-delete-popover {
+      position: fixed;
+      z-index: 130;
+      width: 168px;
+      padding: 12px;
+      color: var(--text);
+      background: #ffffff;
+      border: 1px solid #d8dce3;
+      border-radius: 3px;
+      box-shadow: 0 12px 28px rgba(24, 25, 33, .18);
+    }
+
+    .material-delete-popover::before {
+      content: "";
+      position: absolute;
+      top: -6px;
+      right: 22px;
+      width: 10px;
+      height: 10px;
+      background: #ffffff;
+      border-top: 1px solid #d8dce3;
+      border-left: 1px solid #d8dce3;
+      transform: rotate(45deg);
+    }
+
+    .material-delete-title {
+      margin: 0 0 12px;
+      color: #202124;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .material-delete-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .material-delete-actions .btn {
+      height: 28px;
+      min-width: 42px;
+      padding: 0 10px;
+      font-size: 12px;
+    }
+
     .link-btn {
       border: 0;
       background: transparent;
@@ -1803,6 +1849,7 @@
                     </label>
                     <div class="material-inline-actions" data-material-actions="standard">
                       <button class="btn ghost" data-preview-material="standard">效果预览</button>
+                      <button class="btn ghost hidden" data-material-action="modify" data-material-type="standard" disabled>修改</button>
                       <button class="btn primary hidden" data-material-action="save" data-material-type="standard" disabled>保存</button>
                       <button class="btn hidden" data-material-action="cancel" data-material-type="standard" disabled>取消</button>
                       <button class="btn danger hidden" data-material-action="clear" data-material-type="standard" disabled>删除</button>
@@ -1831,6 +1878,7 @@
                     </label>
                     <div class="material-inline-actions" data-material-actions="peripheral">
                       <button class="btn ghost" data-preview-material="peripheral">效果预览</button>
+                      <button class="btn ghost hidden" data-material-action="modify" data-material-type="peripheral" disabled>修改</button>
                       <button class="btn primary hidden" data-material-action="save" data-material-type="peripheral" disabled>保存</button>
                       <button class="btn hidden" data-material-action="cancel" data-material-type="peripheral" disabled>取消</button>
                       <button class="btn danger hidden" data-material-action="clear" data-material-type="peripheral" disabled>删除</button>
@@ -2125,6 +2173,37 @@
       floatingTooltip = null;
     }
 
+    function showMaterialDeleteConfirm(target, type) {
+      hideFloatingTooltip();
+      floatingTooltip = document.createElement("div");
+      floatingTooltip.className = "material-delete-popover";
+      floatingTooltip.innerHTML = `
+        <p class="material-delete-title">是否确认删除</p>
+        <div class="material-delete-actions">
+          <button class="btn" type="button" data-material-delete-cancel>否</button>
+          <button class="btn danger" type="button" data-material-delete-confirm>是</button>
+        </div>
+      `;
+      document.body.appendChild(floatingTooltip);
+
+      const rect = target.getBoundingClientRect();
+      const tooltipRect = floatingTooltip.getBoundingClientRect();
+      let left = rect.right - tooltipRect.width;
+      left = Math.min(Math.max(left, 8), window.innerWidth - tooltipRect.width - 8);
+      let top = rect.bottom + 10;
+      if (top + tooltipRect.height > window.innerHeight - 8) top = rect.top - tooltipRect.height - 10;
+      if (top < 8) top = 8;
+      floatingTooltip.style.left = `${left}px`;
+      floatingTooltip.style.top = `${top}px`;
+
+      floatingTooltip.addEventListener("click", (event) => event.stopPropagation());
+      floatingTooltip.querySelector("[data-material-delete-cancel]").addEventListener("click", hideFloatingTooltip);
+      floatingTooltip.querySelector("[data-material-delete-confirm]").addEventListener("click", () => {
+        hideFloatingTooltip();
+        clearMaterialImage(type);
+      });
+    }
+
     function bindScopePopovers(root = document) {
       root.querySelectorAll(".scope-summary[data-scope-device]").forEach((item) => {
         item.addEventListener("click", (event) => {
@@ -2228,6 +2307,7 @@
       const image = document.querySelector(`[data-material-image="${type}"]`);
       const name = document.querySelector(`[data-material-file-name="${type}"]`);
       const previewButton = document.querySelector(`[data-preview-material="${type}"]`);
+      const modifyButton = document.querySelector(`[data-material-action="modify"][data-material-type="${type}"]`);
       const saveButton = document.querySelector(`[data-material-action="save"][data-material-type="${type}"]`);
       const cancelButton = document.querySelector(`[data-material-action="cancel"][data-material-type="${type}"]`);
       const clearButton = document.querySelector(`[data-material-action="clear"][data-material-type="${type}"]`);
@@ -2249,6 +2329,10 @@
       }
       if (name) name.textContent = hasImage ? state.fileName : "未上传";
       if (previewButton) previewButton.disabled = false;
+      if (modifyButton) {
+        modifyButton.classList.toggle("hidden", !isConfigured);
+        modifyButton.disabled = !isConfigured;
+      }
       if (saveButton) {
         saveButton.classList.toggle("hidden", !isPending);
         saveButton.disabled = !isPending;
@@ -2269,6 +2353,13 @@
         URL.revokeObjectURL(state.imageUrl);
       }
       materialState[type] = { ...state, status: "pending", fileName, imageUrl };
+      updateMaterialView(type);
+    }
+
+    function enterMaterialEdit(type) {
+      const state = materialState[type];
+      if (state.status !== "configured") return;
+      materialState[type] = { ...state, status: "pending" };
       updateMaterialView(type);
     }
 
@@ -2930,17 +3021,22 @@
       input.addEventListener("change", () => handleMaterialFile(input.dataset.materialInput, input));
     });
     document.querySelectorAll("[data-material-action]").forEach((button) => {
-      button.addEventListener("click", () => {
+      button.addEventListener("click", (event) => {
         const type = button.dataset.materialType;
         if (button.dataset.materialAction === "save") {
           saveMaterialImage(type);
+          return;
+        }
+        if (button.dataset.materialAction === "modify") {
+          enterMaterialEdit(type);
           return;
         }
         if (button.dataset.materialAction === "cancel") {
           cancelPendingMaterial(type);
           return;
         }
-        clearMaterialImage(type);
+        event.stopPropagation();
+        showMaterialDeleteConfirm(button, type);
       });
     });
     document.getElementById("searchDevice").addEventListener("click", () => {

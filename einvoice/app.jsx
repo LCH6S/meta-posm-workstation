@@ -1,7 +1,7 @@
 const { useState, useEffect, useMemo } = React;
 const { Button, NavBar, FieldItem, Input, Icon, HotPopup, HotDatePicker, Search, dialog, toast } = window.MetaPOS;
 const C = window.DemoCore;
-const product = id => C.PRODUCTS.find(p => p.id === id);
+const product = (id,snapshot) => snapshot || C.getProject(id);
 const fmtTime = t => new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(t);
 const notify = message => toast.show({ message });
 const go = path => { location.hash = path; window.scrollTo(0, 0); };
@@ -12,9 +12,9 @@ function useData() {
   const [db, setDb] = useState(C.read);
   useEffect(() => {
     const update = () => setDb(C.read());
-    window.addEventListener('storage', update); window.addEventListener('invoice-data', update);
+    window.addEventListener('storage', update); window.addEventListener('invoice-data', update);window.addEventListener('manual-invoice-config',update);
     const timer = setInterval(() => C.tick(), 500);
-    return () => { clearInterval(timer); window.removeEventListener('storage', update); window.removeEventListener('invoice-data', update); };
+    return () => { clearInterval(timer); window.removeEventListener('storage', update); window.removeEventListener('invoice-data', update);window.removeEventListener('manual-invoice-config',update); };
   }, []);
   return db;
 }
@@ -40,15 +40,16 @@ function QRImage({ order }) {
 }
 function Home() {
   const unavailable = () => notify('请进入电子发票办理开票业务');
+  const currentStore=C.activeStore();
   return <div className="pos-home">
-    <div className="pos-hero" role="img" aria-label="悦投直连测试门店，门店编号 sqb002"><div className="pos-pending-title">待处理订单</div></div>
+    <div className="pos-hero" role="img" aria-label={(currentStore?.name||'门店')+'，门店编号 '+(currentStore?.code||currentStore?.id||'')}>{!InvoiceConfig.current().sample&&<div className="pos-store-identity"><strong>{currentStore?.name||'门店'}</strong><span>门店编号：{currentStore?.code}</span></div>}<div className="pos-pending-title">待处理订单</div></div>
     <div className="pos-empty">{glyph('bi-b-order', 44)}<div>暂无订单，点击刷新</div></div>
     <section className="pos-section"><h2>门店收银</h2><div className="pos-grid">
       {[['收款','bi-b-pay'],['退款','bi-c-after'],['账本','bi-b-list'],['结算','bi-financial-center'],['门店交易统计','bi-transaction-report']].map(([name, icon]) => <button className="pos-tile" onClick={unavailable} key={name}><span className="icon-tile">{glyph(icon, 28)}</span><span>{name}</span></button>)}
     </div></section>
     <section className="pos-section"><h2>应用功能</h2><div className="pos-grid">
       <button className="pos-tile" onClick={unavailable}><span className="icon-tile">{glyph('bi-c-wallet-fill', 28)}</span><span>礼品卡</span></button>
-      <button className="pos-tile invoice-entry" onClick={() => go('/invoicing')}><span className="icon-tile">{glyph('bi-b-note', 28)}</span><span>电子发票</span></button>
+      {InvoiceConfig.entryVisible()&&<button className="pos-tile invoice-entry" onClick={() => go('/invoicing')}><span className="icon-tile">{glyph('bi-b-note', 28)}</span><span>电子发票</span></button>}
     </div></section><div className="bottom-home" />
   </div>;
 }
@@ -101,7 +102,7 @@ function RefundSearch({db}) {
 
 function OrderList({ db }) {
   const [query, setQuery] = useState(''), [submitted, setSubmitted] = useState(''), [filter, setFilter] = useState('全部');
-  const orders = db.orders.filter(o => submitted ? (o.number.includes(submitted) || o.id.includes(submitted)) : o.device === 'POS-002-01').filter(o => filter === '全部' || (filter === '未申请' && !o.cancelled && !o.application) || (filter === '开票中' && !o.cancelled && o.application && !o.invoice) || (filter === '已开票' && !o.cancelled && o.invoice));
+  const orders = db.orders.filter(o => submitted ? (o.number.includes(submitted) || o.id.includes(submitted)) : o.device === C.activeStore()?.device).filter(o => filter === '全部' || (filter === '未申请' && !o.cancelled && !o.application) || (filter === '开票中' && !o.cancelled && o.application && !o.invoice) || (filter === '已开票' && !o.cancelled && o.invoice));
   return <div className="screen">
     <Nav title="开票记录" back={() => go('/invoicing')} />
 
@@ -117,7 +118,7 @@ const numberMessage=value=>C.textLength(value.trim())>36?'订单编号最多36�
 const dateMessage=value=>!/^\d{4}-\d{2}-\d{2}$/.test(value)||Number.isNaN(new Date(value+'T00:00:00').getTime())?'请选择有效的订单日期':value>C.date()?'订单日期不能晚于今天':'';
 const noteMessage=value=>C.textLength(value)>200?'订单备注最多200个字符':'';
 function OrderForm({ order, itemIndex=null }) {
-  const [items, setItems] = useState(() => order ? order.items.map(i => ({ product: i.product, amount: C.money(i.cents), quantity: String(i.quantity ?? 1) })) : [{ product: C.PRODUCTS.find(p => p.default).id, amount: '', quantity: '1' }]);
+  const [items, setItems] = useState(() => order ? order.items.map(i => ({ product: i.product, amount: C.money(i.cents), quantity: String(i.quantity ?? 1) })) : (C.projects().length?[{ product: (C.projects().find(p => p.default)||C.projects()[0]).id, amount: '', quantity: '1' }]:[]));
   const [number, setNumber] = useState(order?.number || ''), [saleDate, setSaleDate] = useState(order?.date || C.date()), [note, setNote] = useState(order?.note || '');
   const [picker, setPicker] = useState(null), [dateVisible, setDateVisible] = useState(false), [error, setError] = useState(''), [busy, setBusy] = useState(false);
   const [originalRev] = useState(order?.rev);
@@ -169,8 +170,8 @@ function OrderForm({ order, itemIndex=null }) {
     <main className="content">
       <section className="section flush"><div style={{padding:'16px 16px 0'}}><h2>开票项目</h2></div>
         {items.map((i, idx) => <div className="item-edit" key={idx}>
-          <div className="item-header"><div className="item-summary"><strong>{product(i.product).name}</strong><span className="quantity-summary">{i.quantity} {product(i.product).unit}</span></div><div className="item-actions"><button type="button" className="edit-item-action" aria-label={'编辑第' + (idx + 1) + '个开票项目'} onClick={()=>openItemEditor(idx)}>编辑</button><button type="button" className="delete-item-action" aria-label={'删除第' + (idx + 1) + '个开票项目'} onClick={()=>{setItems(old=>old.filter((_,k)=>k!==idx));setAmountTouched({});setError('');}}>删除</button></div></div>
-          {product(i.product).spec && <p className="item-meta">规格型号：{product(i.product).spec}</p>}
+          <div className="item-header"><div className="item-summary"><strong>{product(i.product,i.snapshot).name}</strong><span className="quantity-summary">{i.quantity} {product(i.product,i.snapshot).unit}</span></div><div className="item-actions"><button type="button" className="edit-item-action" aria-label={'编辑第' + (idx + 1) + '个开票项目'} onClick={()=>openItemEditor(idx)}>编辑</button><button type="button" className="delete-item-action" aria-label={'删除第' + (idx + 1) + '个开票项目'} onClick={()=>{setItems(old=>old.filter((_,k)=>k!==idx));setAmountTouched({});setError('');}}>删除</button></div></div>
+          {product(i.product,i.snapshot).spec && <p className="item-meta">规格型号：{product(i.product,i.snapshot).spec}</p>}
           <div className="item-price"><label htmlFor={'amount-' + idx}>项目总价</label><input id={'amount-' + idx} aria-label={'第' + (idx + 1) + '个项目总价'} value={i.amount} inputMode="decimal" placeholder="0.00" maxLength={12} onChange={e => updateAmount(idx,e.target.value)} onBlur={()=>setAmountTouched(old=>({...old,[idx]:true}))} aria-invalid={!!((attempted||amountTouched[idx])&&amountMessage(i.amount))} aria-describedby={(attempted||amountTouched[idx])&&amountMessage(i.amount)?'amount-error-'+idx:undefined} /></div>{(attempted||amountTouched[idx])&&amountMessage(i.amount)&&<div id={'amount-error-'+idx} className="field-error" role="alert">{amountMessage(i.amount)}</div>}{attempted&&quantityMessage(i.quantity)&&<div className="field-error" role="alert">{quantityMessage(i.quantity)}</div>}
         </div>)}
         <div className="add-item-row"><Button color="outline" className="add-item" onClick={() => setPicker('add')}>添加开票项目</Button></div>{attempted&&!items.length&&<div className="field-error project-empty-error" role="alert">请选择至少一个开票项目</div>}
@@ -182,7 +183,7 @@ function OrderForm({ order, itemIndex=null }) {
       {order && <p className="quiet">保存后将生成新的开票二维码，请重新交付给消费者。</p>}
     </main>
     <Footer><div className="total"><span className="quiet">合计</span><br/><strong className="amount">¥{C.money(total)}</strong></div><Button className="submit" disabled={busy} onClick={save}>{order ? '保存修改' : '确认创建'}</Button></Footer>
-    <HotPopup visible={picker !== null} onClose={() => setPicker(null)} closeOnMaskClick={true} bodyStyle={{borderRadius:'20px 20px 0 0',overflow:'hidden'}}><div className="popup-body"><div className="popup-title">选择开票项目<button className="icon-button" aria-label="关闭项目选择" onClick={() => setPicker(null)}>{glyph('bi-b-close',20)}</button></div>{C.PRODUCTS.map(p => <button key={p.id} className="product-option" onClick={() => { setItems(old => picker === 'add' ? [...old, {product:p.id,amount:'',quantity:'1'}] : old.map((i,k) => k === picker ? {...i,product:p.id} : i)); setPicker(null); }}><span>{p.name}<p className="quiet">单位：{p.unit}</p></span>{glyph('bi-b-arrow-right',16)}</button>)}</div></HotPopup>
+    <HotPopup visible={picker !== null} onClose={() => setPicker(null)} closeOnMaskClick={true} bodyStyle={{borderRadius:'20px 20px 0 0',overflow:'hidden'}}><div className="popup-body"><div className="popup-title">选择开票项目<button className="icon-button" aria-label="关闭项目选择" onClick={() => setPicker(null)}>{glyph('bi-b-close',20)}</button></div>{C.projects().map(p => <button key={p.id} className="product-option" onClick={() => { setItems(old => picker === 'add' ? [...old, {product:p.id,amount:'',quantity:'1'}] : old.map((i,k) => k === picker ? {...i,product:p.id} : i)); setPicker(null); }}><span>{p.name}<p className="quiet">单位：{p.unit}</p></span>{glyph('bi-b-arrow-right',16)}</button>)}</div></HotPopup>
 
     <OrderCodeScanner visible={numberScanner} onClose={()=>setNumberScanner(false)} onScan={code=>{setNumberScanner(false);if(!/^[A-Za-z0-9]+$/.test(code)){setError('扫码订单编号仅支持英文字母和数字，请核对后录入');return;}if(C.textLength(code)>36){setError('扫码订单编号最多36个字符，请核对后录入');return;}setNumber(code);setError('');}}/>
     <HotDatePicker visible={dateVisible} value={new Date(saleDate + 'T12:00:00')} max={new Date()} title="订单日期" onClose={() => setDateVisible(false)} onConfirm={d => { setSaleDate(C.date(d));setDateTouched(true); setDateVisible(false); }}/>
@@ -194,7 +195,7 @@ function OrderNumberBarcode({number}) {
 }
 function Receipt({ o }) {
   const amount=Number(C.money(C.total(o))).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  return <div className="receipt invoice-receipt"><div className="receipt-brand"><img src="assets/receipt-logo.png" alt="收钱吧"/><div>shouqianba.com</div></div><div className="receipt-instructions"><p>请扫描下方二维码，开具电子发票</p><p className="receipt-english">Please scan QR code for e-invoice</p></div><div className="receipt-invoice-amount"><p>本次开票金额：¥{amount}</p><p className="receipt-english">Fapiao Amount: ¥{amount}</p></div><QRImage order={o}/><div className="dashed"/><div className="receipt-fields"><p>门店名称：{C.STORES[o.store].name}</p><p>门店编号：{o.store}</p><p>订单编号：{o.number}</p></div><OrderNumberBarcode number={o.number}/><div className="receipt-fields"><p>设备编号：{o.device}</p><p>订单日期：{o.date}</p></div><div className="receipt-support">收钱吧提供技术服务支持。</div></div>;
+  return <div className="receipt invoice-receipt"><div className="receipt-brand"><img src="assets/receipt-logo.png" alt="收钱吧"/><div>shouqianba.com</div></div><div className="receipt-instructions"><p>请扫描下方二维码，开具电子发票</p><p className="receipt-english">Please scan QR code for e-invoice</p></div><div className="receipt-invoice-amount"><p>本次开票金额：¥{amount}</p><p className="receipt-english">Fapiao Amount: ¥{amount}</p></div><QRImage order={o}/><div className="dashed"/><div className="receipt-fields"><p>门店名称：{C.STORES[o.store].name}</p><p>门店编号：{C.STORES[o.store].code||o.store}</p><p>订单编号：{o.number}</p></div><OrderNumberBarcode number={o.number}/><div className="receipt-fields"><p>设备编号：{o.device}</p><p>订单日期：{o.date}</p></div><div className="receipt-support">收钱吧提供技术服务支持。</div></div>;
 }
 function ReceiptPage({ o }) {
   return <><div className="screen"><Nav title="二维码小票" back={() => go('/order/' + o.id)}/><div className="receipt-shell"><Receipt o={o}/></div><Footer><Button onClick={() => { document.querySelector('.print-visible').innerHTML = document.querySelector('.receipt-shell').innerHTML; window.print(); }}>打印</Button></Footer></div><div className="print-visible" style={{display:'none'}}/></>;
@@ -223,7 +224,7 @@ function OrderDetail({ o, origin }) {
       </section>
       {o.cancelled && (o.invoice||o.application) && o.refund?.status !== 'success' && <div className="hint">{o.refund?.status === 'failed' ? '关联发票红冲失败，请联系品牌财务处理。' : o.refund ? '关联发票正在全额红冲，请稍后查看结果。' : o.application && !o.invoice ? '系统正在处理关联开票申请。如后续出票成功，将自动全额红冲。' : '订单开票二维码已失效。'}</div>}
       <section className="section"><h2>订单信息</h2><dl className="kv-wrap"><KV label="订单编号">{o.number}</KV><KV label="订单日期">{o.date}</KV><KV label="订单备注">{o.note}</KV><KV label="开票门店">{C.STORES[o.store].name}</KV><KV label="创建时间">{fmtTime(o.createdAt)}</KV></dl></section>
-      <section className="section"><h2>开票项目</h2>{o.items.map((i,k) => <div className="line-item" key={k}><div className="row"><span>{product(i.product).name}</span><span className="amount">¥{C.money(i.cents)}</span></div><p className="quiet">数量：{i.quantity ?? 1} {product(i.product).unit}{product(i.product).spec ? ' · 规格型号：' + product(i.product).spec : ''}</p></div>)}</section>
+      <section className="section"><h2>开票项目</h2>{o.items.map((i,k) => <div className="line-item" key={k}><div className="row"><span>{product(i.product,i.snapshot).name}</span><span className="amount">¥{C.money(i.cents)}</span></div><p className="quiet">数量：{i.quantity ?? 1} {product(i.product,i.snapshot).unit}{product(i.product,i.snapshot).spec ? ' · 规格型号：' + product(i.product,i.snapshot).spec : ''}</p></div>)}</section>
       <section className="section"><h2>开票信息</h2><dl className="kv-wrap"><KV label="销方主体">{C.STORES[o.store].seller}</KV><KV label="销方税号">{C.STORES[o.store].sellerTaxNo}</KV>{o.application && <><KV label="购方抬头">{o.application.title}</KV>{o.application.type === 'company' && <KV label="购方税号">{o.application.taxId}</KV>}<KV label="接收邮箱">{o.deliveries?.length?o.deliveries[o.deliveries.length-1].email:o.application.email}</KV><KV label="申请时间">{fmtTime(o.application.submittedAt)}</KV></>}</dl>
         {o.invoice && <button className="order-action" onClick={() => go('/invoice/' + o.id)}><span>预览电子发票</span>{glyph('bi-b-arrow-right',16)}</button>}
         {o.refund?.status === 'success' && <button className="order-action" onClick={() => go('/invoice/' + o.id + '/red')}><span>预览红字发票</span>{glyph('bi-b-arrow-right',16)}</button>}
@@ -246,7 +247,7 @@ function invoicePdf(o, red) {
   const pdf = new jsPDF({orientation:'landscape',unit:'mm',format:'a5'});
   pdf.addFileToVFS('invoice.ttf',window.INVOICE_FONT);pdf.addFont('invoice.ttf','InvoiceCJK','normal');pdf.setFont('InvoiceCJK');
   const ink='#C92A2A',sign=red?'-':'';
-  const tax=o.items.reduce((s,i)=>s+Math.round(i.cents-i.cents/(1+product(i.product).rate)),0);
+  const tax=o.items.reduce((s,i)=>s+Math.round(i.cents-i.cents/(1+product(i.product,i.snapshot).rate)),0);
   const pageCount=Math.ceil(o.items.length/5);
   for(let pageIndex=0;pageIndex<pageCount;pageIndex++){
     if(pageIndex)pdf.addPage();
@@ -255,7 +256,7 @@ function invoicePdf(o, red) {
     pdf.rect(10,35,190,30);pdf.setFontSize(9);pdf.text('购买方：'+o.application.title,14,44);pdf.text('销售方：'+C.STORES[o.store].seller,108,44);
     pdf.setFontSize(7);pdf.text('纳税人识别号：'+(o.application.taxId||'—'),14,55);pdf.text('订单编号：'+(o.number||o.id),108,55);
     pdf.rect(10,65,190,48);pdf.setFontSize(9);pdf.text('项目名称',14,73);pdf.text('规格型号',75,73);pdf.text('单位',98,73);pdf.text('数量',115,73);pdf.text('金额',145,73);pdf.text('税额',180,73);pdf.line(10,77,200,77);
-    o.items.slice(pageIndex*5,pageIndex*5+5).forEach((i,k)=>{const p=product(i.product),vat=Math.round(i.cents-i.cents/(1+p.rate));pdf.text(p.name,14,84+k*6);pdf.text(p.spec||'—',75,84+k*6);pdf.text(p.unit,98,84+k*6);pdf.text(sign+String(i.quantity??1),115,84+k*6);pdf.text(sign+C.money(i.cents-vat),156,84+k*6,{align:'right'});pdf.text(sign+C.money(vat),192,84+k*6,{align:'right'});});
+    o.items.slice(pageIndex*5,pageIndex*5+5).forEach((i,k)=>{const p=product(i.product,i.snapshot),vat=Math.round(i.cents-i.cents/(1+p.rate));pdf.text(p.name,14,84+k*6);pdf.text(p.spec||'—',75,84+k*6);pdf.text(p.unit,98,84+k*6);pdf.text(sign+String(i.quantity??1),115,84+k*6);pdf.text(sign+C.money(i.cents-vat),156,84+k*6,{align:'right'});pdf.text(sign+C.money(vat),192,84+k*6,{align:'right'});});
     pdf.setFontSize(10);pdf.text('价税合计：'+sign+'¥'+C.money(C.total(o)),14,125);pdf.setFontSize(7);pdf.text('仅供功能演示，非真实发票。',14,136);pdf.text('第 '+(pageIndex+1)+' / '+pageCount+' 页',190,136,{align:'right'});
     if(red){pdf.setTextColor(ink);pdf.setFontSize(26);pdf.text('红字发票',104,108,{align:'center'});}
   }
@@ -264,14 +265,15 @@ function invoicePdf(o, red) {
 function InvoicePreview({ o, red }) {
   const [blob,setBlob] = useState('');
   useEffect(() => { const pdf=invoicePdf(o,red),url=URL.createObjectURL(pdf.output('blob'));setBlob(url);return()=>URL.revokeObjectURL(url); },[o.id,red]);
-  const tax=o.items.reduce((s,i)=>s+Math.round(i.cents-i.cents/(1+product(i.product).rate)),0),sign=red?'-':'';
-  return <div className="screen"><Nav title={red?'红字发票':'电子发票'} back={() => go('/order/'+o.id)}/><main className="content"><div className="invoice-sheet"><div className="row info"><span>电子发票</span><span>演示票样</span></div><h1>电子发票（普通发票）</h1><div className="info">发票号码：{red?'H':''}{o.invoice.number}<br/>开票日期：{C.date(new Date(red?o.refund.completedAt:o.invoice.issuedAt))}<br/>购买方：{o.application.title}<br/>销售方：{C.STORES[o.store].seller}</div><table><thead><tr><th>项目名称</th><th>规格型号</th><th>单位</th><th>数量</th><th>金额</th></tr></thead><tbody>{o.items.map((i,k)=><tr key={k}><td>{product(i.product).name}</td><td>{product(i.product).spec||'—'}</td><td>{product(i.product).unit}</td><td>{sign}{i.quantity ?? 1}</td><td>{sign}{C.money(i.cents-Math.round(i.cents-i.cents/(1+product(i.product).rate)))}</td></tr>)}</tbody></table>{red&&<div className="watermark">红字发票</div>}<div className="info">税额：{sign}¥{C.money(tax)}<br/>价税合计：{sign}¥{C.money(C.total(o))}</div></div></main><Footer><Button color="outline" onClick={()=>{if(blob)window.open(blob,'_blank');}}>打开 PDF</Button><Button onClick={()=>invoicePdf(o,red).save((red?'红字发票_':'电子发票_')+o.id+'.pdf')}>下载 PDF</Button></Footer></div>;
+  const tax=o.items.reduce((s,i)=>s+Math.round(i.cents-i.cents/(1+product(i.product,i.snapshot).rate)),0),sign=red?'-':'';
+  return <div className="screen"><Nav title={red?'红字发票':'电子发票'} back={() => go('/order/'+o.id)}/><main className="content"><div className="invoice-sheet"><div className="row info"><span>电子发票</span><span>演示票样</span></div><h1>电子发票（普通发票）</h1><div className="info">发票号码：{red?'H':''}{o.invoice.number}<br/>开票日期：{C.date(new Date(red?o.refund.completedAt:o.invoice.issuedAt))}<br/>购买方：{o.application.title}<br/>销售方：{C.STORES[o.store].seller}</div><table><thead><tr><th>项目名称</th><th>规格型号</th><th>单位</th><th>数量</th><th>金额</th></tr></thead><tbody>{o.items.map((i,k)=><tr key={k}><td>{product(i.product,i.snapshot).name}</td><td>{product(i.product,i.snapshot).spec||'—'}</td><td>{product(i.product,i.snapshot).unit}</td><td>{sign}{i.quantity ?? 1}</td><td>{sign}{C.money(i.cents-Math.round(i.cents-i.cents/(1+product(i.product,i.snapshot).rate)))}</td></tr>)}</tbody></table>{red&&<div className="watermark">红字发票</div>}<div className="info">税额：{sign}¥{C.money(tax)}<br/>价税合计：{sign}¥{C.money(C.total(o))}</div></div></main><Footer><Button color="outline" onClick={()=>{if(blob)window.open(blob,'_blank');}}>打开 PDF</Button><Button onClick={()=>invoicePdf(o,red).save((red?'红字发票_':'电子发票_')+o.id+'.pdf')}>下载 PDF</Button></Footer></div>;
 }
 function App() {
   const db=useData(),[route,setRoute]=useState(location.hash.slice(1)||'/');
   useEffect(()=>{const onRoute=()=>{setRoute(location.hash.slice(1)||'/');window.scrollTo(0,0);};window.addEventListener('hashchange',onRoute);return()=>window.removeEventListener('hashchange',onRoute);},[]);
   const [,section,id,rev,role]=route.split('/'),o=db.orders.find(x=>x.id===id);
   useEffect(()=>{const review=document.referrer.includes('review.html');if(review&&['qr','order','refund-order'].includes(section)&&o)window.parent.postMessage({type:'invoice-active-order',id:o.id,rev:o.rev},location.origin==='null'?'*':location.origin);},[route,o?.rev]);
+  if(section&&!InvoiceConfig.available())return <div className="screen"><Nav title="电子发票" back={()=>go('/')}/><main className="content"><div className="empty"><p>功能未开通</p></div></main></div>;
   if(section==='invoicing')return <InvoiceHome/>;
   if(section==='refund')return <RefundSearch db={db}/>;
   if(section==='orders')return <OrderList db={db}/>;

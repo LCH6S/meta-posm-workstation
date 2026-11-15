@@ -21,3 +21,5 @@
 .receipt-support{text-align:center;font-size:10px;line-height:16px;margin-top:12px;padding-top:8px;color:#333}@media print{.receipt-support{font-size:9px;color:#000}}
 
 .field-error{font-size:13px;line-height:19px;color:var(--error);padding:4px 0 8px}.project-empty-error{padding:0 16px 12px}
+
+.pos-store-identity{position:absolute;left:0;top:calc(min(100vw,480px)*.075);width:80%;min-height:64px;padding:8px;background:#30313f;color:white;display:flex;flex-direction:column;gap:6px}.pos-store-identity strong{font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pos-store-identity span{font-size:13px;color:#aaa}

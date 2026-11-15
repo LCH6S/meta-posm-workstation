@@ -31,7 +31,7 @@
 <script src="assets/vendor/qrcode.js"></script>
 <script src="assets/vendor/jsbarcode.js"></script>
 <script src="assets/vendor/jspdf.js"></script>
-<script src="assets/vendor/font-data.js"></script><script src="config.js?v=20261116-manual-config"></script><script src="core.js?v=20261116-manual-config"></script>
+<script src="assets/vendor/font-data.js"></script><script src="core.js?v=20261116-manual-independent"></script>
 <script type="text/babel">// Meta POS components. Visual source: Meta-Pos-App / 相关规范 and refund/search/detail screens.
 (() => {
   const {useEffect,useState,useRef}=React;
@@ -74,9 +74,9 @@ function useData() {
   const [db, setDb] = useState(C.read);
   useEffect(() => {
     const update = () => setDb(C.read());
-    window.addEventListener('storage', update); window.addEventListener('invoice-data', update);window.addEventListener('manual-invoice-config',update);
+    window.addEventListener('storage', update); window.addEventListener('invoice-data', update);
     const timer = setInterval(() => C.tick(), 500);
-    return () => { clearInterval(timer); window.removeEventListener('storage', update); window.removeEventListener('invoice-data', update);window.removeEventListener('manual-invoice-config',update); };
+    return () => { clearInterval(timer); window.removeEventListener('storage', update); window.removeEventListener('invoice-data', update); };
   }, []);
   return db;
 }
@@ -104,14 +104,14 @@ function Home() {
   const unavailable = () => notify('请进入电子发票办理开票业务');
   const currentStore=C.activeStore();
   return <div className="pos-home">
-    <div className="pos-hero" role="img" aria-label={(currentStore?.name||'门店')+'，门店编号 '+(currentStore?.code||currentStore?.id||'')}>{!InvoiceConfig.current().sample&&<div className="pos-store-identity"><strong>{currentStore?.name||'门店'}</strong><span>门店编号：{currentStore?.code}</span></div>}<div className="pos-pending-title">待处理订单</div></div>
+    <div className="pos-hero" role="img" aria-label={(currentStore?.name||'门店')+'，门店编号 '+(currentStore?.code||currentStore?.id||'')}><div className="pos-pending-title">待处理订单</div></div>
     <div className="pos-empty">{glyph('bi-b-order', 44)}<div>暂无订单，点击刷新</div></div>
     <section className="pos-section"><h2>门店收银</h2><div className="pos-grid">
       {[['收款','bi-b-pay'],['退款','bi-c-after'],['账本','bi-b-list'],['结算','bi-financial-center'],['门店交易统计','bi-transaction-report']].map(([name, icon]) => <button className="pos-tile" onClick={unavailable} key={name}><span className="icon-tile">{glyph(icon, 28)}</span><span>{name}</span></button>)}
     </div></section>
     <section className="pos-section"><h2>应用功能</h2><div className="pos-grid">
       <button className="pos-tile" onClick={unavailable}><span className="icon-tile">{glyph('bi-c-wallet-fill', 28)}</span><span>礼品卡</span></button>
-      {InvoiceConfig.entryVisible()&&<button className="pos-tile invoice-entry" onClick={() => go('/invoicing')}><span className="icon-tile">{glyph('bi-b-note', 28)}</span><span>电子发票</span></button>}
+      {C.entryVisible()&&<button className="pos-tile invoice-entry" onClick={() => go('/invoicing')}><span className="icon-tile">{glyph('bi-b-note', 28)}</span><span>电子发票</span></button>}
     </div></section><div className="bottom-home" />
   </div>;
 }
@@ -335,7 +335,7 @@ function App() {
   useEffect(()=>{const onRoute=()=>{setRoute(location.hash.slice(1)||'/');window.scrollTo(0,0);};window.addEventListener('hashchange',onRoute);return()=>window.removeEventListener('hashchange',onRoute);},[]);
   const [,section,id,rev,role]=route.split('/'),o=db.orders.find(x=>x.id===id);
   useEffect(()=>{const review=document.referrer.includes('review.html');if(review&&['qr','order','refund-order'].includes(section)&&o)window.parent.postMessage({type:'invoice-active-order',id:o.id,rev:o.rev},location.origin==='null'?'*':location.origin);},[route,o?.rev]);
-  if(section&&!InvoiceConfig.available())return <div className="screen"><Nav title="电子发票" back={()=>go('/')}/><main className="content"><div className="empty"><p>功能未开通</p></div></main></div>;
+  if(section&&!C.manualAvailable())return <div className="screen"><Nav title="电子发票" back={()=>go('/')}/><main className="content"><div className="empty"><p>功能未开通</p></div></main></div>;
   if(section==='invoicing')return <InvoiceHome/>;
   if(section==='refund')return <RefundSearch db={db}/>;
   if(section==='orders')return <OrderList db={db}/>;

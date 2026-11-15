@@ -17,7 +17,7 @@
   const total = o => o.items.reduce((s, i) => s + i.cents, 0);
   const money = n => (n / 100).toFixed(2);
   let cache;
-  const normalize = db => { root.InvoiceConfig?.hydrate(db); for (const o of db.orders) { if (!String(o.number??'').trim()) o.number=o.id; for (const i of o.items) if (i.quantity == null) i.quantity = 1; } return db; };
+  const normalize = db => { for (const [id,store] of Object.entries(db.storeCatalog||{})) STORES[id]=store; for (const o of db.orders) { if (!String(o.number??'').trim()) o.number=o.id; for (const i of o.items) if (i.quantity == null) i.quantity = 1; } return db; };
   const read = () => { try { return normalize(JSON.parse(localStorage.getItem(KEY)) || cache || seed()); } catch { return normalize(cache || seed()); } };
   const write = db => { cache = db; try { localStorage.setItem(KEY, JSON.stringify(db)); } catch {} root.dispatchEvent(new Event('invoice-data')); return db; };
   // Pending fixtures deliberately omit dueAt; external review can explicitly issue them.
@@ -51,7 +51,7 @@
     if (String(input.number??'').trim() && !/^[A-Za-z0-9]+$/.test(String(input.number).trim())) throw new Error('订单编号仅支持英文字母和数字');
     if (textLength(input.note) > 200) throw new Error('订单备注最多200个字符');
     if (!input.items.length) throw new Error('请选择至少一个开票项目');
-    if (input.items.some(i => !(root.InvoiceConfig?.projects()||PRODUCTS).some(p => p.id === i.product))) throw new Error('开票项目已更新，请重新选择开票项目');
+    if (input.items.some(i => !PRODUCTS.some(p => p.id === i.product))) throw new Error('开票项目已更新，请重新选择开票项目');
     if (input.items.some(i => !Number.isSafeInteger(i.cents) || i.cents <= 0)) throw new Error('每个项目的金额须大于 0，最多保留两位小数');
     if (input.items.some(i => !Number.isFinite(i.quantity) || i.quantity <= 0)) throw new Error('每个项目的数量须大于 0');
     if (!/^\d{4}-\d{2}-\d{2}$/.test(input.date) || Number.isNaN(new Date(input.date + 'T00:00:00').getTime())) throw new Error('请选择有效的订单日期');
@@ -59,14 +59,14 @@
     if (total(input) > 10000000000) throw new Error('订单金额超出本次演示支持范围');
   }
   function save(input, id, expectedRev) {
-    if(root.InvoiceConfig&&!root.InvoiceConfig.available())throw new Error('功能未开通');
+    if(read().demoSettings?.manualInvoiceEnabled===false)throw new Error('功能未开通');
     validate(input);
     return commit(db => {
       const now = Date.now();
-      const active=root.InvoiceConfig?.activeStore()||STORES.sqb002;
+      const active=STORES.sqb002;
       db.storeCatalog ||= {};db.storeCatalog[active.id]=active;
       db.projectCatalog ||= {};
-      input.items=input.items.map(i=>{const snapshot={...(root.InvoiceConfig?.findProject(i.product)||PRODUCTS.find(p=>p.id===i.product))};db.projectCatalog[i.product]=snapshot;return {...i,snapshot};});
+      input.items=input.items.map(i=>{const snapshot={...PRODUCTS.find(p=>p.id===i.product)};db.projectCatalog[i.product]=snapshot;return {...i,snapshot};});
       if (id) {
         const o = db.orders.find(x => x.id === id);
         if (!o || o.cancelled || o.application || o.rev !== expectedRev) throw new Error('订单状态已变化，无法修改，请查看最新订单');
@@ -92,7 +92,7 @@
     });
   }
   function cancel(id) {
-    if(root.InvoiceConfig&&!root.InvoiceConfig.available())throw new Error('功能未开通');
+    if(read().demoSettings?.manualInvoiceEnabled===false)throw new Error('功能未开通');
     return commit(db => {
       const o = db.orders.find(x => x.id === id);
       if (!o) throw new Error('订单不存在');
@@ -104,7 +104,7 @@
     });
   }
   function resend(id, email) {
-    if(root.InvoiceConfig&&!root.InvoiceConfig.available())throw new Error('功能未开通');
+    if(read().demoSettings?.manualInvoiceEnabled===false)throw new Error('功能未开通');
     const recipient = String(email || '').trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) throw new Error('请填写有效的接收邮箱');
     return commit(db => {
@@ -130,7 +130,7 @@
     if (changed) write(db);
   }
   function invoiceStatus(o) { return o.refund?.status === 'success' ? '已全额红冲' : o.refund?.status === 'failed' ? '红冲失败' : o.refund ? '红冲中' : o.invoice ? '已开票' : o.application ? '开票中' : '未申请开票'; }
-  root.DemoCore = { KEY, STORES, PRODUCTS, projects:()=>root.InvoiceConfig?.projects()||PRODUCTS, getProject:id=>root.InvoiceConfig?.findProject(id)||PRODUCTS.find(p=>p.id===id), activeStore:()=>root.InvoiceConfig?.activeStore()||STORES.sqb002, date, money, total, textLength, limitText, read, write, seed, order, save, apply, cancel, resend, tick, invoiceStatus };
+  root.DemoCore = { KEY, STORES, PRODUCTS, projects:()=>PRODUCTS, getProject:id=>PRODUCTS.find(p=>p.id===id)||read().projectCatalog?.[id]||{id,name:"开票项目",unit:"件",spec:"",rate:0.13}, activeStore:()=>STORES.sqb002, manualAvailable:()=>read().demoSettings?.manualInvoiceEnabled!==false, entryVisible:()=>read().demoSettings?.invoiceEntryVisible!==false, setDemoSettings:values=>commit(db=>{db.demoSettings={...db.demoSettings,...values};}), date, money, total, textLength, limitText, read, write, seed, order, save, apply, cancel, resend, tick, invoiceStatus };
   const initial = read();
   if (!initial.samplePacks?.includes('processing-v1')) {
     for (const sample of processingSamples()) if (!initial.orders.some(o => o.id === sample.id)) initial.orders.push(sample);

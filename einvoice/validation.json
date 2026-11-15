@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-15",
+  "date": "2026-11-16",
   "entry": "http://127.0.0.1:60916/review.html?v=20261115",
   "scope": "Meta POS 店员端；既有 C 端不设计、不修改；后台配置不展开",
   "design_source": "design-source.json",
@@ -30,7 +30,9 @@
     "detail invoice-number field removed while invoice document retains number",
     "refund guide exact text replaced; query and scan logic unchanged",
     "latest identifier rule ASCII letters/digits only, 36 character cap and 200 character note; invalid manual/scan identifiers rejected without altering previous number; 36/37 and 200/201 boundaries checked; cancelled overview only cancelled state/no duplicate label/expiry hint; unsubmitted list label shortened; new search placeholder; receipt strips internal serial/time, prints support line, direct barcode independently decodes to 123123",
-    "field errors only: no default number-rule/note-limit/counter; invalid manual drafts retain input with save blocked; 36/37 ASCII and 200/201 Chinese-note boundaries; scan error under number without replacing value; project errors per amount field; editor quantity/amount errors next to respective fields; correction clears errors; empty-item error below add; sum 100+50 remains 150 with quantity 2; valid creation and 320px layout; zero page errors"
+    "field errors only: no default number-rule/note-limit/counter; invalid manual drafts retain input with save blocked; 36/37 ASCII and 200/201 Chinese-note boundaries; scan error under number without replacing value; project errors per amount field; editor quantity/amount errors next to respective fields; correction clears errors; empty-item error below add; sum 100+50 remains 150 with quantity 2; valid creation and 320px layout; zero page errors",
+    "2026-11-16 issued order actions: no navigation revoke; fixed footer contains full-order refund and resend-email; renamed resend page and submit feedback; refund confirm/cancel and full-red result verified; unissued navigation revoke and modify/print unchanged; processing query-only unchanged; 320px layout and zero page errors",
+    "2026-11-16 invoice home entry labels are 开票 / 退票 / 开票记录; unchanged destinations /new /refund /orders and 320px layout verified"
   ],
   "logic_checks": [
     "integer cents total is sum of project totals only",

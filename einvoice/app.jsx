@@ -55,8 +55,8 @@ function Home() {
 function InvoiceHome() {
   return <div className="screen"><Nav title="电子发票" back={() => go('/')}/><main className="invoice-home">
     <div className="invoice-entries">
-      <a className="invoice-function-card" href="#/new">手动开票</a>
-      <a className="invoice-function-card" href="#/refund">手动退票</a>
+      <a className="invoice-function-card" href="#/new">开票</a>
+      <a className="invoice-function-card" href="#/refund">退票</a>
       <a className="invoice-function-card" href="#/orders">开票记录</a>
     </div>
   </main></div>;
@@ -202,19 +202,18 @@ function ReceiptPage({ o }) {
 function OrderDetail({ o, origin }) {
   const unissued=!o.cancelled&&!o.application&&!o.invoice;
   const processing=!o.cancelled&&!!o.application&&!o.invoice;
-  const canRevoke=!o.cancelled&&(!o.application||!!o.invoice);
   const canResend=!o.cancelled&&!!o.invoice&&!o.refund;
   const statusText=o.cancelled?'已取消':!o.application&&!o.invoice?'未开票':C.invoiceStatus(o);
   const revoke = async () => {
-    const approved = await dialog.confirm({ title: '撤销这笔订单？', content: o.invoice ? '撤销后订单开票二维码失效，关联发票将全额红冲。' : '撤销后，顾客将无法使用此订单二维码申请开票。', okText: '确认撤销', cancelText: '暂不撤销' });
-    if (approved) { try { C.cancel(o.id); notify('订单已撤销'); } catch(e) { notify(e.message); } }
+    const approved = await dialog.confirm({ title: o.invoice ? '确认整单退票？' : '撤销这笔订单？', content: o.invoice ? '整单退票后，关联发票将全额红冲，订单不可继续开票。' : '撤销后，顾客将无法使用此订单二维码申请开票。', okText: o.invoice ? '确认退票' : '确认撤销', cancelText: o.invoice ? '暂不退票' : '暂不撤销' });
+    if (approved) { try { C.cancel(o.id); notify(o.invoice ? '已提交整单退票' : '订单已撤销'); } catch(e) { notify(e.message); } }
   };
   const queryResult = () => {
     C.tick();const latest=C.order(o.id);
     if(!latest)return notify('未找到这笔订单');
     notify(latest.invoice?'开票成功':latest.cancelled?'订单已撤销':'仍在开票中，请稍后查询');
   };
-  return <div className="screen"><Nav title="订单开票详情" back={() => go(origin === 'refund' ? '/refund' : '/orders')} right={canRevoke?<button className="nav-revoke" onClick={revoke}>撤销</button>:null}/>
+  return <div className="screen"><Nav title="订单开票详情" back={() => go(origin === 'refund' ? '/refund' : '/orders')} right={unissued?<button className="nav-revoke" onClick={revoke}>撤销</button>:null}/>
     <main className="content">
       <section className="section invoice-overview center">
         {!o.cancelled&&<div className="quiet">开票金额</div>}
@@ -233,14 +232,14 @@ function OrderDetail({ o, origin }) {
     </main>
     {unissued&&<Footer><Button color="outline" onClick={() => go('/edit/' + o.id)}>修改</Button><Button onClick={() => go('/receipt/' + o.id)}>打印二维码</Button></Footer>}
     {processing&&<Footer><Button onClick={queryResult}>查询开票结果</Button></Footer>}
-    {canResend&&<Footer><Button onClick={()=>go('/resend/'+o.id)}>重新发送</Button></Footer>}
+    {canResend&&<Footer><Button color="outline" onClick={revoke}>整单退票</Button><Button onClick={()=>go('/resend/'+o.id)}>重发邮件</Button></Footer>}
   </div>;
 }
 function ResendInvoice({o}) {
   const previous=o.deliveries?.length?o.deliveries[o.deliveries.length-1].email:o.application?.email||'';
   const [email,setEmail]=useState(previous),[error,setError]=useState(''),[busy,setBusy]=useState(false);
-  const submit=()=>{if(busy)return;setError('');setBusy(true);try{C.resend(o.id,email);go('/order/'+o.id);notify('已提交重新发送');}catch(e){setError(e.message);}finally{setBusy(false);}};
-  return <div className="screen"><Nav title="重新发送" back={()=>go('/order/'+o.id)}/><main className="content"><section className="section resend-form"><FieldItem title={<label htmlFor="resend-email">接收邮箱</label>}><Input id="resend-email" type="email" value={email} onChange={v=>{setEmail(v);setError('');}} placeholder="请输入接收邮箱"/></FieldItem>{error&&<div className="inline-error" role="alert">{error}</div>}</section></main><Footer><Button onClick={submit} disabled={busy}>确认发送</Button></Footer></div>;
+  const submit=()=>{if(busy)return;setError('');setBusy(true);try{C.resend(o.id,email);go('/order/'+o.id);notify('已提交重发邮件');}catch(e){setError(e.message);}finally{setBusy(false);}};
+  return <div className="screen"><Nav title="重发邮件" back={()=>go('/order/'+o.id)}/><main className="content"><section className="section resend-form"><FieldItem title={<label htmlFor="resend-email">接收邮箱</label>}><Input id="resend-email" type="email" value={email} onChange={v=>{setEmail(v);setError('');}} placeholder="请输入接收邮箱"/></FieldItem>{error&&<div className="inline-error" role="alert">{error}</div>}</section></main><Footer><Button onClick={submit} disabled={busy}>确认发送</Button></Footer></div>;
 }
 function invoicePdf(o, red) {
   const {jsPDF} = window.jspdf;

@@ -1,0 +1,94 @@
+{
+  "figma_file": "X95IBxi4il2QswcmDsGhQB",
+  "norm_nodes": {
+    "buttons": "361:3639",
+    "typography": "14:7648",
+    "color": "14:7702"
+  },
+  "screen_reference_nodes": {
+    "form": "0:8509",
+    "detail": "0:7306",
+    "search": "0:8930"
+  },
+  "asset_source_nodes": {
+    "button-primary.svg": "394:3",
+    "button-disabled.svg": "394:8",
+    "back.svg": "0:9047",
+    "scan.svg": "0:9053",
+    "search.svg": "0:9069",
+    "success.svg": "0:7418"
+  },
+  "principles": [
+    "Deep primary #1C1D24; 48 CSS px main button from 96 design px",
+    "Source SVG intrinsic dimensions preserved; icon display at half-scale",
+    "Lato Bold for monetary values",
+    "Existing consumer page outside this deliverable"
+  ],
+  "assets": [
+    {
+      "file": "assets/meta-pos/search.svg",
+      "bytes": 202,
+      "sha256": "56503dc0dced9f789185ea6315a1db0e8c6b6bec251c53af523a7f920460b4fe",
+      "intrinsic": {
+        "width": "32",
+        "height": "32",
+        "viewBox": "0 0 32 32"
+      }
+    },
+    {
+      "file": "assets/meta-pos/Lato-Bold.ttf",
+      "bytes": 656544,
+      "sha256": "8a0aace75d33794eece4b28187bfc1df0bbd2888b5d8a56e01788c8d65d16be1"
+    },
+    {
+      "file": "assets/meta-pos/button-primary.svg",
+      "bytes": 414,
+      "sha256": "3e0d0c31e530d1d1a93590f9a860379efe6f0af59122523c7d2abe7b56c19bd1",
+      "intrinsic": {
+        "width": "624",
+        "height": "96",
+        "viewBox": "0 0 624 96"
+      }
+    },
+    {
+      "file": "assets/meta-pos/scan.svg",
+      "bytes": 2137,
+      "sha256": "bba6e6a37fa6f9d914b539a316393b56ec6e3f01b4cdd39d18e37ed5d73c57b1",
+      "intrinsic": {
+        "width": "32",
+        "height": "32",
+        "viewBox": "0 0 32 32"
+      }
+    },
+    {
+      "file": "assets/meta-pos/button-disabled.svg",
+      "bytes": 608,
+      "sha256": "73b79be5d642f044c2cdcebbbcc92072779cfa51045280526b427e05936669cd",
+      "intrinsic": {
+        "width": "624",
+        "height": "96",
+        "viewBox": "0 0 624 96"
+      }
+    },
+    {
+      "file": "assets/meta-pos/back.svg",
+      "bytes": 526,
+      "sha256": "c00bebdc110912d428b1c0d9392971a954637a58be5832b9cabfddc1c2bd4c60",
+      "intrinsic": {
+        "width": "23",
+        "height": "38",
+        "viewBox": "0 0 23 38"
+      }
+    },
+    {
+      "file": "assets/meta-pos/success.svg",
+      "bytes": 971,
+      "sha256": "7b438110b6f5fb70969c8394b25a9bda3541bfc5171705dfc85c54641b744ad7",
+      "intrinsic": {
+        "width": "32",
+        "height": "32",
+        "viewBox": "0 0 32 32"
+      }
+    }
+  ]
+}

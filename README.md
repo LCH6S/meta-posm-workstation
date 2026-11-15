@@ -8,6 +8,9 @@
 - Meta POS 订单推送 H5 原型：https://lch6s.github.io/meta-posm-workstation/meta-pos/
 - Meta POS 外设模式 AIO Demo：https://lch6s.github.io/meta-posm-workstation/aio-peripheral/
 
+- Meta POS 电子发票 Demo：https://lch6s.github.io/meta-posm-workstation/einvoice/
+- 电子发票评审入口：https://lch6s.github.io/meta-posm-workstation/einvoice/review.html
+
 ## 当前覆盖
 
 ### 门店 POS 管理原型

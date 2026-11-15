@@ -1,0 +1,54 @@
+{
+  "date": "2026-11-15",
+  "entry": "http://127.0.0.1:60916/review.html?v=20261115",
+  "scope": "Meta POS 店员端；既有 C 端不设计、不修改；后台配置不展开",
+  "design_source": "design-source.json",
+  "verified": [
+    "Meta POS three entries; manual create directly opens form; manual refund directly opens query",
+    "create/edit save goes to order invoice detail with QR display and receipt printing",
+    "quantity 2 + total 100; quantity 3 + total 50 => order total 150; editing quantity to 5 keeps total 150",
+    "positive quantity validation; quantity migration defaults old Demo records to 1 without revaluing amounts",
+    "order number/note optional and sales completion date editable",
+    "manual query empty/result states; query to detail and full reversal; cross-store order-number search",
+    "scanner result injection and query from external review control; page contains scan action and supported-browser camera path",
+    "stale QR version rejected; already-applied edit guarded; late invoice after cancel automatically fully red reversed",
+    "quantity included in details, receipt, invoice preview and downloaded red PDF",
+    "320px no horizontal overflow on menu/form/refund/records/detail; 402px visual screenshots; 1180px external review layout",
+    "no SQB UI JS/CSS/font loaded; no consumer iframe or form remains in deliverable",
+    "final browser flow zero page errors; expected Babel prototype warning only",
+    "external reviewer current-order propagation, simulated application/issuance/full-red controls and local asset loading",
+    "order-number scan in create/edit; trimmed replacement; manual editing; cancellation preserves number; ignores results while scanner closed; keyboard-wedge scan; preserved quantity/total/note; saved number appears in detail; shared refund scan; external review injection; unsupported camera fallback",
+    "item name/quantity share one row; outer card amount only; edit/cancel/save quantity and line total; validation; last-item deletion and empty-order guard; totals recompute without multiplying quantity; order draft preserved; create/edit persistence; 320px geometry; quantity-only editing with blank draft amount",
+    "full item editor page/routes (no drawer/dialog); blue edit/red delete computed colors; quantity/currency units after numbers; save/cancel/browser-back preserves parent order draft; create/edit persistence and 320px layout",
+    "full-width outlined add-item button opens picker; no currency unit in project/total labels; final total retains currency symbol; no inner project title/amount separator; 100+50=150",
+    "invoice home omits store identity; three white navigation cards, one per row; all destinations and return paths verified; 320px no overflow",
+    "detail overview consolidates amount/status/QR; no internal order-ID field or zoom entry; unissued revoke top-right and modify/print fixed bottom; processing query-only with revoke state guard; issued top-right revoke/full reversal; revoked QR hidden; print/edit/query navigation and 320px layout",
+    "records four fields only with actual sales date/no view-text; split seller identity/tax number; process-log UI removed; issued fixed-bottom resend to independent email page; email validation/save/back/new address display; original application snapshot preserved; revoked state/submit race guard; no sending on unissued orders; 320px list layout",
+    "query scope text removed without scope change; refund/list share identical four-field card; cancelled label only; cancelled tab removed while records stay in all; detail retains red-reversal status; destinations and 320px checked",
+    "blank order number assigned automatically; consecutive generated numbers distinct; manual and leading-zero identifiers preserved; old blank numbers stably backfilled; edit blank uses system number",
+    "receipt reference layout with store name/code, device number and real Code128 order-number barcode; screen and 58mm print PDF independently decoded with zxing-cpp",
+    "detail invoice-number field removed while invoice document retains number",
+    "refund guide exact text replaced; query and scan logic unchanged",
+    "latest identifier rule ASCII letters/digits only, 36 character cap and 200 character note; invalid manual/scan identifiers rejected without altering previous number; 36/37 and 200/201 boundaries checked; cancelled overview only cancelled state/no duplicate label/expiry hint; unsubmitted list label shortened; new search placeholder; receipt strips internal serial/time, prints support line, direct barcode independently decodes to 123123",
+    "field errors only: no default number-rule/note-limit/counter; invalid manual drafts retain input with save blocked; 36/37 ASCII and 200/201 Chinese-note boundaries; scan error under number without replacing value; project errors per amount field; editor quantity/amount errors next to respective fields; correction clears errors; empty-item error below add; sum 100+50 remains 150 with quantity 2; valid creation and 320px layout; zero page errors"
+  ],
+  "logic_checks": [
+    "integer cents total is sum of project totals only",
+    "quantity positive finite including fractional values",
+    "old absent quantity compatibility",
+    "edit/application race guard and automatic red reversal"
+  ],
+  "not_verified": [
+    "production scanner SDK and real camera hardware",
+    "POS printer hardware interface",
+    "existing consumer application URL/service",
+    "real tax/mapping/issuance/email services",
+    "SMTP/email delivery: resend only records a simulated submission locally"
+  ],
+  "assumptions": [
+    "quantity initial value 1; no added integer-only requirement",
+    "old QR invalid after edit remains prototype assumption",
+    "existing future-sales-date/email simulation validation unchanged"
+  ],
+  "evidence": "output/playwright/meta-pos-v2-*.png; tmp/meta-pos-invoice-v2/check.js and invoice-red.pdf; output/playwright/meta-pos-number-scan-form.png; tmp/meta-pos-invoice-v2/check-number-scan.js; output/playwright/meta-pos-item-cards.png and meta-pos-item-editor.png; tmp/meta-pos-invoice-v2/check-item-editor.js; output/playwright/meta-pos-item-full-page.png and meta-pos-item-actions-colors.png; tmp/meta-pos-invoice-v2/check-item-page.js; output/playwright/meta-pos-form-polish.png; output/playwright/meta-pos-home-function-cards.png; output/playwright/meta-pos-detail-{unissued,processing,issued}.png; tmp/meta-pos-invoice-v2/check-detail-states.js; output/playwright/meta-pos-records-four-fields.png; meta-pos-resend-email.png; meta-pos-issued-resend-footer.png; tmp/meta-pos-invoice-v2/check-resend.js; output/playwright/meta-pos-refund-shared-record-card.png; meta-pos-records-status-simple.png; output/playwright/meta-pos-receipt-reference-v2.png; tmp/meta-pos-invoice-v2/receipt-reference-v2.pdf, barcode-check.json, printed-code-check.json; output/playwright/meta-pos-cancelled-status-final.png; meta-pos-receipt-clean-final.png; tmp/meta-pos-invoice-v2/check-final-input-receipt.js; receipt-clean-final.pdf; barcode-123123-final.png"
+}

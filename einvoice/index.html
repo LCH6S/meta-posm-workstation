@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#F7F8FA"><title>Meta POS · 电子发票</title><link rel="icon" href="data:,"><style>@font-face{font-family:Lato;src:url('assets/meta-pos/Lato-Bold.ttf') format('truetype');font-weight:700;font-display:swap}
+:root{--brand:#1C1D24;--brand-soft:#F7F8FA;--page:#F7F8FA;--surface:#fff;--ink:#333;--sub:#666;--muted:#999;--line:#EBEDF0;--border:#DCDEE0;--error:#F53F3F;--success:#06AE57;--link:#365DB0;--gap:12px;--radius:4px;--safe:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--page);font-family:'PingFang SC',-apple-system,BlinkMacSystemFont,'Microsoft YaHei',sans-serif;color:var(--ink);font-size:15px;line-height:1.5}button,input,textarea{font:inherit;color:inherit}button{border:0;cursor:pointer;background:none;padding:0}button:disabled{cursor:not-allowed;opacity:.4}button:focus-visible,a:focus-visible{outline:2px solid var(--link);outline-offset:2px}input,textarea{min-width:0}a{color:var(--link)}body{max-width:480px;margin:auto}#root{min-height:100dvh}h1,h2,p{margin:0}button,a{-webkit-tap-highlight-color:transparent}.screen{min-height:100dvh;padding-bottom:calc(96px + var(--safe))}.nav{position:sticky;top:0;background:var(--surface);z-index:20}.meta-navbar{height:48px;display:flex;align-items:center;position:relative;background:var(--surface)}.meta-title{font-size:18px;font-weight:500;margin:auto;pointer-events:none}.meta-back{position:absolute;left:8px;min-width:40px;height:48px;display:grid;place-items:center}.meta-nav-right{position:absolute;right:16px;top:0;height:48px;display:flex;align-items:center}.meta-icon{display:inline-block;position:relative;width:16px;height:16px;flex-shrink:0;vertical-align:middle}.meta-icon img{position:absolute;left:0;top:0;transform:scale(.5);transform-origin:top left}.icon-bi-b-arrow-left{width:12px;height:20px}.icon-word{font-size:13px;font-weight:400;color:var(--sub);white-space:nowrap}.meta-button{position:relative;min-height:48px;padding:12px 16px;border-radius:4px;font-size:16px;font-weight:500;line-height:24px;text-align:center;white-space:nowrap;overflow:hidden;background-repeat:no-repeat;background-size:100% 100%}.meta-button.full{width:100%}.meta-button.primary{color:white;background-color:var(--brand);background-image:url('assets/meta-pos/button-primary.svg')}.meta-button.primary:disabled{opacity:1;background-image:url('assets/meta-pos/button-disabled.svg');color:rgba(255,255,255,.5)}.meta-button.outline{border:1px solid var(--border);background:var(--surface);color:var(--ink)}.meta-button.normal{background:var(--surface);color:var(--sub)}.meta-button.small{min-height:32px;padding:4px 12px;font-size:13px}.meta-field{display:flex;align-items:flex-start;gap:12px;min-height:52px;border-bottom:.5px solid var(--line);padding:16px 0}.meta-field:last-child{border-bottom:0}.meta-field-label{flex:0 0 94px;font-size:15px}.meta-field-control{flex:1;min-width:0}.meta-input{width:100%;border:0;padding:0;outline:0;background:transparent;font-size:15px;line-height:22px}.meta-input::placeholder,textarea::placeholder{color:#ccc}.meta-search{display:flex;align-items:center;gap:16px}.meta-search-box{display:flex;align-items:center;flex:1;background:var(--page);border-radius:4px;padding:12px;gap:8px;min-width:0}.meta-search input{border:0;outline:0;min-width:0;flex:1;width:100%;background:transparent;font-size:14px}.meta-search>button{min-height:44px;font-size:15px}.meta-search input::placeholder{color:#ccc}.meta-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000;background:rgba(0,0,0,.65);color:white;border-radius:4px;padding:12px 16px;max-width:80vw;text-align:center;font-size:14px}.meta-sheet{border:0;position:fixed;top:auto;bottom:0;left:0;right:0;margin:0 auto;padding:0;width:100%;max-width:480px;max-height:85dvh;overflow:auto;background:var(--surface);color:var(--ink);border-radius:8px 8px 0 0}.meta-sheet::backdrop,.meta-confirm::backdrop{background:rgba(0,0,0,.6)}.meta-confirm{border:0;border-radius:4px;padding:24px;width:calc(100% - 48px);max-width:320px;margin:auto;color:var(--ink);background:var(--surface)}.meta-confirm h2{font-size:18px;font-weight:500;text-align:center;margin-bottom:16px}.meta-confirm p{font-size:14px;line-height:1.6;color:var(--sub);margin-bottom:24px}.confirm-actions{display:flex;gap:12px}.confirm-actions button{flex:1;font-size:14px;padding:8px}.date-picker-body{padding:20px 16px}.date-picker-body label{display:block;color:var(--sub);font-size:14px}.date-picker-body input{display:block;width:100%;min-height:52px;border:1px solid var(--border);border-radius:4px;background:white;padding:12px;margin:12px 0 24px}.date-picker-body .meta-button{margin-top:8px}.content{padding:12px}.section{background:var(--surface);border-radius:var(--radius);padding:16px;margin-bottom:12px}.section.flush{padding:0}.section h2{font-size:16px;font-weight:500;margin:0 0 12px}.quiet{color:var(--muted);font-size:12px;line-height:1.5}.secondary{color:var(--sub)}.link{color:var(--link);background:none;padding:8px 0;font-size:14px}.icon-button{background:none;min-height:40px;min-width:40px;display:inline-flex;align-items:center;justify-content:center}.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.row.top{align-items:flex-start}.amount{font-variant-numeric:tabular-nums;font-family:Lato,'PingFang SC',sans-serif;font-weight:700}.big-amount{font-size:28px;line-height:42px;font-weight:700}.center{text-align:center}.footer{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,480px);padding:12px 16px calc(20px + var(--safe));background:var(--surface);z-index:25;display:flex;align-items:center;gap:12px}.footer>button{flex:1}.footer .total{flex:1;white-space:nowrap}.footer .total strong{font-size:20px}.footer .submit{flex:0 0 50%}.module-store{font-size:12px;color:var(--muted);margin-bottom:12px}.search-area{padding:12px 16px;background:var(--surface)}.search-scope{font-size:12px;color:var(--muted);padding-top:8px}.filter-tabs{display:flex;background:var(--surface);border-top:.5px solid var(--line);overflow:auto;position:sticky;top:48px;z-index:15}.filter-tabs button{position:relative;flex:1;white-space:nowrap;min-height:44px;padding:8px;font-size:14px}.filter-tabs button.active{color:var(--brand);font-weight:500}.filter-tabs button.active:after{content:'';position:absolute;bottom:0;left:30%;right:30%;height:2px;background:var(--brand)}.date-heading{font-size:13px;color:var(--sub);padding:16px 16px 8px}.records{background:var(--surface);border-radius:4px;overflow:hidden;margin:0 12px}.record{display:block;text-align:left;width:100%;padding:16px;border-bottom:.5px solid var(--line);background:var(--surface)}.record:last-child{border:0}.record .identity{font-size:14px;max-width:70%;overflow-wrap:anywhere}.record .amount{font-size:18px}.record .secondary{font-size:13px;margin:8px 0 4px}.record .quiet{font-size:12px}.record .status{font-size:13px}.status.success{color:var(--success)}.status.warn{color:var(--sub)}.status.error{color:var(--error)}.status.muted{color:var(--muted)}.empty{padding:48px 16px;text-align:center;color:var(--muted)}.empty p{margin:12px 0}.invoice-home{padding:16px 12px}.invoice-entries{display:grid;grid-template-columns:1fr;gap:12px}.refund-query{display:flex;gap:16px;align-items:center;padding:12px 16px;background:white}.refund-query>button{height:44px;font-size:15px}.refund-input{display:flex;gap:8px;background:var(--page);align-items:center;border-radius:4px;padding:0 12px;flex:1;min-width:0;height:44px}.refund-input input{border:0;outline:0;flex:1;min-width:0;width:100%;background:transparent;font-size:15px}.refund-input input::placeholder{color:#ccc}.refund-input button{height:44px;min-width:32px;display:grid;place-items:center}.query-help{padding:24px;font-size:15px;line-height:1.8;color:var(--sub)}.query-help h2{font-size:16px;font-weight:500;margin-bottom:16px;color:var(--ink)}.result-count{color:var(--muted);font-size:13px;margin:8px 4px 12px}.records.refund-results{margin:0}.scanner-body{padding:16px}.scanner-body p{text-align:center;font-size:14px;line-height:1.6;margin:12px 0}.scanner-body button{margin-top:8px}.scanner-window{height:200px;background:var(--page);display:grid;place-items:center;position:relative;overflow:hidden}.scanner-window video{width:100%;height:100%;object-fit:cover;position:absolute}.scanner-window>.meta-icon{width:32px;height:32px}.scanner-window>.meta-icon img{transform:scale(1)}.item-edit{padding:12px 16px;border-bottom:.5px solid var(--line)}.item-edit:last-child{border:0}.item-name{display:flex;align-items:center;gap:8px;font-weight:500;min-height:36px;font-size:16px}.item-price{display:flex;align-items:center;gap:12px;border-top:0;margin-top:12px;padding-top:12px}.item-price input{width:100%;border:0;text-align:right;outline:0;font-size:20px;line-height:28px;background:var(--surface);font-family:Lato,'PingFang SC',sans-serif;font-weight:700}.item-price label{flex-shrink:0;font-size:14px}.item-price input::placeholder{color:#ccc}.quantity-row{margin-top:8px;padding-top:8px}.quantity-row input{font-size:16px;font-family:inherit;font-weight:400}.item-meta{font-size:12px;color:var(--muted)}.add-item-row{padding:12px 16px}.add-item{width:100%;min-height:48px;font-size:15px;text-decoration:none}.field-group{padding:0 16px}.field-helper{font-size:12px;color:var(--muted);padding:0 16px 12px}.date-control{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:52px;gap:16px;text-align:left}.date-control .value{margin-left:auto}.inline-error{color:var(--error);font-size:13px;line-height:1.5;padding:8px 16px}.product-option{width:100%;text-align:left;background:var(--surface);padding:16px;display:flex;gap:12px;align-items:center;justify-content:space-between;border-bottom:.5px solid var(--line)}.product-option p{margin-top:4px}.popup-title{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:.5px solid var(--line);font-size:17px;font-weight:500;min-height:52px}.popup-body{padding-bottom:calc(16px + var(--safe));background:var(--surface)}.qr-title{font-size:18px;font-weight:500;margin-bottom:4px}.qr-card{padding:24px 16px;text-align:center;background:var(--surface);border-radius:4px}.qr-image{display:block;width:min(216px,70vw);height:auto;margin:16px auto;background:white;padding:8px;image-rendering:pixelated}.qr-caption{font-size:15px;margin-top:8px}.qr-summary{padding:16px 0;border-top:.5px solid var(--line);margin-top:16px}.qr-summary .big-amount{font-size:28px}.kv{display:flex;gap:16px;justify-content:space-between;padding:8px 0;font-size:14px}.kv dt{color:var(--sub);flex-shrink:0}.kv dd{margin:0;text-align:right;overflow-wrap:anywhere;max-width:70%}.kv-wrap{margin:0}.detail-hero{background:var(--surface);padding:24px 16px;text-align:center;margin-bottom:0}.detail-hero .order-state{font-size:15px;font-weight:500;margin-bottom:8px}.detail-hero .quiet{margin-top:8px}.detail-code .qr-image{width:min(192px,65vw);margin-top:0;margin-bottom:8px}.detail-code p{font-size:14px}.detail-code-actions{display:flex;gap:12px;margin-top:16px}.detail-code-actions>*{flex:1;font-size:14px;padding:8px}.line-item{padding:12px 0;border-bottom:.5px solid var(--line)}.line-item:last-child{border:0}.line-item p{margin-top:4px}.order-action{width:100%;display:flex;justify-content:space-between;align-items:center;min-height:48px;text-align:left;font-size:14px}.hint{background:var(--page);color:var(--sub);padding:12px 16px;font-size:13px;margin-bottom:12px;border-radius:4px;line-height:1.6}.logs{padding:0;margin:0;list-style:none}.logs li{padding:8px 0}.logs time{display:block;color:var(--muted);font-size:12px;margin-top:4px}.customer-heading{padding:24px 16px;background:white;text-align:center;margin-bottom:8px}.customer-heading h1{font-size:20px;font-weight:500;margin:0 0 8px}.customer-options{display:flex;gap:24px;padding:16px;align-items:center}.customer-options label{display:flex;gap:8px;align-items:center}.customer-options input{accent-color:var(--brand);width:18px;height:18px}.result{padding:40px 16px;text-align:center}.result .result-icon{margin:auto;width:32px;height:32px}.result .result-icon .meta-icon{width:32px;height:32px}.result .result-icon img{transform:scale(1)}.result h1{font-size:20px;font-weight:500;margin:16px 0 8px}.result .subtext{font-size:14px;color:var(--sub);line-height:1.6}.receipt-shell{background:var(--line);padding:16px}.receipt{background:white;color:black;width:100%;max-width:320px;margin:auto;padding:24px 16px;font-size:13px}.receipt h1{font-size:18px;font-weight:500;text-align:center;margin:0 0 8px}.receipt .qr-image{width:216px;margin:12px auto}.receipt-total{font-size:20px;text-align:center;margin:16px 0}.receipt .dashed{border-top:1px dashed var(--muted);margin:16px 0}.receipt p{margin:8px 0;overflow-wrap:anywhere}.invoice-sheet{background:white;color:#C92A2A;padding:16px;font-size:12px;overflow:hidden}.invoice-sheet h1{font-size:20px;font-weight:500;text-align:center;margin:8px 0 16px}.invoice-sheet .info{font-size:11px;line-height:1.8;color:var(--ink);overflow-wrap:anywhere}.invoice-sheet table{width:100%;border:.5px solid #C92A2A;margin:12px 0;table-layout:fixed;border-collapse:collapse}.invoice-sheet th,.invoice-sheet td{border-right:.5px solid #C92A2A;padding:8px 3px;vertical-align:top;text-align:right;font-size:11px;overflow-wrap:anywhere}.invoice-sheet th:first-child,.invoice-sheet td:first-child{text-align:left;width:30%}.invoice-sheet .watermark{font-size:28px;text-align:center;color:#C92A2A;opacity:.6;margin:16px 0}.invoice-pdf-actions{display:flex;gap:12px;padding:16px;background:white}.invoice-pdf-actions>*{flex:1}.pos-home{background:#F2F3F5;min-height:100dvh;padding-bottom:28px}.pos-hero{height:calc(min(100vw,480px)*.60);position:relative;background-image:url('assets/meta-pos-reference.png');background-repeat:no-repeat;background-position:top center;background-size:100% auto}.pos-pending-title{position:absolute;bottom:12px;left:16px;color:white;font-size:17px;font-weight:500}.pos-empty{margin:0 12px 8px;padding:28px 12px;text-align:center;background:white;border-radius:4px;color:var(--muted);min-height:128px;display:grid;place-items:center}.pos-section{background:white;margin:12px;padding:16px}.pos-section h2{font-size:17px;font-weight:500;margin-bottom:12px}.pos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 8px}.pos-tile{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;padding:8px 0;min-height:64px;color:var(--ink);font-size:15px}.pos-tile .icon-tile:empty{display:none}.pos-tile.invoice-entry{font-weight:500;background:var(--page);border-radius:4px}.bottom-home{height:4px;width:120px;background:var(--ink);border-radius:4px;margin:28px auto 0}.not-found{padding:48px 20px;text-align:center}.note-input{width:100%;resize:vertical;min-height:48px;background:white;color:var(--ink);border:0;padding:0;font-size:15px;line-height:22px}.note-input:focus-visible{outline:1px solid var(--link);outline-offset:2px}@media(min-width:600px){body{box-shadow:0 0 0 1px var(--line)}}@media print{body{max-width:none;background:white}body>*{display:none!important}body>#root{display:block!important}#root>*{display:none!important}#root>.print-visible{display:block!important;width:58mm;padding:0;margin:0}.receipt-shell{padding:0;background:white}.receipt{padding:0;width:58mm;break-inside:avoid}.receipt .qr-image{width:48mm}@page{size:58mm 200mm;margin:4mm}}
+
+.order-number-input{display:flex;align-items:center;gap:8px;min-width:0}.order-number-input .meta-input{flex:1;min-width:0}.number-scan-button{display:grid;place-items:center;min-width:36px;min-height:36px;margin:-7px -4px -7px 0;flex-shrink:0}
+
+.item-header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px}.item-summary{display:flex;align-items:baseline;gap:12px;min-width:0;flex:1}.item-summary strong{font-size:16px;font-weight:500;overflow-wrap:anywhere}.quantity-summary{font-size:14px;color:var(--sub);white-space:nowrap}.item-actions{display:flex;gap:12px;flex-shrink:0}.item-actions button{min-height:36px;font-size:14px;color:var(--sub)}.item-editor-body{padding:16px}.item-editor-name{font-size:16px;font-weight:500;margin-bottom:8px}.item-editor-body .meta-field-label{flex-basis:112px}.item-editor-body input{text-align:right}.item-editor-actions{display:flex;gap:12px;margin:24px 0 8px}.item-editor-actions>*{flex:1}
+
+.item-actions .edit-item-action{color:var(--link)}.item-actions .delete-item-action{color:var(--error)}.quantity-unit-input{display:flex;align-items:center;justify-content:flex-end;gap:8px}.quantity-unit-input .meta-input{width:96px;max-width:calc(100% - 24px);flex:0 1 96px;text-align:right}.item-unit{font-size:15px;color:var(--ink);flex-shrink:0}.item-editor-page .item-editor-body{padding:16px}.item-editor-page .meta-field-label{flex-basis:112px}
+
+.invoice-function-card{display:flex;align-items:center;justify-content:center;min-height:112px;padding:24px;justify-content:flex-start;background:var(--surface);color:var(--ink);border-radius:var(--radius);text-decoration:none;font-size:16px;font-weight:500}.invoice-function-card:hover{background:var(--line)}.invoice-function-card:active{background:var(--border)}
+
+.nav-revoke{font-size:14px;color:var(--error);min-height:44px;min-width:36px}.invoice-overview{padding:20px 16px}.invoice-overview .big-amount{margin:4px 0}.overview-status{font-size:14px;color:var(--sub);margin-top:4px}.invoice-overview .qr-image{width:min(192px,65vw);margin:16px auto 8px}.overview-status.danger-text{color:var(--error)}
+
+.invoice-records{margin-top:12px}.record-bottom{margin-top:12px;align-items:flex-end}.invoice-record-card .identity{max-width:65%;overflow-wrap:anywhere}.invoice-record-card .quiet{font-size:13px}.resend-form .meta-field{padding:8px 0}.resend-form .meta-field-control{min-width:0}
+
+.invoice-receipt{padding:20px 16px;font-family:'PingFang SC',sans-serif;line-height:1.4}.receipt-brand{width:232px;max-width:100%;margin:0 auto 16px}.receipt-brand img{display:block;width:100%;height:auto;filter:grayscale(1) contrast(20)}.receipt-brand div{text-align:right;font-size:13px;letter-spacing:1px;line-height:18px}.receipt-instructions p,.receipt-invoice-amount p{margin:2px 0}.receipt-instructions{margin-bottom:8px}.receipt-english{font-size:11px}.receipt-invoice-amount{font-size:14px;font-variant-numeric:tabular-nums}.invoice-receipt .qr-image{width:100%;max-width:264px;padding:0;margin:12px auto 16px}.receipt-fields p{margin:3px 0;font-size:12px;overflow-wrap:anywhere}.order-number-barcode{width:100%;height:64px;object-fit:fill;display:block;image-rendering:pixelated;margin:4px 0}.barcode-unavailable{font-size:11px}.invoice-receipt .dashed{margin:12px 0}@media print{.invoice-receipt{padding:0;max-width:none}.receipt-brand{width:100%;margin-bottom:10px}.invoice-receipt .qr-image{width:48mm;max-width:100%;padding:0}.order-number-barcode{width:50mm;max-width:100%;height:14mm}.invoice-receipt .receipt-fields p{font-size:10px}.invoice-receipt .receipt-invoice-amount{font-size:12px}}
+
+.field-limit-note{font-size:12px;color:var(--muted);padding:0 0 8px}.note-char-count{text-align:right;font-size:12px;color:var(--muted);padding:0 0 12px}
+
+.receipt-support{text-align:center;font-size:10px;line-height:16px;margin-top:12px;padding-top:8px;color:#333}@media print{.receipt-support{font-size:9px;color:#000}}
+
+.field-error{font-size:13px;line-height:19px;color:var(--error);padding:4px 0 8px}.project-empty-error{padding:0 16px 12px}
+</style></head><body><div id="root"></div>
+<script src="assets/vendor/react.js"></script>
+<script src="assets/vendor/react-dom.js"></script>
+<script src="assets/vendor/babel.js"></script>
+<script src="assets/vendor/qrcode.js"></script>
+<script src="assets/vendor/jsbarcode.js"></script>
+<script src="assets/vendor/jspdf.js"></script>
+<script src="assets/vendor/font-data.js"></script><script src="core.js"></script>
+<script type="text/babel">// Meta POS components. Visual source: Meta-Pos-App / 相关规范 and refund/search/detail screens.
+(() => {
+  const {useEffect,useState,useRef}=React;
+  const assets='assets/meta-pos/';
+  const iconFiles={'bi-b-arrow-left':'back.svg','bi-b-scan':'scan.svg','bi-b-search':'search.svg','bi-b-success':'success.svg'};
+  const actionNames={'bi-b-close':'关闭','bi-b-delete':'移除','bi-b-select-down':'选择','bi-b-arrow-right':'查看','bi-b-arrow-down':'展开','bi-b-arrow-up':'收起'};
+  function Icon({name,fontSize=20}){
+    if(iconFiles[name])return <span className={'meta-icon icon-'+name} aria-hidden="true"><img src={assets+iconFiles[name]} alt=""/></span>;
+    return actionNames[name]?<span className="icon-word" aria-hidden="true">{actionNames[name]}</span>:null;
+  }
+  function Button({children,color='primary',className='',full=true,size='large',...props}){return <button {...props} className={'meta-button '+color+' '+size+' '+(full?'full ':'')+className}>{children}</button>;}
+  function NavBar({children,onBack,right}){return <div className="meta-navbar"><button className="meta-back" aria-label="返回" onClick={onBack}><Icon name="bi-b-arrow-left"/></button><div className="meta-title">{children}</div><div className="meta-nav-right">{right}</div></div>;}
+  function FieldItem({title,children}){return <div className="meta-field"><div className="meta-field-label">{title}</div><div className="meta-field-control">{children}</div></div>;}
+  function Input({onChange,value,...props}){return <input {...props} className="meta-input" value={value} onChange={e=>onChange?.(e.target.value)}/>;}
+  function Search({value,onChange,onSearch,placeholder}){return <form className="meta-search" onSubmit={e=>{e.preventDefault();onSearch(value);}}><div className="meta-search-box"><Icon name="bi-b-search"/><input aria-label="查询订单号" type="search" value={value} placeholder={placeholder} onChange={e=>onChange(e.target.value)}/></div><button type="submit">查询</button></form>;}
+  function HotPopup({visible,children,onClose}){
+    const ref=useRef(null);
+    useEffect(()=>{if(visible)ref.current?.showModal();else ref.current?.close();},[visible]);
+    return <dialog className="meta-sheet" ref={ref} onCancel={e=>{e.preventDefault();onClose?.();}} onClick={e=>{if(e.target===ref.current)onClose?.();}}>{visible&&children}</dialog>;
+  }
+  function HotDatePicker({visible,value,max,onClose,onConfirm,title}){
+    const [v,setV]=useState('');useEffect(()=>{if(visible)setV(DemoCore.date(value||new Date()));},[visible]);
+    return <HotPopup visible={visible} onClose={onClose}><div className="popup-title">{title}</div><div className="date-picker-body"><label htmlFor="sale-date-picker">实际销售完成日期</label><input id="sale-date-picker" type="date" value={v} max={DemoCore.date(max||new Date())} onChange={e=>setV(e.target.value)}/><Button onClick={()=>{if(v)onConfirm(new Date(v+'T12:00:00'));}}>确定</Button><Button color="normal" onClick={onClose}>取消</Button></div></HotPopup>;
+  }
+  const toast={show({message}){const n=document.createElement('div');n.className='meta-toast';n.setAttribute('role','status');n.textContent=message;document.body.append(n);setTimeout(()=>n.remove(),1800);}};
+  const dialog={confirm({title,content,okText='确认',cancelText='取消'}){return new Promise(resolve=>{const el=document.createElement('dialog');el.className='meta-confirm';const heading=document.createElement('h2'),body=document.createElement('p'),actions=document.createElement('div'),no=document.createElement('button'),yes=document.createElement('button');heading.textContent=title;body.textContent=content;no.textContent=cancelText;yes.textContent=okText;no.className='meta-button outline';yes.className='meta-button primary';actions.className='confirm-actions';actions.append(no,yes);el.append(heading,body,actions);document.body.append(el);let settled=false;const finish=v=>{if(settled)return;settled=true;el.close();el.remove();resolve(v);};no.onclick=()=>finish(false);yes.onclick=()=>finish(true);el.oncancel=e=>{e.preventDefault();finish(false);};el.showModal();no.focus();});}};
+  window.MetaPOS={Button,NavBar,FieldItem,Input,Search,HotPopup,HotDatePicker,Icon,dialog,toast};
+})();
+</script><script type="text/babel">const { useState, useEffect, useMemo } = React;
+const { Button, NavBar, FieldItem, Input, Icon, HotPopup, HotDatePicker, Search, dialog, toast } = window.MetaPOS;
+const C = window.DemoCore;
+const product = id => C.PRODUCTS.find(p => p.id === id);
+const fmtTime = t => new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(t);
+const notify = message => toast.show({ message });
+const go = path => { location.hash = path; window.scrollTo(0, 0); };
+// QR carries order identity in this local Demo; production uses the existing consumer application entry.
+const qrPayload = o => JSON.stringify({ scene: 'retail-invoice', orderId: o.id, revision: o.rev });
+function glyph(name, size = 20) { return <Icon name={name} fontSize={size} />; }
+function useData() {
+  const [db, setDb] = useState(C.read);
+  useEffect(() => {
+    const update = () => setDb(C.read());
+    window.addEventListener('storage', update); window.addEventListener('invoice-data', update);
+    const timer = setInterval(() => C.tick(), 500);
+    return () => { clearInterval(timer); window.removeEventListener('storage', update); window.removeEventListener('invoice-data', update); };
+  }, []);
+  return db;
+}
+function Nav({ title, back, right }) { return <div className="nav"><NavBar fixed={false} perch={false} onBack={back} right={right}>{title}</NavBar></div>; }
+function Footer({ children }) { return <div className="footer">{children}</div>; }
+function KV({ label, children }) { return <div className="kv"><dt>{label}</dt><dd>{children || '—'}</dd></div>; }
+function Status({ o }) {
+  const text = o.cancelled ? '已取消' : !o.application&&!o.invoice ? '未申请' : C.invoiceStatus(o);
+  const color = o.cancelled ? 'muted' : o.refund?.status === 'failed' ? 'error' : o.invoice ? 'success' : o.application ? 'warn' : '';
+  return <span className={'status ' + color}>{text}</span>;
+}
+function InvoiceRecordCard({o,detailPrefix='/order/'}) {
+  return <button className="record invoice-record-card" onClick={()=>go(detailPrefix+o.id)}>
+    <div className="row"><span className="identity">订单编号：{o.number || '—'}</span><span className="amount" aria-label={'开票金额 '+C.money(C.total(o))+'元'}>¥{C.money(C.total(o))}</span></div>
+    <div className="row record-bottom"><span className="quiet">订单日期：{o.date}</span><Status o={o}/></div>
+  </button>;
+}
+function QRImage({ order }) {
+  const uri = useMemo(() => {
+    const qr = qrcode(0, 'M'); qr.addData(qrPayload(order)); qr.make(); return qr.createDataURL(5, 4);
+  }, [order.id, order.rev]);
+  return <img className="qr-image" src={uri} alt="订单开票申请二维码" />;
+}
+function Home() {
+  const unavailable = () => notify('请进入电子发票办理开票业务');
+  return <div className="pos-home">
+    <div className="pos-hero" role="img" aria-label="悦投直连测试门店，门店编号 sqb002"><div className="pos-pending-title">待处理订单</div></div>
+    <div className="pos-empty">{glyph('bi-b-order', 44)}<div>暂无订单，点击刷新</div></div>
+    <section className="pos-section"><h2>门店收银</h2><div className="pos-grid">
+      {[['收款','bi-b-pay'],['退款','bi-c-after'],['账本','bi-b-list'],['结算','bi-financial-center'],['门店交易统计','bi-transaction-report']].map(([name, icon]) => <button className="pos-tile" onClick={unavailable} key={name}><span className="icon-tile">{glyph(icon, 28)}</span><span>{name}</span></button>)}
+    </div></section>
+    <section className="pos-section"><h2>应用功能</h2><div className="pos-grid">
+      <button className="pos-tile" onClick={unavailable}><span className="icon-tile">{glyph('bi-c-wallet-fill', 28)}</span><span>礼品卡</span></button>
+      <button className="pos-tile invoice-entry" onClick={() => go('/invoicing')}><span className="icon-tile">{glyph('bi-b-note', 28)}</span><span>电子发票</span></button>
+    </div></section><div className="bottom-home" />
+  </div>;
+}
+function InvoiceHome() {
+  return <div className="screen"><Nav title="电子发票" back={() => go('/')}/><main className="invoice-home">
+    <div className="invoice-entries">
+      <a className="invoice-function-card" href="#/new">手动开票</a>
+      <a className="invoice-function-card" href="#/refund">手动退票</a>
+      <a className="invoice-function-card" href="#/orders">开票记录</a>
+    </div>
+  </main></div>;
+}
+function OrderCodeScanner({visible,onClose,onScan}) {
+  const [error,setError]=useState('');
+  const video=React.useRef(null),stream=React.useRef(null),timer=React.useRef(null),live=React.useRef(false),callback=React.useRef(onScan);
+  callback.current=onScan;
+  const stop=()=>{stream.current?.getTracks().forEach(t=>t.stop());stream.current=null;clearInterval(timer.current);};
+  const deliver=raw=>{const code=String(raw??'').trim();if(!live.current||!code)return;live.current=false;stop();callback.current(code);};
+  const close=()=>{live.current=false;stop();onClose();};
+  useEffect(()=>{
+    live.current=visible;setError('');if(!visible){stop();return;}
+    let buffer='',last=0;
+    const onResult=event=>{if(event.source!==window.parent||event.origin!==location.origin||event.data?.type!=='invoice-scan-result')return;deliver(event.data.code);};
+    const onKey=event=>{if(event.key==='Enter'&&buffer){event.preventDefault();deliver(buffer);buffer='';return;}if(event.key.length===1&&!event.ctrlKey&&!event.altKey&&!event.metaKey){const now=Date.now();if(now-last>150)buffer='';last=now;buffer=(buffer+event.key).slice(-2048);}};
+    window.addEventListener('message',onResult);window.addEventListener('keydown',onKey,true);
+    return()=>{live.current=false;stop();window.removeEventListener('message',onResult);window.removeEventListener('keydown',onKey,true);};
+  },[visible]);
+  const startCamera=async()=>{
+    if(typeof window.BarcodeDetector!=='function'||!navigator.mediaDevices?.getUserMedia){setError('当前设备不支持摄像头识码，可使用扫码枪或手动输入订单号。');return;}
+    try{stop();const detector=new BarcodeDetector({formats:['qr_code','code_128','ean_13']});const media=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});if(!live.current||!video.current){media.getTracks().forEach(t=>t.stop());return;}stream.current=media;video.current.srcObject=media;await video.current.play();let running=false;timer.current=setInterval(async()=>{if(running||!live.current)return;running=true;try{const codes=await detector.detect(video.current);if(codes[0])deliver(codes[0].rawValue);}catch{}finally{running=false;}},500);}catch{if(live.current)setError('无法打开摄像头，请检查设备权限，或使用订单号查询。');}
+  };
+  return <HotPopup visible={visible} onClose={close}><div className="popup-title">扫描订单号<button className="icon-button" onClick={close}>关闭</button></div><div className="scanner-body"><div className="scanner-window"><video ref={video} muted playsInline/><Icon name="bi-b-scan"/></div><p>请扫描原消费订单的条码或二维码</p><p className="quiet">也可使用设备扫码枪输入订单号</p>{error&&<p className="inline-error" role="alert">{error}</p>}<Button onClick={startCamera}>启用摄像头扫码</Button><Button color="normal" onClick={close}>返回手动输入</Button></div></HotPopup>;
+}
+
+function RefundSearch({db}) {
+  const [query,setQuery]=useState(''),[term,setTerm]=useState(null),[scan,setScan]=useState(false);
+  const parse=raw=>{const text=String(raw||'').trim();try{const data=JSON.parse(text);if(data.orderId)return String(data.orderId);}catch{}const match=text.match(/#\/apply\/([^/]+)\//);return match?decodeURIComponent(match[1]):text;};
+  const search=raw=>{const q=parse(raw);setQuery(q);setTerm(q);setScan(false);};
+  const matches=term?db.orders.filter(o=>o.number===term||o.id===term):[];
+  return <div className="screen"><Nav title="手动退票" back={()=>go('/invoicing')}/>
+    <main><form className="refund-query" onSubmit={e=>{e.preventDefault();if(query.trim())search(query);}}>
+      <div className="refund-input"><Icon name="bi-b-search"/><input aria-label="退票订单号" placeholder="请输入订单号" value={query} onChange={e=>{setQuery(e.target.value);setTerm(null);}} enterKeyHint="search"/><button type="button" aria-label="扫码输入订单号" onClick={()=>setScan(true)}><Icon name="bi-b-scan"/></button></div>
+      <button type="submit" disabled={!query.trim()}>查询</button>
+    </form>
+    {term===null?<div className="query-help"><p>请输入订单编号查询已开票记录</p></div>:!matches.length?<div className="empty"><p>未找到相关订单</p><span className="quiet">请核对订单号后重新查询</span></div>:<div className="content"><div className="result-count">查询结果</div><div className="records refund-results">{matches.map(o=><InvoiceRecordCard key={o.id} o={o} detailPrefix="/refund-order/"/>)}</div></div>}
+    </main>
+    <OrderCodeScanner visible={scan} onClose={()=>setScan(false)} onScan={search}/>
+  </div>;
+}
+
+function OrderList({ db }) {
+  const [query, setQuery] = useState(''), [submitted, setSubmitted] = useState(''), [filter, setFilter] = useState('全部');
+  const orders = db.orders.filter(o => submitted ? (o.number.includes(submitted) || o.id.includes(submitted)) : o.device === 'POS-002-01').filter(o => filter === '全部' || (filter === '未申请' && !o.cancelled && !o.application) || (filter === '开票中' && !o.cancelled && o.application && !o.invoice) || (filter === '已开票' && !o.cancelled && o.invoice));
+  return <div className="screen">
+    <Nav title="开票记录" back={() => go('/invoicing')} />
+
+    <div className="search-area"><Search value={query} placeholder="输入订单编号查询" showSearchText={true} onChange={v => { setQuery(typeof v === 'string' ? v : ''); if (!v) setSubmitted(''); }} onSearch={v => setSubmitted(String(v || '').trim())} /></div>
+    <div className="filter-tabs" role="tablist" aria-label="开票状态">{['全部','未申请','开票中','已开票'].map(t => <button role="tab" aria-selected={filter === t} className={filter === t ? 'active' : ''} key={t} onClick={() => setFilter(t)}>{t}</button>)}</div>
+    <div className="records invoice-records">{orders.map(o=><InvoiceRecordCard key={o.id} o={o}/>)}</div>
+    {!orders.length && <div className="empty">{glyph('bi-b-search',40)}<p>{submitted ? '未找到相关订单' : '暂无开票订单'}</p></div>}
+  </div>;
+}
+const amountMessage=(value,optional=false)=>optional&&value===''?'':!/^\d+(\.\d{1,2})?$/.test(value)||Number(value)<=0?'请输入大于0的金额，最多两位小数':'';
+const quantityMessage=value=>!/^\d+(\.\d+)?$/.test(value)||!Number.isFinite(Number(value))||Number(value)<=0?'数量须大于0':'';
+const numberMessage=value=>C.textLength(value.trim())>36?'订单编号最多36个字符':value.trim()&&!/^[A-Za-z0-9]+$/.test(value.trim())?'订单编号仅支持英文字母和数字':'';
+const dateMessage=value=>!/^\d{4}-\d{2}-\d{2}$/.test(value)||Number.isNaN(new Date(value+'T00:00:00').getTime())?'请选择有效的订单日期':value>C.date()?'订单日期不能晚于今天':'';
+const noteMessage=value=>C.textLength(value)>200?'订单备注最多200个字符':'';
+function OrderForm({ order, itemIndex=null }) {
+  const [items, setItems] = useState(() => order ? order.items.map(i => ({ product: i.product, amount: C.money(i.cents), quantity: String(i.quantity ?? 1) })) : [{ product: C.PRODUCTS.find(p => p.default).id, amount: '', quantity: '1' }]);
+  const [number, setNumber] = useState(order?.number || ''), [saleDate, setSaleDate] = useState(order?.date || C.date()), [note, setNote] = useState(order?.note || '');
+  const [picker, setPicker] = useState(null), [dateVisible, setDateVisible] = useState(false), [error, setError] = useState(''), [busy, setBusy] = useState(false);
+  const [originalRev] = useState(order?.rev);
+  const [numberScanner,setNumberScanner]=useState(false);
+  const [attempted,setAttempted]=useState(false),[numberTouched,setNumberTouched]=useState(false),[noteTouched,setNoteTouched]=useState(false),[dateTouched,setDateTouched]=useState(false),[amountTouched,setAmountTouched]=useState({}),[editorAttempted,setEditorAttempted]=useState(false);
+  const numberComposing=React.useRef(false),noteComposing=React.useRef(false);
+  const changeNumber=v=>{setError('');setNumber(v);if(!numberComposing.current)setNumberTouched(true);};
+  const changeNote=v=>{setNote(v);if(!noteComposing.current)setNoteTouched(true);};
+  const numberError=error.includes('编号')?error:(numberTouched||attempted)&&!numberComposing.current?numberMessage(number):'';
+  const noteError=(noteTouched||attempted)&&!noteComposing.current?noteMessage(note):'';
+  const dateError=dateTouched||attempted?dateMessage(saleDate):'';
+  const [editingItem,setEditingItem]=useState(null),[itemError,setItemError]=useState('');
+  const formRoute=order?'/edit/'+order.id:'/new';
+  useEffect(()=>{
+    setEditorAttempted(false);
+    if(itemIndex===null){setEditingItem(null);setItemError('');return;}
+    if(!Number.isInteger(itemIndex)||!items[itemIndex]){go(formRoute);return;}
+    setEditingItem(current=>current?.index===itemIndex?current:{index:itemIndex,...items[itemIndex]});setItemError('');
+  },[itemIndex]);
+  const closeItemEditor=()=>{setEditingItem(null);setItemError('');setEditorAttempted(false);go(formRoute);};
+  const total = items.reduce((s, i) => s + (/^\d+(\.\d{0,2})?$/.test(i.amount) ? Math.round(Number(i.amount) * 100) : 0), 0);
+  const updateAmount = (idx, amount) => { setError('');setAmountTouched(old=>({...old,[idx]:true})); setItems(old => old.map((i,k) => k === idx ? { ...i, amount } : i)); };
+  const openItemEditor = idx => { setEditorAttempted(false);setItemError(''); setEditingItem({index:idx,...items[idx]});go(formRoute+'/item/'+idx); };
+  const saveItemEditor = () => {
+    setEditorAttempted(true);
+    if (!/^\d+(\.\d+)?$/.test(editingItem.quantity) || !Number.isFinite(Number(editingItem.quantity)) || Number(editingItem.quantity)<=0) return setItemError('数量须大于 0');
+    if (editingItem.amount!=='' && (!/^\d+(\.\d{1,2})?$/.test(editingItem.amount) || Number(editingItem.amount)<=0)) return setItemError('合计金额须大于 0，最多保留两位小数');
+    setItems(old=>old.map((i,k)=>k===editingItem.index?{...i,quantity:editingItem.quantity,amount:editingItem.amount}:i));setError('');closeItemEditor();
+  };
+  const back = async () => {
+    const changed = items.some(i => i.amount) || number || note;
+    if (!changed || await dialog.confirm({ title: '放弃本次编辑？', content: '未保存的内容将丢失。', okText: '放弃编辑', cancelText: '继续编辑' })) go(order ? '/order/' + order.id : '/invoicing');
+  };
+  const save = () => {
+    if (busy) return;
+    setAttempted(true);setError('');
+    if(numberMessage(number)||noteMessage(note)||dateMessage(saleDate))return;
+    if (!items.length) return setError('请选择至少一个开票项目');
+    if (items.some(i => !/^\d+(\.\d{1,2})?$/.test(i.amount) || Number(i.amount) <= 0)) return setError('请为每个开票项目填写大于 0 的金额，最多两位小数');
+    if (items.some(i => !/^\d+(\.\d+)?$/.test(i.quantity) || !Number.isFinite(Number(i.quantity)) || Number(i.quantity) <= 0)) return setError('请为每个开票项目填写大于 0 的数量');
+    setBusy(true);
+    try {
+      const saved = C.save({ items: items.map(i => ({ product: i.product, cents: Math.round(Number(i.amount) * 100), quantity: Number(i.quantity) })), number: number.trim(), date: saleDate, note: note.trim() }, order?.id, originalRev);
+      go('/order/' + saved.id); notify(order ? '订单已修改，已生成新二维码' : '订单已创建');
+    } catch (e) { notify(e.message); } finally { setBusy(false); }
+  };
+  if(itemIndex!==null && editingItem) return <div className="screen item-editor-page"><Nav title="编辑开票项目" back={closeItemEditor}/><main className="content"><section className="section item-editor-body"><h2>{product(editingItem.product).name}</h2><FieldItem title={<label htmlFor="edit-item-quantity">数量</label>}><div className="quantity-unit-input"><input id="edit-item-quantity" className="meta-input" aria-label="编辑项目数量" inputMode="decimal" value={editingItem.quantity} onChange={e=>{setItemError('');setEditingItem({...editingItem,quantity:e.target.value});}}/><span className="item-unit">{product(editingItem.product).unit}</span></div></FieldItem>{editorAttempted&&quantityMessage(editingItem.quantity)&&<div className="field-error" role="alert">{quantityMessage(editingItem.quantity)}</div>}<FieldItem title={<label htmlFor="edit-item-total">合计金额</label>}><div className="quantity-unit-input"><input id="edit-item-total" className="meta-input" aria-label="编辑项目合计金额" inputMode="decimal" maxLength={12} placeholder="0.00" value={editingItem.amount} onChange={e=>{setItemError('');setEditingItem({...editingItem,amount:e.target.value});}}/><span className="item-unit">元</span></div></FieldItem>{editorAttempted&&amountMessage(editingItem.amount,true)&&<div className="field-error" role="alert">{amountMessage(editingItem.amount,true)}</div>}</section></main><Footer><Button color="outline" onClick={closeItemEditor}>取消</Button><Button onClick={saveItemEditor}>保存项目</Button></Footer></div>;
+  return <div className="screen"><Nav title={order ? '修改订单' : '手动开票'} back={back}/>
+    <main className="content">
+      <section className="section flush"><div style={{padding:'16px 16px 0'}}><h2>开票项目</h2></div>
+        {items.map((i, idx) => <div className="item-edit" key={idx}>
+          <div className="item-header"><div className="item-summary"><strong>{product(i.product).name}</strong><span className="quantity-summary">{i.quantity} {product(i.product).unit}</span></div><div className="item-actions"><button type="button" className="edit-item-action" aria-label={'编辑第' + (idx + 1) + '个开票项目'} onClick={()=>openItemEditor(idx)}>编辑</button><button type="button" className="delete-item-action" aria-label={'删除第' + (idx + 1) + '个开票项目'} onClick={()=>{setItems(old=>old.filter((_,k)=>k!==idx));setAmountTouched({});setError('');}}>删除</button></div></div>
+          {product(i.product).spec && <p className="item-meta">规格型号：{product(i.product).spec}</p>}
+          <div className="item-price"><label htmlFor={'amount-' + idx}>项目总价</label><input id={'amount-' + idx} aria-label={'第' + (idx + 1) + '个项目总价'} value={i.amount} inputMode="decimal" placeholder="0.00" maxLength={12} onChange={e => updateAmount(idx,e.target.value)} onBlur={()=>setAmountTouched(old=>({...old,[idx]:true}))} aria-invalid={!!((attempted||amountTouched[idx])&&amountMessage(i.amount))} aria-describedby={(attempted||amountTouched[idx])&&amountMessage(i.amount)?'amount-error-'+idx:undefined} /></div>{(attempted||amountTouched[idx])&&amountMessage(i.amount)&&<div id={'amount-error-'+idx} className="field-error" role="alert">{amountMessage(i.amount)}</div>}{attempted&&quantityMessage(i.quantity)&&<div className="field-error" role="alert">{quantityMessage(i.quantity)}</div>}
+        </div>)}
+        <div className="add-item-row"><Button color="outline" className="add-item" onClick={() => setPicker('add')}>添加开票项目</Button></div>{attempted&&!items.length&&<div className="field-error project-empty-error" role="alert">请选择至少一个开票项目</div>}
+      </section>
+      <section className="section flush"><div style={{padding:'16px 16px 0'}}><h2>订单信息</h2></div><div className="field-group">
+        <FieldItem title={<label htmlFor="order-number">订单编号</label>}><div className="order-number-input"><Input id="order-number" aria-invalid={!!numberError} aria-describedby={numberError?'number-error':undefined} onBlur={()=>setNumberTouched(true)} pattern="[A-Za-z0-9]*" spellCheck={false} autoCapitalize="off" value={number} onChange={changeNumber} onCompositionStart={()=>{numberComposing.current=true;}} onCompositionEnd={e=>{numberComposing.current=false;setNumber(e.currentTarget.value);setNumberTouched(true);}} placeholder="选填，留空自动分配" /><button type="button" className="number-scan-button" aria-label="扫码录入订单编号" onClick={()=>setNumberScanner(true)}><Icon name="bi-b-scan"/></button></div></FieldItem>{numberError&&<div id="number-error" className="field-error" role="alert">{numberError}</div>}
+        <button className="date-control" onClick={() => setDateVisible(true)}><span>订单日期</span><span className="value">{saleDate}</span>{glyph('bi-b-calendar',18)}</button>{dateError&&<div className="field-error" role="alert">{dateError}</div>}
+      </div><div className="field-helper">实际销售完成日期</div><div className="field-group"><FieldItem title={<label htmlFor="order-note">订单备注</label>}><textarea id="order-note" className="note-input" value={note} onChange={e => changeNote(e.target.value)} onCompositionStart={()=>{noteComposing.current=true;}} onCompositionEnd={e=>{noteComposing.current=false;setNote(e.currentTarget.value);setNoteTouched(true);}} placeholder="选填" rows={2} onBlur={()=>setNoteTouched(true)} aria-invalid={!!noteError} aria-describedby={noteError?'note-error':undefined} /></FieldItem>{noteError&&<div id="note-error" className="field-error" role="alert">{noteError}</div>}</div></section>
+      {order && <p className="quiet">保存后将生成新的开票二维码，请重新交付给消费者。</p>}
+    </main>
+    <Footer><div className="total"><span className="quiet">合计</span><br/><strong className="amount">¥{C.money(total)}</strong></div><Button className="submit" disabled={busy} onClick={save}>{order ? '保存修改' : '确认创建'}</Button></Footer>
+    <HotPopup visible={picker !== null} onClose={() => setPicker(null)} closeOnMaskClick={true} bodyStyle={{borderRadius:'20px 20px 0 0',overflow:'hidden'}}><div className="popup-body"><div className="popup-title">选择开票项目<button className="icon-button" aria-label="关闭项目选择" onClick={() => setPicker(null)}>{glyph('bi-b-close',20)}</button></div>{C.PRODUCTS.map(p => <button key={p.id} className="product-option" onClick={() => { setItems(old => picker === 'add' ? [...old, {product:p.id,amount:'',quantity:'1'}] : old.map((i,k) => k === picker ? {...i,product:p.id} : i)); setPicker(null); }}><span>{p.name}<p className="quiet">单位：{p.unit}</p></span>{glyph('bi-b-arrow-right',16)}</button>)}</div></HotPopup>
+
+    <OrderCodeScanner visible={numberScanner} onClose={()=>setNumberScanner(false)} onScan={code=>{setNumberScanner(false);if(!/^[A-Za-z0-9]+$/.test(code)){setError('扫码订单编号仅支持英文字母和数字，请核对后录入');return;}if(C.textLength(code)>36){setError('扫码订单编号最多36个字符，请核对后录入');return;}setNumber(code);setError('');}}/>
+    <HotDatePicker visible={dateVisible} value={new Date(saleDate + 'T12:00:00')} max={new Date()} title="订单日期" onClose={() => setDateVisible(false)} onConfirm={d => { setSaleDate(C.date(d));setDateTouched(true); setDateVisible(false); }}/>
+  </div>;
+}
+function OrderNumberBarcode({number}) {
+  const encoded=useMemo(()=>{try{const canvas=document.createElement('canvas');JsBarcode(canvas,number,{format:'CODE128',displayValue:false,width:2,height:64,margin:8,lineColor:'#000000',background:'#FFFFFF'});return canvas.toDataURL('image/png');}catch{return null;}},[number]);
+  return encoded?<img className="order-number-barcode" src={encoded} alt="订单编号条码" data-order-number={number}/>:<p className="barcode-unavailable">此编号无法生成条码，请使用订单编号查询</p>;
+}
+function Receipt({ o }) {
+  const amount=Number(C.money(C.total(o))).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return <div className="receipt invoice-receipt"><div className="receipt-brand"><img src="assets/receipt-logo.png" alt="收钱吧"/><div>shouqianba.com</div></div><div className="receipt-instructions"><p>请扫描下方二维码，开具电子发票</p><p className="receipt-english">Please scan QR code for e-invoice</p></div><div className="receipt-invoice-amount"><p>本次开票金额：¥{amount}</p><p className="receipt-english">Fapiao Amount: ¥{amount}</p></div><QRImage order={o}/><div className="dashed"/><div className="receipt-fields"><p>门店名称：{C.STORES[o.store].name}</p><p>门店编号：{o.store}</p><p>订单编号：{o.number}</p></div><OrderNumberBarcode number={o.number}/><div className="receipt-fields"><p>设备编号：{o.device}</p><p>订单日期：{o.date}</p></div><div className="receipt-support">收钱吧提供技术服务支持。</div></div>;
+}
+function ReceiptPage({ o }) {
+  return <><div className="screen"><Nav title="二维码小票" back={() => go('/order/' + o.id)}/><div className="receipt-shell"><Receipt o={o}/></div><Footer><Button onClick={() => { document.querySelector('.print-visible').innerHTML = document.querySelector('.receipt-shell').innerHTML; window.print(); }}>打印</Button></Footer></div><div className="print-visible" style={{display:'none'}}/></>;
+}
+function OrderDetail({ o, origin }) {
+  const unissued=!o.cancelled&&!o.application&&!o.invoice;
+  const processing=!o.cancelled&&!!o.application&&!o.invoice;
+  const canRevoke=!o.cancelled&&(!o.application||!!o.invoice);
+  const canResend=!o.cancelled&&!!o.invoice&&!o.refund;
+  const statusText=o.cancelled?'已取消':!o.application&&!o.invoice?'未开票':C.invoiceStatus(o);
+  const revoke = async () => {
+    const approved = await dialog.confirm({ title: '撤销这笔订单？', content: o.invoice ? '撤销后订单开票二维码失效，关联发票将全额红冲。' : '撤销后，顾客将无法使用此订单二维码申请开票。', okText: '确认撤销', cancelText: '暂不撤销' });
+    if (approved) { try { C.cancel(o.id); notify('订单已撤销'); } catch(e) { notify(e.message); } }
+  };
+  const queryResult = () => {
+    C.tick();const latest=C.order(o.id);
+    if(!latest)return notify('未找到这笔订单');
+    notify(latest.invoice?'开票成功':latest.cancelled?'订单已撤销':'仍在开票中，请稍后查询');
+  };
+  return <div className="screen"><Nav title="订单开票详情" back={() => go(origin === 'refund' ? '/refund' : '/orders')} right={canRevoke?<button className="nav-revoke" onClick={revoke}>撤销</button>:null}/>
+    <main className="content">
+      <section className="section invoice-overview center">
+        {!o.cancelled&&<div className="quiet">开票金额</div>}
+        <div className="big-amount amount">¥{C.money(C.total(o))}</div>
+        <div className={'overview-status '+(o.refund?.status==='failed'?'danger-text':'')}>{statusText}</div>
+        {unissued&&<><QRImage order={o}/><p className="quiet">请顾客扫码申请开票</p></>}
+      </section>
+      {o.cancelled && (o.invoice||o.application) && <div className="hint">{o.refund?.status === 'success' ? '关联发票已全额红冲。' : o.refund?.status === 'failed' ? '关联发票红冲失败，请联系品牌财务处理。' : o.refund ? '关联发票正在全额红冲，请稍后查看结果。' : o.application && !o.invoice ? '系统正在处理关联开票申请。如后续出票成功，将自动全额红冲。' : '订单开票二维码已失效。'}</div>}
+      <section className="section"><h2>订单信息</h2><dl className="kv-wrap"><KV label="订单编号">{o.number}</KV><KV label="订单日期">{o.date}</KV><KV label="订单备注">{o.note}</KV><KV label="开票门店">{C.STORES[o.store].name}</KV><KV label="创建时间">{fmtTime(o.createdAt)}</KV></dl></section>
+      <section className="section"><h2>开票项目</h2>{o.items.map((i,k) => <div className="line-item" key={k}><div className="row"><span>{product(i.product).name}</span><span className="amount">¥{C.money(i.cents)}</span></div><p className="quiet">数量：{i.quantity ?? 1} {product(i.product).unit}{product(i.product).spec ? ' · 规格型号：' + product(i.product).spec : ''}</p></div>)}</section>
+      <section className="section"><h2>开票信息</h2><dl className="kv-wrap"><KV label="销方主体">{C.STORES[o.store].seller}</KV><KV label="销方税号">{C.STORES[o.store].sellerTaxNo}</KV>{o.application && <><KV label="购方抬头">{o.application.title}</KV>{o.application.type === 'company' && <KV label="购方税号">{o.application.taxId}</KV>}<KV label="接收邮箱">{o.deliveries?.length?o.deliveries[o.deliveries.length-1].email:o.application.email}</KV><KV label="申请时间">{fmtTime(o.application.submittedAt)}</KV></>}</dl>
+        {o.invoice && <button className="order-action" onClick={() => go('/invoice/' + o.id)}><span>预览电子发票</span>{glyph('bi-b-arrow-right',16)}</button>}
+        {o.refund?.status === 'success' && <button className="order-action" onClick={() => go('/invoice/' + o.id + '/red')}><span>预览红字发票</span>{glyph('bi-b-arrow-right',16)}</button>}
+      </section>
+
+    </main>
+    {unissued&&<Footer><Button color="outline" onClick={() => go('/edit/' + o.id)}>修改</Button><Button onClick={() => go('/receipt/' + o.id)}>打印二维码</Button></Footer>}
+    {processing&&<Footer><Button onClick={queryResult}>查询开票结果</Button></Footer>}
+    {canResend&&<Footer><Button onClick={()=>go('/resend/'+o.id)}>重新发送</Button></Footer>}
+  </div>;
+}
+function ResendInvoice({o}) {
+  const previous=o.deliveries?.length?o.deliveries[o.deliveries.length-1].email:o.application?.email||'';
+  const [email,setEmail]=useState(previous),[error,setError]=useState(''),[busy,setBusy]=useState(false);
+  const submit=()=>{if(busy)return;setError('');setBusy(true);try{C.resend(o.id,email);go('/order/'+o.id);notify('已提交重新发送');}catch(e){setError(e.message);}finally{setBusy(false);}};
+  return <div className="screen"><Nav title="重新发送" back={()=>go('/order/'+o.id)}/><main className="content"><section className="section resend-form"><FieldItem title={<label htmlFor="resend-email">接收邮箱</label>}><Input id="resend-email" type="email" value={email} onChange={v=>{setEmail(v);setError('');}} placeholder="请输入接收邮箱"/></FieldItem>{error&&<div className="inline-error" role="alert">{error}</div>}</section></main><Footer><Button onClick={submit} disabled={busy}>确认发送</Button></Footer></div>;
+}
+function invoicePdf(o, red) {
+  const {jsPDF} = window.jspdf;
+  const pdf = new jsPDF({orientation:'landscape',unit:'mm',format:'a5'});
+  pdf.addFileToVFS('invoice.ttf',window.INVOICE_FONT);pdf.addFont('invoice.ttf','InvoiceCJK','normal');pdf.setFont('InvoiceCJK');
+  const ink='#C92A2A',sign=red?'-':'';
+  const tax=o.items.reduce((s,i)=>s+Math.round(i.cents-i.cents/(1+product(i.product).rate)),0);
+  const pageCount=Math.ceil(o.items.length/5);
+  for(let pageIndex=0;pageIndex<pageCount;pageIndex++){
+    if(pageIndex)pdf.addPage();
+    pdf.setTextColor(ink);pdf.setDrawColor(ink);pdf.setFontSize(18);pdf.text('电子发票（普通发票）',105,18,{align:'center'});
+    pdf.setFontSize(8);pdf.text('演示票样',190,10,{align:'right'});pdf.text('发票号码：'+(red?'H':'')+o.invoice.number,12,30);pdf.text('开票日期：'+C.date(new Date(red?o.refund.completedAt:o.invoice.issuedAt)),132,30);
+    pdf.rect(10,35,190,30);pdf.setFontSize(9);pdf.text('购买方：'+o.application.title,14,44);pdf.text('销售方：'+C.STORES[o.store].seller,108,44);
+    pdf.setFontSize(7);pdf.text('纳税人识别号：'+(o.application.taxId||'—'),14,55);pdf.text('订单编号：'+(o.number||o.id),108,55);
+    pdf.rect(10,65,190,48);pdf.setFontSize(9);pdf.text('项目名称',14,73);pdf.text('规格型号',75,73);pdf.text('单位',98,73);pdf.text('数量',115,73);pdf.text('金额',145,73);pdf.text('税额',180,73);pdf.line(10,77,200,77);
+    o.items.slice(pageIndex*5,pageIndex*5+5).forEach((i,k)=>{const p=product(i.product),vat=Math.round(i.cents-i.cents/(1+p.rate));pdf.text(p.name,14,84+k*6);pdf.text(p.spec||'—',75,84+k*6);pdf.text(p.unit,98,84+k*6);pdf.text(sign+String(i.quantity??1),115,84+k*6);pdf.text(sign+C.money(i.cents-vat),156,84+k*6,{align:'right'});pdf.text(sign+C.money(vat),192,84+k*6,{align:'right'});});
+    pdf.setFontSize(10);pdf.text('价税合计：'+sign+'¥'+C.money(C.total(o)),14,125);pdf.setFontSize(7);pdf.text('仅供功能演示，非真实发票。',14,136);pdf.text('第 '+(pageIndex+1)+' / '+pageCount+' 页',190,136,{align:'right'});
+    if(red){pdf.setTextColor(ink);pdf.setFontSize(26);pdf.text('红字发票',104,108,{align:'center'});}
+  }
+  return pdf;
+}
+function InvoicePreview({ o, red }) {
+  const [blob,setBlob] = useState('');
+  useEffect(() => { const pdf=invoicePdf(o,red),url=URL.createObjectURL(pdf.output('blob'));setBlob(url);return()=>URL.revokeObjectURL(url); },[o.id,red]);
+  const tax=o.items.reduce((s,i)=>s+Math.round(i.cents-i.cents/(1+product(i.product).rate)),0),sign=red?'-':'';
+  return <div className="screen"><Nav title={red?'红字发票':'电子发票'} back={() => go('/order/'+o.id)}/><main className="content"><div className="invoice-sheet"><div className="row info"><span>电子发票</span><span>演示票样</span></div><h1>电子发票（普通发票）</h1><div className="info">发票号码：{red?'H':''}{o.invoice.number}<br/>开票日期：{C.date(new Date(red?o.refund.completedAt:o.invoice.issuedAt))}<br/>购买方：{o.application.title}<br/>销售方：{C.STORES[o.store].seller}</div><table><thead><tr><th>项目名称</th><th>规格型号</th><th>单位</th><th>数量</th><th>金额</th></tr></thead><tbody>{o.items.map((i,k)=><tr key={k}><td>{product(i.product).name}</td><td>{product(i.product).spec||'—'}</td><td>{product(i.product).unit}</td><td>{sign}{i.quantity ?? 1}</td><td>{sign}{C.money(i.cents-Math.round(i.cents-i.cents/(1+product(i.product).rate)))}</td></tr>)}</tbody></table>{red&&<div className="watermark">红字发票</div>}<div className="info">税额：{sign}¥{C.money(tax)}<br/>价税合计：{sign}¥{C.money(C.total(o))}</div></div></main><Footer><Button color="outline" onClick={()=>{if(blob)window.open(blob,'_blank');}}>打开 PDF</Button><Button onClick={()=>invoicePdf(o,red).save((red?'红字发票_':'电子发票_')+o.id+'.pdf')}>下载 PDF</Button></Footer></div>;
+}
+function App() {
+  const db=useData(),[route,setRoute]=useState(location.hash.slice(1)||'/');
+  useEffect(()=>{const onRoute=()=>{setRoute(location.hash.slice(1)||'/');window.scrollTo(0,0);};window.addEventListener('hashchange',onRoute);return()=>window.removeEventListener('hashchange',onRoute);},[]);
+  const [,section,id,rev,role]=route.split('/'),o=db.orders.find(x=>x.id===id);
+  useEffect(()=>{const review=document.referrer.includes('review.html');if(review&&['qr','order','refund-order'].includes(section)&&o)window.parent.postMessage({type:'invoice-active-order',id:o.id,rev:o.rev},location.origin==='null'?'*':location.origin);},[route,o?.rev]);
+  if(section==='invoicing')return <InvoiceHome/>;
+  if(section==='refund')return <RefundSearch db={db}/>;
+  if(section==='orders')return <OrderList db={db}/>;
+  if(section==='new')return <OrderForm key="new" itemIndex={id==='item'?Number(rev):null}/>;
+  if(!section)return <Home/>;
+  if(!o)return <div className="screen"><Nav title="电子发票" back={()=>go('/orders')}/><div className="not-found">未找到这笔订单</div></div>;
+  if(section==='edit')return !o.cancelled&&!o.application?<OrderForm key={o.id} order={o} itemIndex={rev==='item'?Number(role):null}/>:<OrderDetail o={o}/>;
+  if(section==='resend')return o.invoice&&!o.cancelled&&!o.refund?<ResendInvoice key={o.id} o={o}/>:<OrderDetail o={o}/>;
+  if(section==='qr')return <OrderDetail o={o}/>;
+  if(section==='refund-order')return <OrderDetail o={o} origin="refund"/>;
+  if(section==='order')return <OrderDetail o={o}/>;
+  if(section==='receipt')return !o.cancelled&&!o.application?<ReceiptPage o={o}/>:<OrderDetail o={o}/>;
+  if(section==='invoice')return o.invoice&&(rev!=='red'||o.refund?.status==='success')?<InvoicePreview key={o.id+'/'+rev} o={o} red={rev==='red'}/>:<OrderDetail o={o}/>;
+  return <Home/>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script></body></html>

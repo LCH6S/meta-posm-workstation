@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="624" height="96" viewBox="0 0 624 96" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="&#231;&#159;&#169;&#229;&#189;&#162;">
+<use xlink:href="#stroke0_0_25243" fill="#1C1D24"/>
+<use xlink:href="#stroke0_0_25243" fill="white" fill-opacity="0.5"/>
+</g>
+<defs>
+<path id="stroke0_0_25243" d="M0 8C0 3.58172 3.58172 0 8 0H616C620.418 0 624 3.58172 624 8V88C624 92.4183 620.418 96 616 96H7.99998C3.5817 96 0 92.4183 0 88V8Z" fill-rule="evenodd" clip-rule="evenodd"/>
+</defs>
+</svg>

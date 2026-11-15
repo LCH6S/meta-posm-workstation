@@ -1,7 +1,7 @@
 {
   "date": "2026-11-16",
   "entry": "http://127.0.0.1:60916/review.html?v=20261115",
-  "scope": "Meta POS 店员端；既有 C 端不设计、不修改；后台配置不展开",
+  "scope": "Meta POS 店员端 + CRM门店手动开票配置 + POS入口设置；既有C端不修改；生产服务未接入",
   "design_source": "design-source.json",
   "verified": [
     "Meta POS three entries; manual create directly opens form; manual refund directly opens query",

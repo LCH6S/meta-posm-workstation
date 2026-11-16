@@ -62,7 +62,7 @@ function Home() {
 function InvoiceHome() {
   return <div className="screen"><Nav title="电子发票" back={() => go('/')}/><main className="invoice-home">
     <div className="invoice-entries">
-      <a className="invoice-function-card" href="#/new">开票</a>
+      <a className="invoice-function-card" href="#/new">手动开票</a>
       <a className="invoice-function-card" href="#/orders">开票记录</a>
       <a className="invoice-function-card" href="#/query">开票查询</a>
     </div>

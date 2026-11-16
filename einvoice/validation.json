@@ -4,7 +4,7 @@
   "scope": "Meta POS店员端：本机开票记录与本品牌开票查询分开；不与CRM/POS设置Demo联动，生产服务未接入",
   "design_source": "design-source.json",
   "verified": [
-    "Meta POS entries 开票 / 开票记录 / 开票查询; create opens form; records scoped to own device, query scoped to own brand",
+    "Meta POS entries 手动开票 / 开票记录 / 开票查询; create opens form; records scoped to own device, query scoped to own brand",
     "create/edit save goes to order invoice detail with QR display and receipt printing",
     "quantity 2 + total 100; quantity 3 + total 50 => order total 150; editing quantity to 5 keeps total 150",
     "positive quantity validation; quantity migration defaults old Demo records to 1 without revaluing amounts",
@@ -32,7 +32,7 @@
     "latest identifier rule ASCII letters/digits only, 36 character cap and 200 character note; invalid manual/scan identifiers rejected without altering previous number; 36/37 and 200/201 boundaries checked; cancelled overview only cancelled state/no duplicate label/expiry hint; unsubmitted list label shortened; new search placeholder; receipt strips internal serial/time, prints support line, direct barcode independently decodes to 123123",
     "field errors only: no default number-rule/note-limit/counter; invalid manual drafts retain input with save blocked; 36/37 ASCII and 200/201 Chinese-note boundaries; scan error under number without replacing value; project errors per amount field; editor quantity/amount errors next to respective fields; correction clears errors; empty-item error below add; sum 100+50 remains 150 with quantity 2; valid creation and 320px layout; zero page errors",
     "2026-11-16 issued order actions: no navigation revoke; fixed footer contains full-order refund and resend-email; renamed resend page and submit feedback; refund confirm/cancel and full-red result verified; unissued navigation revoke and modify/print unchanged; processing query-only unchanged; 320px layout and zero page errors",
-    "2026-11-16 invoice home entry labels are 开票 / 开票记录 / 开票查询; destinations /new /orders /query; old refund routes retained as query aliases",
+    "2026-11-16 invoice home entry labels are 手动开票 / 开票记录 / 开票查询; destinations /new /orders /query; old refund routes retained as query aliases",
     "2026-11-16 full-red success hint and wrapper removed from cancelled detail; 已取消 overview, red invoice preview and refund success state preserved",
     "2026-11-16 independent demos: CRM brand/store exclusive override, eligibility guard, per-row status, persistence, brand isolation and field validation; POS settings retain its own entry switch; staff preview uses only its own visibility/availability flags; cross-demo configuration bridge and generated admin copies removed by latest user instruction",
     "2026-11-16 current scopes verified: device-only records/search; brand-wide exact order-number/QR query includes same-store other-device and other-store data; other brands excluded from list/search/detail and staff actions; current brand/device assigned on create; known legacy orders normalized without reset; new fixture pack idempotent; query detail/receipt/edit return paths; 3 processing samples and 320px preserved"

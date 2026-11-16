@@ -4,7 +4,13 @@ const C = window.DemoCore;
 const product = (id,snapshot) => snapshot || C.getProject(id);
 const fmtTime = t => new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(t);
 const notify = message => toast.show({ message });
-const go = path => { location.hash = path; window.scrollTo(0, 0); };
+const go = path => {
+  const [current,params='']=location.hash.slice(1).split('?');
+  const fromQuery=/^\/(query-order|refund-order)\//.test(current)||new URLSearchParams(params).get('from')==='query';
+  if(fromQuery&&path.startsWith('/order/'))path=path.replace('/order/','/query-order/');
+  if(fromQuery&&/^\/(edit|receipt|resend|invoice)\//.test(path)&&!path.includes('?'))path+='?from=query';
+  location.hash=path;window.scrollTo(0,0);
+};
 // QR carries order identity in this local Demo; production uses the existing consumer application entry.
 const qrPayload = o => JSON.stringify({ scene: 'retail-invoice', orderId: o.id, revision: o.rev });
 function glyph(name, size = 20) { return <Icon name={name} fontSize={size} />; }
@@ -57,8 +63,8 @@ function InvoiceHome() {
   return <div className="screen"><Nav title="电子发票" back={() => go('/')}/><main className="invoice-home">
     <div className="invoice-entries">
       <a className="invoice-function-card" href="#/new">开票</a>
-      <a className="invoice-function-card" href="#/refund">退票</a>
       <a className="invoice-function-card" href="#/orders">开票记录</a>
+      <a className="invoice-function-card" href="#/query">开票查询</a>
     </div>
   </main></div>;
 }
@@ -84,17 +90,17 @@ function OrderCodeScanner({visible,onClose,onScan}) {
   return <HotPopup visible={visible} onClose={close}><div className="popup-title">扫描订单号<button className="icon-button" onClick={close}>关闭</button></div><div className="scanner-body"><div className="scanner-window"><video ref={video} muted playsInline/><Icon name="bi-b-scan"/></div><p>请扫描原消费订单的条码或二维码</p><p className="quiet">也可使用设备扫码枪输入订单号</p>{error&&<p className="inline-error" role="alert">{error}</p>}<Button onClick={startCamera}>启用摄像头扫码</Button><Button color="normal" onClick={close}>返回手动输入</Button></div></HotPopup>;
 }
 
-function RefundSearch({db}) {
+function InvoiceQuery({db}) {
   const [query,setQuery]=useState(''),[term,setTerm]=useState(null),[scan,setScan]=useState(false);
   const parse=raw=>{const text=String(raw||'').trim();try{const data=JSON.parse(text);if(data.orderId)return String(data.orderId);}catch{}const match=text.match(/#\/apply\/([^/]+)\//);return match?decodeURIComponent(match[1]):text;};
   const search=raw=>{const q=parse(raw);setQuery(q);setTerm(q);setScan(false);};
-  const matches=term?db.orders.filter(o=>o.number===term||o.id===term):[];
-  return <div className="screen"><Nav title="手动退票" back={()=>go('/invoicing')}/>
+  const matches=term?C.queryOrders(term,db):[];
+  return <div className="screen"><Nav title="开票查询" back={()=>go('/invoicing')}/>
     <main><form className="refund-query" onSubmit={e=>{e.preventDefault();if(query.trim())search(query);}}>
-      <div className="refund-input"><Icon name="bi-b-search"/><input aria-label="退票订单号" placeholder="请输入订单号" value={query} onChange={e=>{setQuery(e.target.value);setTerm(null);}} enterKeyHint="search"/><button type="button" aria-label="扫码输入订单号" onClick={()=>setScan(true)}><Icon name="bi-b-scan"/></button></div>
+      <div className="refund-input"><Icon name="bi-b-search"/><input aria-label="查询订单编号" placeholder="请输入订单号" value={query} onChange={e=>{setQuery(e.target.value);setTerm(null);}} enterKeyHint="search"/><button type="button" aria-label="扫码输入订单号" onClick={()=>setScan(true)}><Icon name="bi-b-scan"/></button></div>
       <button type="submit" disabled={!query.trim()}>查询</button>
     </form>
-    {term===null?<div className="query-help"><p>请输入订单编号查询已开票记录</p></div>:!matches.length?<div className="empty"><p>未找到相关订单</p><span className="quiet">请核对订单号后重新查询</span></div>:<div className="content"><div className="result-count">查询结果</div><div className="records refund-results">{matches.map(o=><InvoiceRecordCard key={o.id} o={o} detailPrefix="/refund-order/"/>)}</div></div>}
+    {term===null?<div className="query-help"><p>请输入订单编号查询</p></div>:!matches.length?<div className="empty"><p>未找到相关订单</p><span className="quiet">请核对订单号后重新查询</span></div>:<div className="content"><div className="result-count">查询结果</div><div className="records refund-results">{matches.map(o=><InvoiceRecordCard key={o.id} o={o} detailPrefix="/query-order/"/>)}</div></div>}
     </main>
     <OrderCodeScanner visible={scan} onClose={()=>setScan(false)} onScan={search}/>
   </div>;
@@ -102,7 +108,7 @@ function RefundSearch({db}) {
 
 function OrderList({ db }) {
   const [query, setQuery] = useState(''), [submitted, setSubmitted] = useState(''), [filter, setFilter] = useState('全部');
-  const orders = db.orders.filter(o => submitted ? (o.number.includes(submitted) || o.id.includes(submitted)) : o.device === C.activeStore()?.device).filter(o => filter === '全部' || (filter === '未申请' && !o.cancelled && !o.application) || (filter === '开票中' && !o.cancelled && o.application && !o.invoice) || (filter === '已开票' && !o.cancelled && o.invoice));
+  const orders = C.listOrders('device',submitted,db).filter(o => filter === '全部' || (filter === '未申请' && !o.cancelled && !o.application) || (filter === '开票中' && !o.cancelled && o.application && !o.invoice) || (filter === '已开票' && !o.cancelled && o.invoice));
   return <div className="screen">
     <Nav title="开票记录" back={() => go('/invoicing')} />
 
@@ -214,7 +220,7 @@ function OrderDetail({ o, origin }) {
     if(!latest)return notify('未找到这笔订单');
     notify(latest.invoice?'开票成功':latest.cancelled?'订单已撤销':'仍在开票中，请稍后查询');
   };
-  return <div className="screen"><Nav title="订单开票详情" back={() => go(origin === 'refund' ? '/refund' : '/orders')} right={unissued?<button className="nav-revoke" onClick={revoke}>撤销</button>:null}/>
+  return <div className="screen"><Nav title="订单开票详情" back={() => go(origin === 'query' || origin === 'refund' ? '/query' : '/orders')} right={unissued?<button className="nav-revoke" onClick={revoke}>撤销</button>:null}/>
     <main className="content">
       <section className="section invoice-overview center">
         {!o.cancelled&&<div className="quiet">开票金额</div>}
@@ -271,22 +277,24 @@ function InvoicePreview({ o, red }) {
 function App() {
   const db=useData(),[route,setRoute]=useState(location.hash.slice(1)||'/');
   useEffect(()=>{const onRoute=()=>{setRoute(location.hash.slice(1)||'/');window.scrollTo(0,0);};window.addEventListener('hashchange',onRoute);return()=>window.removeEventListener('hashchange',onRoute);},[]);
-  const [,section,id,rev,role]=route.split('/'),o=db.orders.find(x=>x.id===id);
-  useEffect(()=>{const review=document.referrer.includes('review.html');if(review&&['qr','order','refund-order'].includes(section)&&o)window.parent.postMessage({type:'invoice-active-order',id:o.id,rev:o.rev},location.origin==='null'?'*':location.origin);},[route,o?.rev]);
+  const [pathname,params='']=route.split('?');
+  const [,section,id,rev,role]=pathname.split('/'),o=db.orders.find(x=>x.id===id&&C.inBrand(x));
+  const origin=['query-order','refund-order'].includes(section)||new URLSearchParams(params).get('from')==='query'?'query':undefined;
+  useEffect(()=>{const review=document.referrer.includes('review.html');if(review&&['qr','order','query-order','refund-order'].includes(section)&&o)window.parent.postMessage({type:'invoice-active-order',id:o.id,rev:o.rev},location.origin==='null'?'*':location.origin);},[route,o?.rev]);
   if(section&&!C.manualAvailable())return <div className="screen"><Nav title="电子发票" back={()=>go('/')}/><main className="content"><div className="empty"><p>功能未开通</p></div></main></div>;
   if(section==='invoicing')return <InvoiceHome/>;
-  if(section==='refund')return <RefundSearch db={db}/>;
+  if(section==='query'||section==='refund')return <InvoiceQuery db={db}/>;
   if(section==='orders')return <OrderList db={db}/>;
   if(section==='new')return <OrderForm key="new" itemIndex={id==='item'?Number(rev):null}/>;
   if(!section)return <Home/>;
-  if(!o)return <div className="screen"><Nav title="电子发票" back={()=>go('/orders')}/><div className="not-found">未找到这笔订单</div></div>;
-  if(section==='edit')return !o.cancelled&&!o.application?<OrderForm key={o.id} order={o} itemIndex={rev==='item'?Number(role):null}/>:<OrderDetail o={o}/>;
-  if(section==='resend')return o.invoice&&!o.cancelled&&!o.refund?<ResendInvoice key={o.id} o={o}/>:<OrderDetail o={o}/>;
-  if(section==='qr')return <OrderDetail o={o}/>;
-  if(section==='refund-order')return <OrderDetail o={o} origin="refund"/>;
-  if(section==='order')return <OrderDetail o={o}/>;
-  if(section==='receipt')return !o.cancelled&&!o.application?<ReceiptPage o={o}/>:<OrderDetail o={o}/>;
-  if(section==='invoice')return o.invoice&&(rev!=='red'||o.refund?.status==='success')?<InvoicePreview key={o.id+'/'+rev} o={o} red={rev==='red'}/>:<OrderDetail o={o}/>;
+  if(!o)return <div className="screen"><Nav title="电子发票" back={()=>go(origin==='query'?'/query':'/orders')}/><div className="not-found">未找到这笔订单</div></div>;
+  if(section==='edit')return !o.cancelled&&!o.application?<OrderForm key={o.id} order={o} itemIndex={rev==='item'?Number(role):null}/>:<OrderDetail o={o} origin={origin}/>;
+  if(section==='resend')return o.invoice&&!o.cancelled&&!o.refund?<ResendInvoice key={o.id} o={o}/>:<OrderDetail o={o} origin={origin}/>;
+  if(section==='qr')return <OrderDetail o={o} origin={origin}/>;
+  if(section==='query-order'||section==='refund-order')return <OrderDetail o={o} origin="query"/>;
+  if(section==='order')return <OrderDetail o={o} origin={origin}/>;
+  if(section==='receipt')return !o.cancelled&&!o.application?<ReceiptPage o={o}/>:<OrderDetail o={o} origin={origin}/>;
+  if(section==='invoice')return o.invoice&&(rev!=='red'||o.refund?.status==='success')?<InvoicePreview key={o.id+'/'+rev} o={o} red={rev==='red'}/>:<OrderDetail o={o} origin={origin}/>;
   return <Home/>;
 }
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);

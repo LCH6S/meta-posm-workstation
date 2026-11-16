@@ -1,10 +1,12 @@
 (function (root) {
   'use strict';
   const KEY = 'meta-pos-store-invoice-20261113-v1';
+  const CURRENT_BRAND_ID='700001', CURRENT_DEVICE_ID='POS-002-01';
   const STORES = {
-    sqb002: { id: 'sqb002', name: '悦投直连测试门店', device: 'POS-002-01', seller: '悦投服饰（上海）有限公司', sellerTaxNo: '91310000DEMO000001' },
-    sqb003: { id: 'sqb003', name: '悦投服饰静安店', device: 'POS-003-01', seller: '悦投服饰（上海）有限公司', sellerTaxNo: '91310000DEMO000001' }
+    sqb002: { id: 'sqb002', brandId: CURRENT_BRAND_ID, name: '悦投直连测试门店', device: 'POS-002-01', seller: '悦投服饰（上海）有限公司', sellerTaxNo: '91310000DEMO000001' },
+    sqb003: { id: 'sqb003', brandId: CURRENT_BRAND_ID, name: '悦投服饰静安店', device: 'POS-003-01', seller: '悦投服饰（上海）有限公司', sellerTaxNo: '91310000DEMO000001' }
   };
+  STORES.sqb900={id:'sqb900',brandId:'700002',name:'其他品牌示例门店',device:'POS-900-01',seller:'其他品牌演示有限公司',sellerTaxNo:'DEMOOTHERBRAND001'};
   const PRODUCTS = [
     { id: 'clothes', name: '服装', category: '服装', spec: '', unit: '件', default: true, rate: 0.13 },
     { id: 'shoes', name: '鞋子', category: '鞋', spec: '', unit: '双', rate: 0.13 },
@@ -17,7 +19,7 @@
   const total = o => o.items.reduce((s, i) => s + i.cents, 0);
   const money = n => (n / 100).toFixed(2);
   let cache;
-  const normalize = db => { for (const [id,store] of Object.entries(db.storeCatalog||{})) STORES[id]=store; for (const o of db.orders) { if (!String(o.number??'').trim()) o.number=o.id; for (const i of o.items) if (i.quantity == null) i.quantity = 1; } return db; };
+  const normalize = db => { for (const [id,store] of Object.entries(db.storeCatalog||{})) STORES[id]={...STORES[id],...store}; for (const o of db.orders) { if(!o.brandId&&brandOf(o))o.brandId=brandOf(o); if (!String(o.number??'').trim()) o.number=o.id; for (const i of o.items) if (i.quantity == null) i.quantity = 1; } return db; };
   const read = () => { try { return normalize(JSON.parse(localStorage.getItem(KEY)) || cache || seed()); } catch { return normalize(cache || seed()); } };
   const write = db => { cache = db; try { localStorage.setItem(KEY, JSON.stringify(db)); } catch {} root.dispatchEvent(new Event('invoice-data')); return db; };
   // Pending fixtures deliberately omit dueAt; external review can explicitly issue them.
@@ -41,11 +43,21 @@
       make('KP202611130002', 'OTHER20261113', 56900, { store: 'sqb003', device: 'POS-003-01' }),
       make('KP202611130001', 'LOCALOTHERDEVICE', 15900, { device: 'POS-002-02' })
     ];
-    return { version: 1, sequence: 6, orders: [...processingSamples(now, today), ...orders], samplePacks: ['processing-v1'], lastCreated: orders[0].id };
+    return { version: 1, sequence: 6, orders: [...processingSamples(now, today), ...orders, otherBrandSample(now)], samplePacks: ['processing-v1','brand-scope-v1'], lastCreated: orders[0].id };
   }
+  function brandOf(order){return String(order.brandId||STORES[order.store]?.brandId||'');}
+  function inBrand(order){return brandOf(order)===CURRENT_BRAND_ID;}
+  function listOrders(scope='device',query='',db=read()){
+    const q=String(query||'').trim();
+    return db.orders.filter(o=>inBrand(o)&&(scope==='brand'||o.device===CURRENT_DEVICE_ID)).filter(o=>!q||o.number.includes(q)||o.id.includes(q));
+  }
+  function queryOrders(query,db=read()){
+    const q=String(query||'').trim();return q?listOrders('brand','',db).filter(o=>o.number===q||o.id===q):[];
+  }
+  function otherBrandSample(now=Date.now()) {return {id:'KPOtherBrand001',number:'OTHERBRAND001',brandId:'700002',date:date(),note:'',store:'sqb900',device:'POS-900-01',rev:1,createdAt:now-45000,updatedAt:now-30000,cancelled:false,items:[{product:'clothes',cents:88800,quantity:1}],application:{type:'company',title:'其他品牌购方示例',taxId:'DEMOOTHERBUYER001',email:'demo@example.com',submittedAt:now-40000},invoice:{number:'26000000000000000900',issuedAt:now-30000},refund:null,log:[]};}
   function commit(fn) { const db = read(); const value = fn(db); write(db); return value; }
   function log(o, text) { o.log.unshift({ text, at: Date.now() }); }
-  const order = id => read().orders.find(o => o.id === id);
+  const order = id => read().orders.find(o => o.id === id&&inBrand(o));
   function validate(input) {
     if (textLength(String(input.number??'').trim()) > 36) throw new Error('订单编号最多36个字符');
     if (String(input.number??'').trim() && !/^[A-Za-z0-9]+$/.test(String(input.number).trim())) throw new Error('订单编号仅支持英文字母和数字');
@@ -63,18 +75,18 @@
     validate(input);
     return commit(db => {
       const now = Date.now();
-      const active=STORES.sqb002;
+      const active={...STORES.sqb002,id:'sqb002',brandId:CURRENT_BRAND_ID,device:CURRENT_DEVICE_ID};
       db.storeCatalog ||= {};db.storeCatalog[active.id]=active;
       db.projectCatalog ||= {};
       input.items=input.items.map(i=>{const snapshot={...PRODUCTS.find(p=>p.id===i.product)};db.projectCatalog[i.product]=snapshot;return {...i,snapshot};});
       if (id) {
-        const o = db.orders.find(x => x.id === id);
+        const o = db.orders.find(x => x.id === id&&inBrand(x));
         if (!o || o.cancelled || o.application || o.rev !== expectedRev) throw new Error('订单状态已变化，无法修改，请查看最新订单');
         Object.assign(o, input, { number:String(input.number||'').trim()||o.id, rev: o.rev + 1, updatedAt: now }); log(o, '订单已修改，生成新开票二维码');
         db.lastCreated = id; return o;
       }
       let generated;do{db.sequence++;generated='KP'+date().replaceAll('-', '')+String(db.sequence).padStart(4, '0');}while(db.orders.some(o=>o.id===generated||o.number===generated));
-      const o = { ...input, number:String(input.number||'').trim()||generated, id: generated, store: active.id, device: active.device, rev: 1, createdAt: now, updatedAt: now, cancelled: false, application: null, invoice: null, refund: null, log: [{ text: '订单已创建', at: now }] };
+      const o = { ...input, number:String(input.number||'').trim()||generated, id: generated, brandId:CURRENT_BRAND_ID, store: active.id, device: active.device, rev: 1, createdAt: now, updatedAt: now, cancelled: false, application: null, invoice: null, refund: null, log: [{ text: '订单已创建', at: now }] };
       db.orders.unshift(o); db.lastCreated = o.id; return o;
     });
   }
@@ -94,7 +106,7 @@
   function cancel(id) {
     if(read().demoSettings?.manualInvoiceEnabled===false)throw new Error('功能未开通');
     return commit(db => {
-      const o = db.orders.find(x => x.id === id);
+      const o = db.orders.find(x => x.id === id&&inBrand(x));
       if (!o) throw new Error('订单不存在');
       if (o.cancelled) return o;
       if (o.application && !o.invoice) throw new Error('正在开票，暂不能撤销，请先查询开票结果');
@@ -108,7 +120,7 @@
     const recipient = String(email || '').trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) throw new Error('请填写有效的接收邮箱');
     return commit(db => {
-      const o = db.orders.find(x => x.id === id);
+      const o = db.orders.find(x => x.id === id&&inBrand(x));
       if (!o || !o.invoice || o.cancelled || o.refund) throw new Error('当前订单状态不支持重新发送');
       if (!o.deliveries) o.deliveries = [];
       o.deliveries.push({ email: recipient, invoiceNumber: o.invoice.number, submittedAt: Date.now(), status: 'submitted' });
@@ -130,11 +142,15 @@
     if (changed) write(db);
   }
   function invoiceStatus(o) { return o.refund?.status === 'success' ? '已全额红冲' : o.refund?.status === 'failed' ? '红冲失败' : o.refund ? '红冲中' : o.invoice ? '已开票' : o.application ? '开票中' : '未申请开票'; }
-  root.DemoCore = { KEY, STORES, PRODUCTS, projects:()=>PRODUCTS, getProject:id=>PRODUCTS.find(p=>p.id===id)||read().projectCatalog?.[id]||{id,name:"开票项目",unit:"件",spec:"",rate:0.13}, activeStore:()=>STORES.sqb002, manualAvailable:()=>read().demoSettings?.manualInvoiceEnabled!==false, entryVisible:()=>read().demoSettings?.invoiceEntryVisible!==false, setDemoSettings:values=>commit(db=>{db.demoSettings={...db.demoSettings,...values};}), date, money, total, textLength, limitText, read, write, seed, order, save, apply, cancel, resend, tick, invoiceStatus };
-  const initial = read();
+  root.DemoCore = { KEY, STORES, PRODUCTS, CURRENT_BRAND_ID, CURRENT_DEVICE_ID, inBrand, listOrders, queryOrders, projects:()=>PRODUCTS, getProject:id=>PRODUCTS.find(p=>p.id===id)||read().projectCatalog?.[id]||{id,name:"开票项目",unit:"件",spec:"",rate:0.13}, activeStore:()=>({...STORES.sqb002,id:"sqb002",brandId:CURRENT_BRAND_ID,device:CURRENT_DEVICE_ID}), manualAvailable:()=>read().demoSettings?.manualInvoiceEnabled!==false, entryVisible:()=>read().demoSettings?.invoiceEntryVisible!==false, setDemoSettings:values=>commit(db=>{db.demoSettings={...db.demoSettings,...values};}), date, money, total, textLength, limitText, read, write, seed, order, save, apply, cancel, resend, tick, invoiceStatus };
+  const initial = read();let migrated=!localStorage.getItem(KEY);
   if (!initial.samplePacks?.includes('processing-v1')) {
     for (const sample of processingSamples()) if (!initial.orders.some(o => o.id === sample.id)) initial.orders.push(sample);
-    initial.samplePacks = [...(initial.samplePacks || []), 'processing-v1'];
-    write(initial);
-  } else if (!localStorage.getItem(KEY)) write(initial);
+    initial.samplePacks = [...(initial.samplePacks || []), 'processing-v1'];migrated=true;
+  }
+  if(!initial.samplePacks?.includes('brand-scope-v1')){
+    if(!initial.orders.some(o=>o.id==='KPOtherBrand001'))initial.orders.push(otherBrandSample());
+    initial.samplePacks=[...(initial.samplePacks||[]),'brand-scope-v1'];migrated=true;
+  }
+  if(migrated)write(initial);
 })(window);

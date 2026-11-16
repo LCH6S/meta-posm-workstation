@@ -11,7 +11,7 @@ tags = '\n'.join(f'<script src="assets/vendor/{p}"></script>' for p in scripts)
 (ROOT / 'index.html').write_text(f'''<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#F7F8FA"><title>Meta POS · 电子发票</title><link rel="icon" href="data:,"><style>{css}</style></head><body><div id="root"></div>
 {tags}
-<script src="assets/vendor/font-data.js"></script><script src="core.js?v=20261116-manual-independent"></script>
+<script src="assets/vendor/font-data.js"></script><script src="core.js?v=20261116-record-query"></script>
 <script type="text/babel">{ui}</script><script type="text/babel">{jsx}</script></body></html>''')
 
 font_path = ROOT / 'assets/vendor/invoice-cjk.ttf'
